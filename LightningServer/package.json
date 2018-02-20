@@ -5,5 +5,8 @@
   "main": "server.js",
   "author": {
     "name": "Paul"
+  },
+  "dependencies": {
+    "nedb": "^1.8.0"
   }
 }
