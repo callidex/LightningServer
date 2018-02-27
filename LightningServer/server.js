@@ -30,7 +30,11 @@ server.on('message', function (message, remote) {
         // this is a quick hack to only store 'data'
         // should check the packet type, potentially have seperate store for GPS entries, then a foreign key between
         // source IP and the GPS, use the IP for grouping / sorting the data packets
-        if (message.length > 1300) {
+        
+        //first 8 bytes are type
+        
+        
+        if (message.length == 1472) {
 
             for (var i = 0; i < message.length; i++) {
                 var low = message[i];
