@@ -7,6 +7,14 @@ var web = net.createServer(function(socket) {
 	socket.write('Echo server\r\n');
 	socket.pipe(socket);
 });
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "bdars",
+  database: "lightning"
+});
 
 var dgram = require('dgram');
 var server = dgram.createSocket('udp4');
@@ -18,13 +26,14 @@ server.on('listening', function () {
 });
 
 server.on('message', function (message, remote) {
-    console.log(remote.address + ':' + remote.port + ' - ' + message);
+    console.log(remote.address + ':' + remote.port);
 
     var packet = {
         type: 'data'
         , data: message
         , address: remote.address
         , port: remote.port
+        , timestamp: Date.now()
 
     };
 
@@ -65,7 +74,22 @@ server.on('message', function (message, remote) {
         }
   */  });
 
+con.connect(function(err) {
+  if (err) throw err;
+});
+
+var sql = "INSERT INTO raw (ip, data) VALUES ('" + packet.address + "', " + packet.data +")";
+  con.query(sql, function (err, result) {
+    if (err) throw err;
+    console.log("1 record inserted");
+  });
+
+
+
+
+
+
 });
  
-web.server(PORT,HOST);
+web.listen(PORT,HOST);
 server.bind(PORT, HOST);

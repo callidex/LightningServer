@@ -78,7 +78,7 @@ con.connect(function(err) {
   if (err) throw err;
 });
 
-var sql = "INSERT INTO raw (ip, data) VALUES ('" + packet.address + "', '" + packet.data +"')";
+var sql = "INSERT INTO raw (ip, data) VALUES ('" + packet.address + "','X" + packet.data +"')";
   con.query(sql, function (err, result) {
     if (err) throw err;
     console.log("1 record inserted");
