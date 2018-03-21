@@ -1,6 +1,13 @@
 var PORT = 5000;
 var HOST = '0.0.0.0';
 
+var net = require('net');
+
+var web = net.createServer(function(socket) {
+	socket.write('Echo server\r\n');
+	socket.pipe(socket);
+});
+
 var dgram = require('dgram');
 var server = dgram.createSocket('udp4');
 var Datastore = require('nedb'), db = new Datastore({ filename: 'datastore.db', autoload: true })
@@ -33,7 +40,7 @@ server.on('message', function (message, remote) {
         
         //first 8 bytes are type
         
-        
+/*        
         if (message.length == 1472) {
 
             for (var i = 0; i < message.length; i++) {
@@ -56,9 +63,9 @@ server.on('message', function (message, remote) {
 
             });
         }
-    });
+  */  });
 
 });
  
-
+web.listen(PORT,HOST);
 server.bind(PORT, HOST);
