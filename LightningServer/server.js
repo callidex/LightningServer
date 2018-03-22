@@ -25,6 +25,9 @@ server.on('listening', function () {
     console.log('UDP Server listening on ' + address.address + ":" + address.port);
 });
 
+con.connect(function(err)
+{if(err) throw err;
+});
 server.on('message', function (message, remote) {
     console.log(remote.address + ':' + remote.port);
 
@@ -74,11 +77,7 @@ server.on('message', function (message, remote) {
         }
   */  });
 
-con.connect(function(err) {
-  if (err) throw err;
-});
-
-var sql = "INSERT INTO raw (ip, data) VALUES ('" + packet.address + "','X" + packet.data +"')";
+var sql = "INSERT INTO raw (ip, data) VALUES ('" + packet.address + "','" + [ Buffer(message, 'binary') ] +"')";
   con.query(sql, function (err, result) {
     if (err) throw err;
     console.log("1 record inserted");
