@@ -101,16 +101,16 @@ function gpsNavPvt(buffer) {
          "min": buffer[5], // min Minute of hour, range 0..59 UTC
          "sec": buffer[6], // s Seconds of minute, range 0..60 UTC
          "valid": buffer[7], // - Validity Flags (see graphic below)
-         "tAcc": new Int64LE(buffer, 8), // ns Time accuracy estimate UTC
-         "nano": new Int64LE(buffer, 16), // ns Fraction of second, range -1e9..1e9 UTC
-         "fixType": buffer[24], // - GNSSfix Type, range 0..5
-         "flags": buffer[25], // - Fix Status Flags (see graphic below)
-         "reserved1": buffer[26],
-         "numSV": buffer[27], // - Number
-         "lon": buffer.readFloatLE(5),
-         "lat": buffer.readDoubleBE(24),
+         "tAcc": buffer.readUInt32LE(8), // ns Time accuracy estimate UTC
+         "nano": buffer.readUInt32LE(buffer, 12), // ns Fraction of second, range -1e9..1e9 UTC
+         "fixType": buffer[16], // - GNSSfix Type, range 0..5
+         "flags": buffer[17], // - Fix Status Flags (see graphic below)
+         "reserved1": buffer[18],
+         "numSV": buffer[19], // - Number
+         "lon": buffer.readFloatLE(20),
+         "lat": buffer.readFloatLE(24),
          "height": buffer.readFloatLE(28), // mm Height above Ellipsoid
-         "hMSL": buffer.readFloatBE(28), // mm Height above mean sea level
+         "hMSL": buffer.readFloatBE(32), // mm Height above mean sea level
          "hAcc": 0, // mm Horizontal Accuracy Estimate
          "vAcc": 0, // mm Vertical Accuracy Estimate
          "velN": 0, // mm/s NED north velocity
