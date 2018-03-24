@@ -30,13 +30,18 @@ con.connect(function(err)
 });
 server.on('message', function (message, remote) {
     console.log(remote.address + ':' + remote.port);
+    var now = Date.now();
 
     var packet = {
-        type: 'data'
+        version: '0.1'
+        ,type: 'data'
         , data: message
         , address: remote.address
         , port: remote.port
-        , timestamp: Date.now()
+        , timestamp: now
+
+//        , date: now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() +   
+//":" + now.getMilliseconds()
 
     };
 
@@ -77,13 +82,13 @@ server.on('message', function (message, remote) {
         }
   */  });
 
-var sql = "INSERT INTO raw (ip, data) VALUES ('" + packet.address + "','" + [ Buffer(message, 'binary') ] +"')";
+/*var sql = "INSERT INTO raw (ip, data) VALUES ('" + packet.address + "','" + [ Buffer(message, 'binary') ] +"')";
   con.query(sql, function (err, result) {
     if (err) throw err;
     console.log("1 record inserted");
   });
 
-
+*/
 
 
 
