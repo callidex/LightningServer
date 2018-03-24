@@ -85,22 +85,21 @@ function gpsNavPvt(buffer) {
    console.log(buffer.length);
    var ret =
       {
-         "iTOW": new Int64LE(buffer, 0),  //long
-         "year": new Int16Array(buffer, 8, 1)[0],
-         "month": buffer[10], // month Month, range 1..12 UTC
-         "day": buffer[11], // d Day of month, range 1..31 UTC
-         "hour": buffer[12], // h Hour of day, range 0..23 UTC
-         "min": buffer[13], // min Minute of hour, range 0..59 UTC
-         "sec": buffer[14], // s Seconds of minute, range 0..60 UTC
-         "valid": buffer[15], // - Validity Flags (see graphic below)
-         "tAcc": new Int64LE(buffer, 16), // ns Time accuracy estimate UTC
-         "nano": new Int64LE(buffer, 24), // ns Fraction of second, range -1e9..1e9 UTC
-         "fixType": buffer[25], // - GNSSfix Type, range 0..5
-         "flags": buffer[26], // - Fix Status Flags (see graphic below)
-         "reserved1": buffer[27],
-         "numSV": buffer[28], // - Number
-         "lon": new Int64LE(buffer, 29),
-         "lat": new Int64LE(buffer, 37), // deg Latitude (1e-7)
+         "year": buffer[1] << 8 | buffer[0],
+         "month": buffer[2], // month Month, range 1..12 UTC
+         "day": buffer[3], // d Day of month, range 1..31 UTC
+         "hour": buffer[4], // h Hour of day, range 0..23 UTC
+         "min": buffer[5], // min Minute of hour, range 0..59 UTC
+         "sec": buffer[6], // s Seconds of minute, range 0..60 UTC
+         "valid": buffer[7], // - Validity Flags (see graphic below)
+         "tAcc": new Int64LE(buffer, 8), // ns Time accuracy estimate UTC
+         "nano": new Int64LE(buffer, 16), // ns Fraction of second, range -1e9..1e9 UTC
+         "fixType": buffer[24], // - GNSSfix Type, range 0..5
+         "flags": buffer[25], // - Fix Status Flags (see graphic below)
+         "reserved1": buffer[26],
+         "numSV": buffer[27], // - Number
+         "lon": new Int64LE(buffer, 28),
+         "lat": new Int64LE(buffer, 36), // deg Latitude (1e-7)
          "height": 0, // mm Height above Ellipsoid
          "hMSL": 0, // mm Height above mean sea level
          "hAcc": 0, // mm Horizontal Accuracy Estimate
