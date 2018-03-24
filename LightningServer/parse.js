@@ -7,11 +7,10 @@ var Int64BE = require("int64-buffer").Int64BE;
 module.exports = {
 
    parseDataChunk: function (dataChunk) {
-     
+
       var len = Object.keys(dataChunk).length;
       var buffer = [];
-      for (var i = 0; i < len; i++)
-      {
+      for (var i = 0; i < len; i++) {
          buffer.push(dataChunk[i]);
       }
 
@@ -29,7 +28,7 @@ module.exports = {
 
 function parseADCSamplePacket(buffer) {
    console.log("sample packet found");
-   
+
    return 0;
 }
 
@@ -45,11 +44,12 @@ function parseStatusPacket(buffer) {
       console.log("unknown status");
    }
 
-  
+
    console.log(buffer[4] + ' pps');
 
    var gps = gpsNavPvt(buffer.slice(8));
    if (gps != null) {
+      console.log("height = " + gps.height);
       console.log("lat = " + gps.lat);
       console.log("lon = " + gps.lon);
    }
@@ -81,8 +81,28 @@ function distance(lat1, lon1, lat2, lon2, unit) {
    return dist
 }
 
+function Bytes2Float32(bytes) {
+   var sign = (bytes & 0x80000000) ? -1 : 1;
+   var exponent = ((bytes >> 23) & 0xFF) - 127;
+   var significand = (bytes & ~(-1 << 23));
+
+   if (exponent == 128)
+      return sign * ((significand) ? Number.NaN : Number.POSITIVE_INFINITY);
+
+   if (exponent == -127) {
+      if (significand == 0) return sign * 0.0;
+      exponent = -126;
+      significand /= (1 << 22);
+   } else significand = (significand | (1 << 23)) / (1 << 23);
+
+   return sign * significand * Math.pow(2, exponent);
+}
+
 function gpsNavPvt(buffer) {
    console.log(buffer.length);
+   var i = Bytes2Float32([buffer[24], buffer[25], buffer[26], buffer[27]]);
+   var i2 = Bytes2Float32([buffer[27], buffer[26], buffer[25], buffer[24]]);
+
    var ret =
       {
          "year": buffer[1] << 8 | buffer[0],
@@ -98,9 +118,22 @@ function gpsNavPvt(buffer) {
          "flags": buffer[25], // - Fix Status Flags (see graphic below)
          "reserved1": buffer[26],
          "numSV": buffer[27], // - Number
-         "lon": new Int64LE(buffer, 28),
-         "lat": new Int64LE(buffer, 36), // deg Latitude (1e-7)
-         "height": 0, // mm Height above Ellipsoid
+         "lon":
+
+         parseFloat(buffer[27] << 24 |
+            buffer[26] << 16 |
+            buffer[25] << 8 |
+            buffer[24] / 1e6),
+         "lat": Bytes2Float32(buffer.slice(28, 4)),
+
+         //"lat": parseFloat(buffer[31] << 24 |
+         //   buffer[30] << 16 |
+         //   buffer[29] << 8 |
+         //   buffer[28] / 1e6), // deg Latitude (1e6)
+         "height": parseFloat(buffer[35] << 24 |
+            buffer[34] << 16 |
+            buffer[33] << 8 |
+            buffer[32] / 1e6), // mm Height above Ellipsoid
          "hMSL": 0, // mm Height above mean sea level
          "hAcc": 0, // mm Horizontal Accuracy Estimate
          "vAcc": 0, // mm Vertical Accuracy Estimate
