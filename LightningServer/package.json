@@ -7,6 +7,8 @@
     "name": "Paul"
   },
   "dependencies": {
-    "nedb": "^1.8.0"
+    "int64-buffer": "^0.1.10",
+    "nedb": "^1.8.0",
+    "node-bitarray": "^0.1.0"
   }
 }

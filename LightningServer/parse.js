@@ -1,23 +1,21 @@
-﻿//var Datastore = require('nedb'), db = new Datastore({ filename: 'datastore.db', autoload: true })
+﻿var Datastore = require('nedb'), db = new Datastore({ filename: 'datastore.db', autoload: true })
 
-var BitArray = require('node-bitarray');
+var Int64LE = require("int64-buffer").Int64LE;
+var Int64BE = require("int64-buffer").Int64BE;
 
-function copy(src) {
-   var dst = new ArrayBuffer(src.byteLength);
-   new Uint8Array(dst).set(new Uint8Array(src));
-   return dst;
-}
 
 module.exports = {
 
    parseDataChunk: function (dataChunk) {
-
-
-      //console.log('parsing chunk');
-      var arr = dataChunk[0];
+     
       var len = Object.keys(dataChunk).length;
-      var buffer = copy(dataChunk);
+      var buffer = [];
+      for (var i = 0; i < len; i++)
+      {
+         buffer.push(dataChunk[i]);
+      }
 
+      if (buffer.length < 1) throw -1;
       if (len == 140) {
          return parseStatusPacket(buffer);
       }
@@ -31,21 +29,14 @@ module.exports = {
 
 function parseADCSamplePacket(buffer) {
    console.log("sample packet found");
+   
    return 0;
-}
-
-function bytesTo32bit(arr) {
-   var b0 = arr;
-   var b0 = + arr[1] << 8;
-   var b0 = + arr[2] << 16;
-   var b0 = + arr[3] << 24;
-   return b0;
 }
 
 function parseStatusPacket(buffer) {
 
    console.log("status packet");
-   if (BitArray.parse(buffer[0])[1]) {
+   if (buffer[0] & 2) {
       console.log("timed status");
    }
    else if (buffer[0] & 1)
@@ -54,25 +45,27 @@ function parseStatusPacket(buffer) {
       console.log("unknown status");
    }
 
-   console.log(buffer[4] + ' seconds');
-
-   var a = [buffer[9], buffer[10], buffer[11], buffer[12]]
-   var test = bytesTo32bit(
-      a);
-
+  
    console.log(buffer[4] + ' pps');
+
+   var gps = gpsNavPvt(buffer.slice(8));
+   if (gps != null) {
+      console.log("lat = " + gps.lat);
+      console.log("lon = " + gps.lon);
+   }
 
    return 0;
 }
 
-//db.find({}, function (err, docs) {
-//   if (err) throw err;
-//   console.log('Founds docs');
+db.find({}, function (err, docs) {
+   if (err) throw err;
+   console.log('Founds docs');
 
-//   for (var i = 0, len = docs.length; i < len; i++) {
-//      parse(docs[i]);
-//   }
-//});
+   for (var i = 0, len = docs.length; i < len; i++) {
+
+      module.exports.parseDataChunk(docs[i].data);
+   }
+});
 
 function distance(lat1, lon1, lat2, lon2, unit) {
    var radlat1 = Math.PI * lat1 / 180
@@ -88,40 +81,26 @@ function distance(lat1, lon1, lat2, lon2, unit) {
    return dist
 }
 
-function toLong(buffer)
-{
-
-}
-
-function toShort(buffer)
-{
-
-}
-
-function toInt(buffer)
-{
-
-}
-
 function gpsNavPvt(buffer) {
+   console.log(buffer.length);
    var ret =
       {
-         "iTOW": toLong(buffer.slice(0,8)),  //long
-         "year": toShort(buffer.slice(8, 2)),
+         "iTOW": new Int64LE(buffer, 0),  //long
+         "year": new Int16Array(buffer, 8, 1)[0],
          "month": buffer[10], // month Month, range 1..12 UTC
          "day": buffer[11], // d Day of month, range 1..31 UTC
          "hour": buffer[12], // h Hour of day, range 0..23 UTC
          "min": buffer[13], // min Minute of hour, range 0..59 UTC
          "sec": buffer[14], // s Seconds of minute, range 0..60 UTC
          "valid": buffer[15], // - Validity Flags (see graphic below)
-         "tAcc": toLong(buffer.slice([16],8)), // ns Time accuracy estimate UTC
-         "nano": 0, // ns Fraction of second, range -1e9..1e9 UTC
-         "fixType": 0, // - GNSSfix Type, range 0..5
-         "flags": 0, // - Fix Status Flags (see graphic below)
-         "reserved1": 0,
-         "numSV": 0, // - Number
-         "lon": 0,
-         "lat": 0, // deg Latitude (1e-7)
+         "tAcc": new Int64LE(buffer, 16), // ns Time accuracy estimate UTC
+         "nano": new Int64LE(buffer, 24), // ns Fraction of second, range -1e9..1e9 UTC
+         "fixType": buffer[25], // - GNSSfix Type, range 0..5
+         "flags": buffer[26], // - Fix Status Flags (see graphic below)
+         "reserved1": buffer[27],
+         "numSV": buffer[28], // - Number
+         "lon": new Int64LE(buffer, 29),
+         "lat": new Int64LE(buffer, 37), // deg Latitude (1e-7)
          "height": 0, // mm Height above Ellipsoid
          "hMSL": 0, // mm Height above mean sea level
          "hAcc": 0, // mm Horizontal Accuracy Estimate
