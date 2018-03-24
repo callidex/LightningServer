@@ -1,12 +1,7 @@
-﻿var Datastore = require('nedb'), db = new Datastore({ filename: 'datastore.db', autoload: true })
-
-var Int64LE = require("int64-buffer").Int64LE;
-var Int64BE = require("int64-buffer").Int64BE;
-
+﻿var Datastore = require("nedb"), db = new Datastore({ filename: "datastore.db", autoload: true });
 
 module.exports = {
-
-   parseDataChunk: function (dataChunk) {
+   parseDataChunk: function(dataChunk) {
 
       var len = Object.keys(dataChunk).length;
       var buffer = new Buffer(len);
@@ -15,16 +10,15 @@ module.exports = {
       }
 
       if (buffer.length < 1) throw -1;
-      if (len == 140) {
+      if (len === 140) {
          return parseStatusPacket(buffer);
-      }
-      else if (len == 1472) {
+      } else if (len === 1472) {
          return parseADCSamplePacket(buffer);
       }
-      console.log('object length ' + len);
+      console.log("object length " + len);
       return null;
    }
-}
+};
 
 function parseADCSamplePacket(buffer) {
    console.log("sample packet found");
@@ -37,88 +31,89 @@ function parseStatusPacket(buffer) {
    console.log("status packet");
    if (buffer[0] & 2) {
       console.log("timed status");
-   }
-   else if (buffer[0] & 1)
-   { console.log("end seq status"); }
-   else {
+   } else if (buffer[0] & 1) {
+      console.log("end seq status");
+   } else {
       console.log("unknown status");
    }
 
 
-   console.log(buffer[4] + ' pps');
+   console.log(buffer[4] + " pps");
 
-   console.log(typeof (buffer));
    var sliced = buffer.slice(8);
-
    var gps = gpsNavPvt(sliced);
    if (gps != null) {
-      //console.log("height = " + gps.height);
-      //console.log("lat = " + gps.lat);
-      //console.log("lon = " + gps.lon);
+      console.log("height = " + gps.height);
+      console.log("lat = " + gps.lat);
+      console.log("lon = " + gps.lon);
    }
 
    return 0;
 }
 
-db.find({}, function (err, docs) {
-   if (err) throw err;
-   console.log('Founds docs');
+db.find({},
+   function(err, docs) {
+      if (err) throw err;
+      console.log("Founds docs");
 
-   for (var i = 0, len = docs.length; i < len; i++) {
-
-      module.exports.parseDataChunk(docs[i].data);
-   }
-});
+      for (var i = 0, len = docs.length; i < len; i++) {
+         module.exports.parseDataChunk(docs[i].data);
+      }
+   });
 
 function distance(lat1, lon1, lat2, lon2, unit) {
-   var radlat1 = Math.PI * lat1 / 180
-   var radlat2 = Math.PI * lat2 / 180
-   var theta = lon1 - lon2
-   var radtheta = Math.PI * theta / 180
+   var radlat1 = Math.PI * lat1 / 180;
+   var radlat2 = Math.PI * lat2 / 180;
+   var theta = lon1 - lon2;
+   var radtheta = Math.PI * theta / 180;
    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-   dist = Math.acos(dist)
-   dist = dist * 180 / Math.PI
-   dist = dist * 60 * 1.1515
-   if (unit == "K") { dist = dist * 1.609344 }
-   if (unit == "N") { dist = dist * 0.8684 }
-   return dist
+   dist = Math.acos(dist);
+   dist = dist * 180 / Math.PI;
+   dist = dist * 60 * 1.1515;
+   if (unit === "K") {
+      dist = dist * 1.609344;
+   }
+   if (unit === "N") {
+      dist = dist * 0.8684;
+   }
+   return dist;
 }
 
 function gpsNavPvt(buffer) {
    if (buffer.length == undefined) return null;
-   
+
    var ret =
-      {
-         "year": buffer.readInt16LE(0),
-         "month": buffer[2], // month Month, range 1..12 UTC
-         "day": buffer[3], // d Day of month, range 1..31 UTC
-         "hour": buffer[4], // h Hour of day, range 0..23 UTC
-         "min": buffer[5], // min Minute of hour, range 0..59 UTC
-         "sec": buffer[6], // s Seconds of minute, range 0..60 UTC
-         "valid": buffer[7], // - Validity Flags (see graphic below)
-         "tAcc": buffer.readUInt32LE(8), // ns Time accuracy estimate UTC
-         "nano": buffer.readUInt32LE(buffer, 12), // ns Fraction of second, range -1e9..1e9 UTC
-         "fixType": buffer[16], // - GNSSfix Type, range 0..5
-         "flags": buffer[17], // - Fix Status Flags (see graphic below)
-         "reserved1": buffer[18],
-         "numSV": buffer[19], // - Number
-         "lon": buffer.readUInt32LE(20)/1e7,
-         "lat": buffer.readUInt32LE(24)/1e7,
-         "height": buffer.readUInt32LE(28), // mm Height above Ellipsoid
-         "hMSL": buffer.readUInt32LE(32), // mm Height above mean sea level
-         "hAcc": 0, // mm Horizontal Accuracy Estimate
-         "vAcc": 0, // mm Vertical Accuracy Estimate
-         "velN": 0, // mm/s NED north velocity
-         "velE": 0, // mm/s NED east velocity
-         "velD": 0, // mm/s NED down velocity
-         "gSpeed": 0, // mm/s Ground Speed (2-D)
-         "heading": 0, // deg Heading of motion 2-D (1e-5)
-         "sAcc": 0, // mm/s Speed Accuracy Estimate
-         "headingAcc": 0, // deg Heading Accuracy Estimate (1e-5)
-         "pDOP": 0,// - Position DOP (0.01)
-         "reserved2": 0, // - Reserved
-         "reserved3": 0, // - Reserved
-      }
+   {
+      "year": buffer.readInt16LE(0),
+      "month": buffer[2], // month Month, range 1..12 UTC
+      "day": buffer[3], // d Day of month, range 1..31 UTC
+      "hour": buffer[4], // h Hour of day, range 0..23 UTC
+      "min": buffer[5], // min Minute of hour, range 0..59 UTC
+      "sec": buffer[6], // s Seconds of minute, range 0..60 UTC
+      "valid": buffer[7], // - Validity Flags (see graphic below)
+      "tAcc": buffer.readUInt32LE(8), // ns Time accuracy estimate UTC
+      "nano": buffer.readUInt32LE(buffer, 12), // ns Fraction of second, range -1e9..1e9 UTC
+      "fixType": buffer[16], // - GNSSfix Type, range 0..5
+      "flags": buffer[17], // - Fix Status Flags (see graphic below)
+      "reserved1": buffer[18],
+      "numSV": buffer[19], // - Number
+      "lon": buffer.readUInt32LE(20) / 1e7,
+      "lat": buffer.readUInt32LE(24) / 1e7,
+      "height": buffer.readUInt32LE(28), // mm Height above Ellipsoid
+      "hMSL": buffer.readUInt32LE(32), // mm Height above mean sea level
+      "hAcc": 0, // mm Horizontal Accuracy Estimate
+      "vAcc": 0, // mm Vertical Accuracy Estimate
+      "velN": 0, // mm/s NED north velocity
+      "velE": 0, // mm/s NED east velocity
+      "velD": 0, // mm/s NED down velocity
+      "gSpeed": 0, // mm/s Ground Speed (2-D)
+      "heading": 0, // deg Heading of motion 2-D (1e-5)
+      "sAcc": 0, // mm/s Speed Accuracy Estimate
+      "headingAcc": 0, // deg Heading Accuracy Estimate (1e-5)
+      "pDOP": 0, // - Position DOP (0.01)
+      "reserved2": 0, // - Reserved
+      "reserved3": 0 // - Reserved
+   };
    return ret;
 }
 /*
