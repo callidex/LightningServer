@@ -37,29 +37,23 @@ function parseStatusPacket(buffer) {
       console.log("unknown status");
    }
 
-
-   console.log(buffer[4] + " pps");
-
    var sliced = buffer.slice(8);
    var gps = gpsNavPvt(sliced);
    if (gps != null) {
-      console.log("height = " + gps.height);
-      console.log("lat = " + gps.lat);
-      console.log("lon = " + gps.lon);
+      return { "gps": gps };
    }
-
    return 0;
 }
+//Testing only
+//db.find({},
+//   function(err, docs) {
+//      if (err) throw err;
+//      console.log("Founds docs");
 
-db.find({},
-   function(err, docs) {
-      if (err) throw err;
-      console.log("Founds docs");
-
-      for (var i = 0, len = docs.length; i < len; i++) {
-         module.exports.parseDataChunk(docs[i].data);
-      }
-   });
+//      for (var i = 0, len = docs.length; i < len; i++) {
+//         module.exports.parseDataChunk(docs[i].data);
+//      }
+//   });
 
 function distance(lat1, lon1, lat2, lon2, unit) {
    var radlat1 = Math.PI * lat1 / 180;
