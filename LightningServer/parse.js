@@ -86,12 +86,7 @@ function distance(lat1, lon1, lat2, lon2, unit) {
 
 function gpsNavPvt(buffer) {
    if (buffer.length == undefined) return null;
-   for (var i= 0; i < buffer.length - 4;i++)
-   {
-      var p = buffer.readFloatLE(i);
-      if(( p < 160 && p > 1) || ( p>-30 && p < -1)) console.log(i + '  ' + buffer.readFloatLE(i));
-   }
-
+   
    var ret =
       {
          "year": buffer.readInt16LE(0),
@@ -107,10 +102,10 @@ function gpsNavPvt(buffer) {
          "flags": buffer[17], // - Fix Status Flags (see graphic below)
          "reserved1": buffer[18],
          "numSV": buffer[19], // - Number
-         "lon": buffer.readFloatLE(20),
-         "lat": buffer.readFloatLE(24),
-         "height": buffer.readFloatLE(28), // mm Height above Ellipsoid
-         "hMSL": buffer.readFloatBE(32), // mm Height above mean sea level
+         "lon": buffer.readUInt32LE(20)/1e7,
+         "lat": buffer.readUInt32LE(24)/1e7,
+         "height": buffer.readUInt32LE(28), // mm Height above Ellipsoid
+         "hMSL": buffer.readUInt32LE(32), // mm Height above mean sea level
          "hAcc": 0, // mm Horizontal Accuracy Estimate
          "vAcc": 0, // mm Vertical Accuracy Estimate
          "velN": 0, // mm/s NED north velocity
