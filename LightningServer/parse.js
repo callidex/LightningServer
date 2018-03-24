@@ -97,20 +97,20 @@ function gpsNavPvt(buffer) {
       "flags": buffer[17], // - Fix Status Flags (see graphic below)
       "reserved1": buffer[18],
       "numSV": buffer[19], // - Number
-      "lon": buffer.readUInt32LE(20) / 1e7,
-      "lat": buffer.readUInt32LE(24) / 1e7,
-      "height": buffer.readUInt32LE(28), // mm Height above Ellipsoid
-      "hMSL": buffer.readUInt32LE(32), // mm Height above mean sea level
-      "hAcc": 0, // mm Horizontal Accuracy Estimate
-      "vAcc": 0, // mm Vertical Accuracy Estimate
-      "velN": 0, // mm/s NED north velocity
-      "velE": 0, // mm/s NED east velocity
-      "velD": 0, // mm/s NED down velocity
-      "gSpeed": 0, // mm/s Ground Speed (2-D)
-      "heading": 0, // deg Heading of motion 2-D (1e-5)
-      "sAcc": 0, // mm/s Speed Accuracy Estimate
-      "headingAcc": 0, // deg Heading Accuracy Estimate (1e-5)
-      "pDOP": 0, // - Position DOP (0.01)
+      "lon": buffer.readInt32LE(20) / 1e7,
+      "lat": buffer.readInt32LE(24) / 1e7,
+      "height": buffer.readInt32LE(28), // mm Height above Ellipsoid
+      "hMSL": buffer.readInt32LE(32), // mm Height above mean sea level
+      "hAcc": buffer.readUInt32LE(36), // mm Horizontal Accuracy Estimate
+      "vAcc": buffer.readUInt32LE(40), // mm Vertical Accuracy Estimate
+      "velN": buffer.readInt32LE(44), // mm/s NED north velocity
+      "velE": buffer.readInt32LE(48), // mm/s NED east velocity
+      "velD": buffer.readInt32LE(52), // mm/s NED down velocity
+      "gSpeed": buffer.readInt32LE(56), // mm/s Ground Speed (2-D)
+      "heading": buffer.readInt32LE(60), // deg Heading of motion 2-D (1e-5)
+      "sAcc": buffer.readUInt32LE(64), // mm/s Speed Accuracy Estimate
+      "headingAcc": buffer.readInt16LE(68), // deg Heading Accuracy Estimate (1e-5)
+      "pDOP": buffer.readUInt16LE(70), // - Position DOP (0.01)
       "reserved2": 0, // - Reserved
       "reserved3": 0 // - Reserved
    };
