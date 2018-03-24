@@ -1,17 +1,22 @@
-﻿var Datastore = require('nedb'), db = new Datastore({ filename: 'datastore.db', autoload: true })
+﻿//var Datastore = require('nedb'), db = new Datastore({ filename: 'datastore.db', autoload: true })
 
-function parse(dataChunk) {
+module.exports = {
 
-   //console.log('parsing chunk');
-   var arr = dataChunk.data[0];
-   var len = Object.keys(dataChunk.data).length;
-   if (len == 140) {
-      parseStatusPacket(dataChunk);
-   }
-   else if (len == 1472) {
-      parseADCSamplePacket(dataChunk);
+   parseDataChunk: function (dataChunk) {
+
+      //console.log('parsing chunk');
+      var arr = dataChunk[0];
+      var len = Object.keys(dataChunk).length;
+      if (len == 140) {
+         return parseStatusPacket(dataChunk);
+      }
+      else if (len == 1472) {
+         return parseADCSamplePacket(dataChunk);
+      }
+      return null;
    }
 }
+
 function parseADCSamplePacket(dataChunk) {
    //console.log("Sample packet found");
 }
@@ -26,37 +31,34 @@ function bytesTo32bit(arr) {
 }
 
 function parseStatusPacket(dataChunk) {
-   //   console.log("Status packet found");
-   //   console.log(dataChunk.data);
-
-   if (dataChunk.data[0] & 2) {
+   
+   if (dataChunk[0] & 2) {
       console.log("timed status");
    }
-   else if (dataChunk.data[0] & 1)
+   else if (dataChunk[0] & 1)
    { console.log("end seq status"); }
    else {
       console.log("unknown status");
    }
 
+   console.log(dataChunk[4] + ' seconds');
 
-   console.log(dataChunk.data[4] + ' seconds');
-
-   var a = [dataChunk.data[9], dataChunk.data[10], dataChunk.data[11], dataChunk.data[12]]
+   var a = [dataChunk[9], dataChunk[10], dataChunk[11], dataChunk[12]]
    var test = bytesTo32bit(
       a);
 
-   console.log(dataChunk.data[4] + ' pps');
+   console.log(dataChunk[4] + ' pps');
 
 }
 
-db.find({}, function (err, docs) {
-   if (err) throw err;
-   console.log('Founds docs');
+//db.find({}, function (err, docs) {
+//   if (err) throw err;
+//   console.log('Founds docs');
 
-   for (var i = 0, len = docs.length; i < len; i++) {
-      parse(docs[i]);
-   }
-});
+//   for (var i = 0, len = docs.length; i < len; i++) {
+//      parse(docs[i]);
+//   }
+//});
 
 function distance(lat1, lon1, lat2, lon2, unit) {
    var radlat1 = Math.PI * lat1 / 180
@@ -71,5 +73,6 @@ function distance(lat1, lon1, lat2, lon2, unit) {
    if (unit == "N") { dist = dist * 0.8684 }
    return dist
 }
+
 
 

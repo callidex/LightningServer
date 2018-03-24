@@ -1,7 +1,1 @@
-﻿# LightningServer
-
-
-pm2 
-nodejs
-server.js
-
+pm2 restart server
