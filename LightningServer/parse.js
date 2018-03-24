@@ -9,9 +9,9 @@ module.exports = {
    parseDataChunk: function (dataChunk) {
 
       var len = Object.keys(dataChunk).length;
-      var buffer = [];
+      var buffer = new Buffer(len);
       for (var i = 0; i < len; i++) {
-         buffer.push(dataChunk[i]);
+         buffer[i] = dataChunk[i];
       }
 
       if (buffer.length < 1) throw -1;
@@ -47,11 +47,14 @@ function parseStatusPacket(buffer) {
 
    console.log(buffer[4] + ' pps');
 
-   var gps = gpsNavPvt(buffer.slice(8));
+   console.log(typeof (buffer));
+   var sliced = buffer.slice(8);
+
+   var gps = gpsNavPvt(sliced);
    if (gps != null) {
-      console.log("height = " + gps.height);
-      console.log("lat = " + gps.lat);
-      console.log("lon = " + gps.lon);
+      //console.log("height = " + gps.height);
+      //console.log("lat = " + gps.lat);
+      //console.log("lon = " + gps.lon);
    }
 
    return 0;
@@ -81,31 +84,17 @@ function distance(lat1, lon1, lat2, lon2, unit) {
    return dist
 }
 
-function Bytes2Float32(bytes) {
-   var sign = (bytes & 0x80000000) ? -1 : 1;
-   var exponent = ((bytes >> 23) & 0xFF) - 127;
-   var significand = (bytes & ~(-1 << 23));
-
-   if (exponent == 128)
-      return sign * ((significand) ? Number.NaN : Number.POSITIVE_INFINITY);
-
-   if (exponent == -127) {
-      if (significand == 0) return sign * 0.0;
-      exponent = -126;
-      significand /= (1 << 22);
-   } else significand = (significand | (1 << 23)) / (1 << 23);
-
-   return sign * significand * Math.pow(2, exponent);
-}
-
 function gpsNavPvt(buffer) {
-   console.log(buffer.length);
-   var i = Bytes2Float32([buffer[24], buffer[25], buffer[26], buffer[27]]);
-   var i2 = Bytes2Float32([buffer[27], buffer[26], buffer[25], buffer[24]]);
+   if (buffer.length == undefined) return null;
+   for (var i= 0; i < buffer.length - 4;i++)
+   {
+      var p = buffer.readFloatLE(i);
+      if(( p < 160 && p > 1) || ( p>-30 && p < -1)) console.log(i + '  ' + buffer.readFloatLE(i));
+   }
 
    var ret =
       {
-         "year": buffer[1] << 8 | buffer[0],
+         "year": buffer.readInt16LE(0),
          "month": buffer[2], // month Month, range 1..12 UTC
          "day": buffer[3], // d Day of month, range 1..31 UTC
          "hour": buffer[4], // h Hour of day, range 0..23 UTC
@@ -118,23 +107,10 @@ function gpsNavPvt(buffer) {
          "flags": buffer[25], // - Fix Status Flags (see graphic below)
          "reserved1": buffer[26],
          "numSV": buffer[27], // - Number
-         "lon":
-
-         parseFloat(buffer[27] << 24 |
-            buffer[26] << 16 |
-            buffer[25] << 8 |
-            buffer[24] / 1e6),
-         "lat": Bytes2Float32(buffer.slice(28, 4)),
-
-         //"lat": parseFloat(buffer[31] << 24 |
-         //   buffer[30] << 16 |
-         //   buffer[29] << 8 |
-         //   buffer[28] / 1e6), // deg Latitude (1e6)
-         "height": parseFloat(buffer[35] << 24 |
-            buffer[34] << 16 |
-            buffer[33] << 8 |
-            buffer[32] / 1e6), // mm Height above Ellipsoid
-         "hMSL": 0, // mm Height above mean sea level
+         "lon": buffer.readFloatLE(5),
+         "lat": buffer.readDoubleBE(24),
+         "height": buffer.readFloatLE(28), // mm Height above Ellipsoid
+         "hMSL": buffer.readFloatBE(28), // mm Height above mean sea level
          "hAcc": 0, // mm Horizontal Accuracy Estimate
          "vAcc": 0, // mm Vertical Accuracy Estimate
          "velN": 0, // mm/s NED north velocity
