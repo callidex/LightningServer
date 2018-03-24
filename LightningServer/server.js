@@ -7,13 +7,12 @@ var dataParser = require("./parse");
 //var con = mysql.createConnection({
 //  host: "localhost",
 //  user: "root",
-//  password: "bdars",
 //  database: "lightning"
 //});
 
 var dgram = require("dgram");
 var server = dgram.createSocket("udp4");
-var Datastore = require("nedb"), db = new Datastore({ filename: "datastore.db", autoload: true });
+var Datastore = require("nedb"), db = new Datastore({ filename: "../../datastore.db", autoload: true });
 
 server.on("listening",
    function() {

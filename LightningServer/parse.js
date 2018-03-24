@@ -1,4 +1,4 @@
-﻿var Datastore = require("nedb"), db = new Datastore({ filename: "datastore.db", autoload: true });
+﻿var Datastore = require("nedb"), db = new Datastore({ filename: "../../datastore.db", autoload: true });
 
 module.exports = {
    parseDataChunk: function(dataChunk) {
