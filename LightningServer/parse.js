@@ -13,12 +13,14 @@ module.exports = {
       else if (len == 1472) {
          return parseADCSamplePacket(dataChunk);
       }
+      console.log('object length ' + len);   
       return null;
    }
 }
 
 function parseADCSamplePacket(dataChunk) {
-   //console.log("Sample packet found");
+   console.log("sample packet found");
+   return 0;
 }
 
 function bytesTo32bit(arr) {
@@ -31,7 +33,8 @@ function bytesTo32bit(arr) {
 }
 
 function parseStatusPacket(dataChunk) {
-   
+
+   console.log("status packet");   
    if (dataChunk[0] & 2) {
       console.log("timed status");
    }
@@ -49,6 +52,7 @@ function parseStatusPacket(dataChunk) {
 
    console.log(dataChunk[4] + ' pps');
 
+   return 0;
 }
 
 //db.find({}, function (err, docs) {

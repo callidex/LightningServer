@@ -1,17 +1,12 @@
 var PORT = 5000;
 var HOST = '0.0.0.0';
-
 var net = require('net');
 var dataParser = require('./parse');
-var web = net.createServer(function (socket) {
-   socket.write('Echo server\r\n');
-   socket.pipe(socket);
-});
 //var mysql = require('mysql');
 
 //var con = mysql.createConnection({
 //  host: "localhost",
-// user: "root",
+//  user: "root",
 //  password: "bdars",
 //  database: "lightning"
 //});
@@ -42,13 +37,12 @@ server.on('message', function (message, remote) {
       , received: new Date().toString()
    };
 
-   db.insert(packet, function (err, newDoc) {   // Callback is optional
-      // newDoc is the newly inserted document, including its _id
-      var fs = require('fs');
+   db.insert(packet, function (err, newDoc) { 
+   if(err) throw err;
+   console.log('packet stored');  
+     });
 
-      var data = [];
-   });
-
+   console.log('parsing object at ' + packet.received);
    var parsedObject = dataParser.parseDataChunk(packet.data);
    if (parsedObject == null)
    {
@@ -66,5 +60,4 @@ server.on('message', function (message, remote) {
    }
 });
 
-web.listen(PORT, HOST);
 server.bind(PORT, HOST);
