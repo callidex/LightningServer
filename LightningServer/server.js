@@ -2,20 +2,10 @@ var port = 5000;
 var host = "0.0.0.0";
 var net = require("net");
 var dataParser = require("./parse");
-var parseddb = new Datastore({ filename: "../../parsed.db", autoload: true });
-
-
-//var mysql = require('mysql');
-
-//var con = mysql.createConnection({
-//  host: "localhost",
-//  user: "root",
-//  database: "lightning"
-//});
-
 var dgram = require("dgram");
 var server = dgram.createSocket("udp4");
 var Datastore = require("nedb"), db = new Datastore({ filename: "../../datastore.db", autoload: true });
+var parseddb = new Datastore({ filename: "../../parsed.db", autoload: true });
 
 server.on("listening",
    function () {
@@ -48,7 +38,7 @@ server.on("message",
          });
 
       console.log("parsing object at " + packet.received);
-      var parsedObject = dataParser.parseDataChunk(packet.data);
+      var parsedObject = dataParser.parseDataChunk(packet);
       if (parsedObject == null) {
          console.log("Unknown object");
       } else {
@@ -61,7 +51,7 @@ server.on("message",
 
             if (parsedObject.packettype != "undefined") {
                parsedObject.persistedDate = Date.now();
-               persistResolvedData(data);
+               persistResolvedData(parsedObject);
             }
          }
       }

@@ -4,10 +4,10 @@ var PacketTypeEnum = Object.freeze({ "sample": 0, "status": 1, "timedstatus": 2 
 module.exports = {
    parseDataChunk: function (dataChunk) {
 
-      var len = Object.keys(dataChunk).length;
+      var len = Object.keys(dataChunk.data).length;
       var buffer = new Buffer(len);
       for (var i = 0; i < len; i++) {
-         buffer[i] = dataChunk[i];
+         buffer[i] = dataChunk.data[i];
       }
       if (buffer.length < 1) throw -1;
       var packetType = buffer.readUInt8(3);
@@ -17,10 +17,12 @@ module.exports = {
       var tempObject = {
          "packetnumber": packetNumber,
          "packettype": packetType,
-         "gps": { "lat" : "", "lon":"", "height":""}
+         "gps": { "lat" : "", "lon":"", "height":""},
+         "recieved": dataChunk.recieved,
+         "address" : dataChunk.address,
+         "version" : dataChunk.version 
       }
 
-      
       switch (packetType) {
          case PacketTypeEnum.sample:
             return parseADCSamplePacket(tempObject ,buffer);
