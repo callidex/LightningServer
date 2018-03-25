@@ -42,6 +42,8 @@ module.exports = {
 };
 
 function parseADCSamplePacket(tempObject, buffer) {
+
+
    console.log("sample packet found");
    return tempObject;
 }
@@ -57,11 +59,22 @@ function parseStatusPacket(tempObject, buffer) {
       console.log("unknown status");
    }
 
-   var sliced = buffer.slice(8);
+   var sliced = buffer.slice(4);
    var gps = gpsNavPvt(sliced);
    if (gps != null) {
       tempObject.gps = gps;
    }
+   tempObject.detectorID = sliced.readUInt16LE(86); 
+   tempObject.packetssent= sliced.readUInt32LE(88); 
+   tempObject.triggeroffset = sliced.readUInt16LE(92); 
+   tempObject.triggernoise = sliced.readUInt16LE(94); 
+   tempObject.sysuptime = sliced.readUInt32LE(96);
+   tempObject.netuptime = sliced.readUInt32LE(100);
+   tempObject.gpsuptime = sliced.readUInt32LE(104);
+   tempObject.majorversion = sliced[108];
+   tempObject.minorversion = sliced[109];
+   tempObject.avgadcnoise = sliced.readUInt16LE(110);
+  
    return tempObject;
 }
 //Testing only
@@ -98,35 +111,36 @@ function gpsNavPvt(buffer) {
 
    var ret =
       {
-         "year": buffer.readInt16LE(0),
-         "month": buffer[2], // month Month, range 1..12 UTC
-         "day": buffer[3], // d Day of month, range 1..31 UTC
-         "hour": buffer[4], // h Hour of day, range 0..23 UTC
-         "min": buffer[5], // min Minute of hour, range 0..59 UTC
-         "sec": buffer[6], // s Seconds of minute, range 0..60 UTC
-         "valid": buffer[7], // - Validity Flags (see graphic below)
-         "tAcc": buffer.readUInt32LE(8), // ns Time accuracy estimate UTC
-         "nano": buffer.readUInt32LE(buffer, 12), // ns Fraction of second, range -1e9..1e9 UTC
-         "fixType": buffer[16], // - GNSSfix Type, range 0..5
-         "flags": buffer[17], // - Fix Status Flags (see graphic below)
-         "reserved1": buffer[18],
-         "numSV": buffer[19], // - Number
-         "lon": buffer.readInt32LE(20) / 1e7,
-         "lat": buffer.readInt32LE(24) / 1e7,
-         "height": buffer.readInt32LE(28), // mm Height above Ellipsoid
-         "hMSL": buffer.readInt32LE(32), // mm Height above mean sea level
-         "hAcc": buffer.readUInt32LE(36), // mm Horizontal Accuracy Estimate
-         "vAcc": buffer.readUInt32LE(40), // mm Vertical Accuracy Estimate
-         "velN": buffer.readInt32LE(44), // mm/s NED north velocity
-         "velE": buffer.readInt32LE(48), // mm/s NED east velocity
-         "velD": buffer.readInt32LE(52), // mm/s NED down velocity
-         "gSpeed": buffer.readInt32LE(56), // mm/s Ground Speed (2-D)
-         "heading": buffer.readInt32LE(60), // deg Heading of motion 2-D (1e-5)
-         "sAcc": buffer.readUInt32LE(64), // mm/s Speed Accuracy Estimate
-         "headingAcc": buffer.readInt16LE(68), // deg Heading Accuracy Estimate (1e-5)
-         "pDOP": buffer.readUInt16LE(70), // - Position DOP (0.01)
-         "reserved2": 0, // - Reserved
-         "reserved3": 0 // - Reserved
+         "iTOW": buffer.readUInt32LE(0),
+         "year": buffer.readInt16LE(4),
+         "month": buffer[6], // month Month, range 1..12 UTC
+         "day": buffer[7], // d Day of month, range 1..31 UTC
+         "hour": buffer[8], // h Hour of day, range 0..23 UTC
+         "min": buffer[9], // min Minute of hour, range 0..59 UTC
+         "sec": buffer[10], // s Seconds of minute, range 0..60 UTC
+         "valid": buffer[11], // - Validity Flags (see graphic below)
+         "tAcc": buffer.readUInt32LE(12), // ns Time accuracy estimate UTC
+         "nano": buffer.readUInt32LE(buffer, 16), // ns Fraction of second, range -1e9..1e9 UTC
+         "fixType": buffer[20], // - GNSSfix Type, range 0..5
+         "flags": buffer[21], // - Fix Status Flags (see graphic below)
+         "reserved1": buffer[22],
+         "numSV": buffer[23], // - Number
+         "lon": buffer.readInt32LE(24) / 1e7,
+         "lat": buffer.readInt32LE(28) / 1e7,
+         "height": buffer.readInt32LE(32), // mm Height above Ellipsoid
+         "hMSL": buffer.readInt32LE(36), // mm Height above mean sea level
+         "hAcc": buffer.readUInt32LE(40), // mm Horizontal Accuracy Estimate
+         "vAcc": buffer.readUInt32LE(44), // mm Vertical Accuracy Estimate
+         "velN": buffer.readInt32LE(48), // mm/s NED north velocity
+         "velE": buffer.readInt32LE(52), // mm/s NED east velocity
+         "velD": buffer.readInt32LE(56), // mm/s NED down velocity
+         "gSpeed": buffer.readInt32LE(60), // mm/s Ground Speed (2-D)
+         "heading": buffer.readInt32LE(64), // deg Heading of motion 2-D (1e-5)
+         "sAcc": buffer.readUInt32LE(68), // mm/s Speed Accuracy Estimate
+         "headingAcc": buffer.readInt32LE(72), // deg Heading Accuracy Estimate (1e-5)
+         "pDOP": buffer.readUInt16LE(76), // - Position DOP (0.01)
+         "reserved2": 0, // - Reserved  78
+         "reserved3": 0 // - Reserved   80
       };
    return ret;
 }

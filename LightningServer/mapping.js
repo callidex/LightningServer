@@ -15,7 +15,7 @@ db.find({},
       }
       console.log("found " + docs.length + " docs");
       for (var i = 0, len = docs.length; i < len; i++) {
-         var data = parser.parseDataChunk(docs[i].data);
+         var data = parser.parseDataChunk(docs[i]);
 
          if (data) {
 
