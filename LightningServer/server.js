@@ -2,6 +2,9 @@ var port = 5000;
 var host = "0.0.0.0";
 var net = require("net");
 var dataParser = require("./parse");
+var parseddb = new Datastore({ filename: "../../parsed.db", autoload: true });
+
+
 //var mysql = require('mysql');
 
 //var con = mysql.createConnection({
@@ -15,7 +18,7 @@ var server = dgram.createSocket("udp4");
 var Datastore = require("nedb"), db = new Datastore({ filename: "../../datastore.db", autoload: true });
 
 server.on("listening",
-   function() {
+   function () {
       var address = server.address();
       console.log("UDP Server listening on " + address.address + ":" + address.port);
    });
@@ -24,7 +27,7 @@ server.on("listening",
 //{if(err) throw err;
 //});
 server.on("message",
-   function(message, remote) {
+   function (message, remote) {
       console.log(remote.address + ":" + remote.port);
       var now = Date.now();
 
@@ -39,7 +42,7 @@ server.on("message",
       };
 
       db.insert(packet,
-         function(err, newDoc) {
+         function (err, newDoc) {
             if (err) throw err;
             console.log("packet stored");
          });
@@ -49,13 +52,18 @@ server.on("message",
       if (parsedObject == null) {
          console.log("Unknown object");
       } else {
-         /*var sql = "INSERT INTO raw (ip, data) VALUES ('" + packet.address + "','" + [ Buffer(message, 'binary') ] +"')";
-           con.query(sql, function (err, result) {
-             if (err) throw err;
-             console.log("1 record inserted");
-           });
-         
-         */
+
+         var persistResolvedData = function (dataObject) {
+            parseddb.insert(dataObject);
+         };
+
+         if (parsedObject) {
+
+            if (parsedObject.packettype != "undefined") {
+               parsedObject.persistedDate = Date.now();
+               persistResolvedData(data);
+            }
+         }
       }
    });
 
