@@ -64,16 +64,17 @@ function parseStatusPacket(tempObject, buffer) {
    if (gps != null) {
       tempObject.gps = gps;
    }
-   tempObject.detectorID = sliced.readUInt32LE(84) & 0x3FFFF; 
-   tempObject.packetssent= sliced.readUInt32LE(88); 
-   tempObject.triggeroffset = sliced.readUInt16LE(92); 
-   tempObject.triggernoise = sliced.readUInt16LE(94); 
-   tempObject.sysuptime = sliced.readUInt32LE(96);
-   tempObject.netuptime = sliced.readUInt32LE(100);
-   tempObject.gpsuptime = sliced.readUInt32LE(104);
-   tempObject.majorversion = sliced[108];
-   tempObject.minorversion = sliced[109];
-   tempObject.avgadcnoise = sliced.readUInt16LE(110);
+   tempObject.clocktrim = sliced.readUInt32LE(84); 
+   tempObject.detectorID = sliced.readUInt32LE(88) & 0x3FFFF; 
+   tempObject.packetssent= sliced.readUInt32LE(92); 
+   tempObject.triggeroffset = sliced.readUInt16LE(96); 
+   tempObject.triggernoise = sliced.readUInt16LE(98); 
+   tempObject.sysuptime = sliced.readUInt32LE(100);
+   tempObject.netuptime = sliced.readUInt32LE(104);
+   tempObject.gpsuptime = sliced.readUInt32LE(108);
+   tempObject.majorversion = sliced[112];
+   tempObject.minorversion = sliced[113];
+   tempObject.avgadcnoise = sliced.readUInt16LE(114);
   
    return tempObject;
 }
