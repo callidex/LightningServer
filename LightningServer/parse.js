@@ -64,7 +64,7 @@ function parseStatusPacket(tempObject, buffer) {
    if (gps != null) {
       tempObject.gps = gps;
    }
-   tempObject.detectorID = sliced.readUInt16LE(86); 
+   tempObject.detectorID = sliced.readUInt32LE(84) & 0x3FFFF; 
    tempObject.packetssent= sliced.readUInt32LE(88); 
    tempObject.triggeroffset = sliced.readUInt16LE(92); 
    tempObject.triggernoise = sliced.readUInt16LE(94); 
