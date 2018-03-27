@@ -1,5 +1,14 @@
 // created direct online, don't use yet :-) 
 
+// evaluate baseline of sample (get base noise)
+/* 
+  roll through array 
+
+
+*/
+
+
+
 function peak(
 
 var mean = function(array) {
@@ -9,9 +18,6 @@ var mean = function(array) {
 
 
 module peak
-  def mean(array)
-    array.reduce(&:+) / array.size.to_f
-  end
 
   def stddev(array)
     array_mean = mean(array)
