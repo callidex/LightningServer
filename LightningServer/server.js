@@ -17,7 +17,16 @@ restapiapp.use(bodyParser.json());
 
 restapiapp.set('view engine', 'ejs');
 restapiapp.get('/', function (req, res) {
-  res.render('index');
+
+   var parsed = new Datastore({ filename: "../../parsed.db", autoload: true });
+
+   parsed.find({}).sort({ timestamp: -1 }).limit(1000).exec(function (err, docs) {
+      res.render('index', { samples: docs }); 
+
+
+
+   })
+
 })
 var routes = require('./api/routes/lightningRoutes');
 routes(restapiapp);

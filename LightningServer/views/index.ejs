@@ -5,12 +5,27 @@
     <title>Waveform viewer</title>
     <link rel="stylesheet" type="text/css" href="/css/style.css">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
   </head>
   <body>
     <div class="container">
+<div id="visualization"></div>
+<script type="text/javascript">
+    var container = document.getElementById('visualization');
+  var items = [
 
-Hello
+  <% for(var i=0; i<samples.length; i++) {%>
 
-    </div>
+    { x: <%= i %> , y: <%= samples[i].packetnumber %>},
+  <% } %>
+  ];
+
+  var dataset = new vis.DataSet(items);
+  var options = {
+  };
+  var graph2d = new vis.Graph2d(container, dataset, options);
+</script>
+</div>
   </body>
 </html>
