@@ -1,34 +1,38 @@
-var port = 5000;
+var stmport = 5000;
 var host = "0.0.0.0";
 var net = require("net");
 var dataParser = require("./parse");
 var dgram = require("dgram");
-var server = dgram.createSocket("udp4");
+var stmserver = dgram.createSocket("udp4");
 var Datastore = require("nedb"), db = new Datastore({ filename: "../../datastore.db", autoload: true });
 var parseddb = new Datastore({ filename: "../../parsed.db", autoload: true });
 
 var express = require('express'), 
-    app = express(), 
-    port = process.env.PORT || 5001,
+    restapiapp = express(), 
+    port = 5001,
     bodyParser = require('body-parser');
 
-app.use(bodyParser.urlencoded({ extended: true } ));
-app.use(bodyParser.json());
+restapiapp.use(bodyParser.urlencoded({ extended: true } ));
+restapiapp.use(bodyParser.json());
 
+restapiapp.set('view engine', 'ejs');
+restapiapp.get('/', function (req, res) {
+  res.render('index');
+})
 var routes = require('./api/routes/lightningRoutes');
-routes(app);
+routes(restapiapp);
 
-app.listen(port);
+restapiapp.listen(port);
 
 console.log('REST API server started on: ' + port);
 
-server.on("listening",
+stmserver.on("listening",
    function () {
-      var address = server.address();
+      var address = stmserver.address();
       console.log("UDP Server listening on " + address.address + ":" + address.port);
    });
 
-server.on("message",
+stmserver.on("message",
    function (message, remote) {
       console.log(remote.address + ":" + remote.port);
      var now = Date.now();
@@ -84,4 +88,4 @@ server.on("message",
       }
    });
 
-server.bind(port, host);
+stmserver.bind(stmport, host);
