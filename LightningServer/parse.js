@@ -43,8 +43,12 @@ module.exports = {
 
 function parseADCSamplePacket(tempObject, buffer) {
 
+ 
+   tempObject.detectorID = buffer.readUInt32LE(40) & 0x3FFFF;
 
-   console.log("sample packet found");
+   var datasizeoffset = 0;   // docs say 64 (or 96??)
+   
+
    return tempObject;
 }
 
