@@ -83,7 +83,9 @@ stmserver.on("message",
          function (err, newDoc) {
             if (err) throw err;
             console.log("packet stored");
-         });
+            
+            
+         
 
       console.log("parsing object at " + packet.received);
       var parsedObject = dataParser.parseDataChunk(packet);
@@ -103,6 +105,7 @@ stmserver.on("message",
             }
          }
       }
+      });
    });
 
 stmserver.bind(stmport, host);
