@@ -17,6 +17,21 @@ var mean = function(array) {
 };
 
 
+Convert the latitude/longitude coordinates to 3D Cartesian coordinates:
+
+x = cos(lat) * cos(lon)
+y = cos(lat) * sin(lon)
+z = sin(lat)
+Compute the average of x, the average of y, and the average of z:
+
+x_avg = sum(x) / count(x)
+y_avg = sum(y) / count(y)
+z_avg = sum(z) / count(z)
+Convert that direction back to latitude and longitude:
+
+lat_avg = arctan(z_avg / sqrt(x_avg ** 2 + y_avg ** 2))
+lon_avg = arctan(y_avg / x_avg)
+
 module peak
 
   def stddev(array)

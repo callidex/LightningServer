@@ -7,7 +7,7 @@ exports.list_all_packets = function(req, res)
    var db = new Datastore({ filename: "../../datastore.db", autoload: true });
 
    
-   db.find({}).sort( { timestamp: -1}).limit(20).exec(function (err, docs) 
+   db.find({}).sort( { timestamp: -1 }).limit(5).exec(function (err, docs) 
       {
           if (err)  res.send(err);
     res.json(docs);    

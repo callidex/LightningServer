@@ -18,7 +18,7 @@ module.exports = {
          "packetnumber": packetNumber,
          "packettype": packetType,
          "gps": { "lat" : "", "lon":"", "height":""},
-         "recieved": dataChunk.recieved,
+         "recieved": Date.now(),
          "address" : dataChunk.address,
          "version" : dataChunk.version 
       }
