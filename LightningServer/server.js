@@ -1,15 +1,17 @@
 var stmport = 5000;
+var stmportalt = 5001;
 var host = "0.0.0.0";
 var net = require("net");
 var dataParser = require("./parse");
 var dgram = require("dgram");
 var stmserver = dgram.createSocket("udp4");
+var stmserveralt = dgram.createSocket("udp4");
 var Datastore = require("nedb"), db = new Datastore({ filename: "../../datastore.db", autoload: true });
 var parseddb = new Datastore({ filename: "../../parsed.db", autoload: true });
 
 var express = require('express'), 
     restapiapp = express(), 
-    port = 5001,
+    port = 8080,
     bodyParser = require('body-parser');
 
 restapiapp.use(bodyParser.urlencoded({ extended: true } ));
@@ -22,9 +24,6 @@ restapiapp.get('/', function (req, res) {
 
    parsed.find({}).sort({ timestamp: -1 }).limit(1000).exec(function (err, docs) {
       res.render('index', { samples: docs }); 
-
-
-
    })
 
 })
@@ -41,6 +40,15 @@ stmserver.on("listening",
       console.log("UDP Server listening on " + address.address + ":" + address.port);
    });
 
+stmserveralt.on("message",
+   function (message, remote) {
+      console.log("Incoming message on wrong port, 5001");
+      console.log("redirecting");
+      var redir = dgram.createSocket('udp4');
+      redir.send(message, 0, message.length, 5000, 'localhost', (err) => {
+      if(err) throw err;
+      });
+      });
 stmserver.on("message",
    function (message, remote) {
       console.log(remote.address + ":" + remote.port);
@@ -98,3 +106,4 @@ stmserver.on("message",
    });
 
 stmserver.bind(stmport, host);
+stmserveralt.bind(stmportalt, host);
