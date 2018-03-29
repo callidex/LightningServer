@@ -101,7 +101,7 @@ stmserver.on("message",
                   if(err) throw err;
                    console.log(res);
                   });//
-   });
+   
 
 
 
@@ -112,6 +112,7 @@ stmserver.on("message",
       } else {
 
          var persistResolvedData = function (dataObject) {
+
             parseddb.insert(dataObject);
          };
 
@@ -119,10 +120,13 @@ stmserver.on("message",
 
             if (parsedObject.packettype != "undefined") {
                parsedObject.persistedDate = Date.now();
+               
                persistResolvedData(parsedObject);
+  rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });
             }
          }
       }
+      });
       });
    });
 
