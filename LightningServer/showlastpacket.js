@@ -1,8 +1,18 @@
-var Datastore = require("nedb");
-var parseddb = new Datastore({ filename: "../../parsed.db", autoload: true });
-var db = new Datastore({ filename: "../../datastore.db", autoload: true });
+var r = require('rethinkdb');
 
-db.find({}).sort({timestamp : -1}).limit(1).exec(
-   function (err, docs) {
-console.log(docs);
-   });
+var connection = null;
+r.connect( {host: 'localhost', port: 28015}, function(err, conn) {
+    if (err) throw err;
+    connection = conn;
+    
+    
+    r.db('lightning').table('rawpackets').run(connection, function(err, cursor) {
+    if (err) throw err;
+    cursor.toArray(function(err, result) {
+        if (err) throw err;
+        console.log(JSON.stringify(result, null, 2));
+    });
+});
+    
+    
+})

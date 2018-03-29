@@ -1,6 +1,7 @@
 var stmport = 5000;
 var stmportalt = 5001;
 var host = "0.0.0.0";
+var rethink = require('rethinkdb');    
 var net = require("net");
 var dataParser = require("./parse");
 var dgram = require("dgram");
@@ -27,6 +28,10 @@ restapiapp.get('/', function (req, res) {
    })
 
 })
+
+
+
+
 var routes = require('./api/routes/lightningRoutes');
 routes(restapiapp);
 
@@ -84,10 +89,23 @@ stmserver.on("message",
             if (err) throw err;
             console.log("packet stored");
             
-            
-         
 
-      console.log("parsing object at " + packet.received);
+
+
+  rethink.connect({ host: 'localhost', port: 28015 }, function(err, conn) 
+   {
+   if(err) throw err;
+   
+      rethink.db('lightning').table('rawpackets').insert(packet).run(conn, function(err, res)
+                  {
+                  if(err) throw err;
+                   console.log(res);
+                  });//
+   });
+
+
+
+              console.log("parsing object at " + packet.received);
       var parsedObject = dataParser.parseDataChunk(packet);
       if (parsedObject == null) {
          console.log("Unknown object");
