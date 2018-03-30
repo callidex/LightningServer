@@ -10,19 +10,27 @@
   </head>
   <body>
     <div class="container">
-<div id="visualization"></div>
+<div id="visualization1"></div>
+<div id="visualization2"></div>
 <script type="text/javascript">
-    var container = document.getElementById('visualization');
+    var container1 = document.getElementById('visualization1');
+    var container2 = document.getElementById('visualization2');
 
-  var items = [
-
-
-  <% for(var i=0; i<samples.length; i++) {%>
-    { x: <%= i %> , y: <%= samples[i] %>},
+  var items1 = [
+  <% for(var i=0; i<samples[0].data.length; i++) {%>
+    { x: <%= i %> , y: <%= samples[0].data[i] %>},
+  <% } %>
+  ];
+  var items2 = [
+  <% for(var i=0; i<samples[1].data.length; i++) {%>
+    { x: <%= i %> , y: <%= samples[1].data[i] %>},
   <% } %>
   ];
 
-  var dataset = new vis.DataSet(items);
+
+  var dataset1 = new vis.DataSet(items1);
+  var dataset2 = new vis.DataSet(items2);
+
   var options = {
    drawPoints: {
       style: 'circle' // square, circle
@@ -31,7 +39,9 @@
       orientation: 'bottom' // top, bottom
     }
   };
-  var graph2d = new vis.Graph2d(container, dataset, options);
+  var graph2d1 = new vis.Graph2d(container1, dataset1, options);
+  var graph2d2 = new vis.Graph2d(container2, dataset2, options);
+
 </script>
 </div>
   </body>
