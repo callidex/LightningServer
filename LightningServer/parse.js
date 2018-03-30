@@ -43,13 +43,13 @@ module.exports = {
 
 function parseADCSamplePacket(tempObject, buffer) {
 
- 
-   tempObject.detectorID = buffer.readUInt32LE(40) & 0x3FFFF;
-
-   var datasizeoffset = 0;   // docs say 64 (or 96??)
-   
-
-   return tempObject;
+  tempObject.udpnumber = (buffer.readUInt32LE(0) >> 8) & 0x00ffffff;
+  tempObject.adcseq = buffer.readUInt8LE(4);
+  tempObject.detectoruid = (buffer.readUInt32LE(4) >> 14) & 0x3ffff;      
+  tempObject.rtsecs = (buffer.readUInt32LE(4) >> 24) & 0xff;
+  tempObject.ppstime = buffer.readUInt32LE(8);
+  tempObject.dmatime = buffer.readUInt32LE(12);          
+  return tempObject;
 }
 
 function parseStatusPacket(tempObject, buffer) {
