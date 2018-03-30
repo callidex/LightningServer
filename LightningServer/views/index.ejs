@@ -15,7 +15,6 @@
     var container1 = document.getElementById('visualization');
      var groups = new vis.DataSet();
   <% 
-
   for(var g=0; g<samples.length; g++) { %>
      groups.add({
         id: <%=g %>,
@@ -42,9 +41,6 @@
   var options = {
    drawPoints: {
       style: 'circle' // square, circle
-    },
-    shaded: {
-      orientation: 'bottom' // top, bottom
     }
   };
   var graph2d1 = new vis.Graph2d(container1, dataset, groups, options);
