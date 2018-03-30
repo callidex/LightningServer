@@ -17,7 +17,6 @@ module.exports = {
       var tempObject = {
          "packetnumber": packetNumber,
          "packettype": packetType,
-         "gps": { "lat" : "", "lon":"", "height":""},
          "recieved": Date.now(),
          "address" : dataChunk.address,
          "version" : dataChunk.version 
@@ -44,11 +43,15 @@ module.exports = {
 function parseADCSamplePacket(tempObject, buffer) {
 
   tempObject.udpnumber = (buffer.readUInt32LE(0) >> 8) & 0x00ffffff;
-  tempObject.adcseq = buffer.readUInt8LE(4);
+  tempObject.adcseq = buffer[4];
   tempObject.detectoruid = (buffer.readUInt32LE(4) >> 14) & 0x3ffff;      
   tempObject.rtsecs = (buffer.readUInt32LE(4) >> 24) & 0xff;
   tempObject.ppstime = buffer.readUInt32LE(8);
-  tempObject.dmatime = buffer.readUInt32LE(12);          
+   tempObject.dmatime = buffer.readUInt32LE(12);
+   tempObject.data = [];
+   for (var i = 0; i < 728; i++) {
+      tempObject.data.push(buffer[16 + (2 * (i+1))]<<8 | buffer[16 + (2 * i)])
+   }
   return tempObject;
 }
 
