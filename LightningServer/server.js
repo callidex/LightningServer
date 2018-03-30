@@ -20,13 +20,22 @@ restapiapp.use(bodyParser.json());
 
 restapiapp.set('view engine', 'ejs');
 restapiapp.get('/', function (req, res) {
+ 
+   var connection = null;
+   rethink.connect( {host: 'localhost', port: 28015}, function(err, conn) {
+        if (err) throw err;
+        connection = conn;
 
-   var parsed = new Datastore({ filename: "../../parsed.db", autoload: true });
 
-   parsed.find({}).sort({ timestamp: -1 }).limit(1000).exec(function (err, docs) {
-      res.render('index', { samples: docs }); 
-   })
+        rethink.db('lightning').table('rawpackets').orderBy(rethink.desc('received')).limit(1).run(connection, function(err, cursor) {
+            if (err) throw err;
 
+            console.log(cursor);
+            cursor.toArray().then(function(results) {
+                 res.render('index', { samples: new Uint8Array(results) }); 
+            });
+       });
+});
 })
 
 

@@ -13,11 +13,12 @@
 <div id="visualization"></div>
 <script type="text/javascript">
     var container = document.getElementById('visualization');
+
   var items = [
 
-  <% for(var i=0; i<samples.length; i++) {%>
 
-    { x: <%= i %> , y: <%= samples[i].packetnumber %>},
+  <% for(var i=0; i<samples.length; i++) {%>
+    { x: <%= i %> , y: <%= samples[i] %>},
   <% } %>
   ];
 
