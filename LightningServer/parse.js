@@ -45,7 +45,7 @@ function parseADCSamplePacket(tempObject, buffer) {
   tempObject.udpnumber = (buffer.readUInt32LE(0) >> 8) & 0x00ffffff;
   tempObject.adcseq = buffer[4];
   tempObject.detectoruid = (buffer.readUInt32LE(4) >> 14) & 0x3ffff;      
-  tempObject.rtsecs = (buffer.readUInt32LE(4) >> 26);
+  tempObject.rtsecs = buffer.readUInt32LE(4) >> 26;
   tempObject.ppstime = buffer.readUInt32LE(8);
    tempObject.dmatime = buffer.readUInt32LE(12);
    tempObject.data = [];
