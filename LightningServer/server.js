@@ -126,12 +126,15 @@ stmserver.on("message",
          };
 
          if (parsedObject) {
-
-            if (parsedObject.packettype != "undefined") {
-               parsedObject.persistedDate = Date.now();
+            parsedObject.persistedDate = Date.now();
+            if (parsedObject.packettype != "sample" && parsedObject.packettype != 0) {
                
                persistResolvedData(parsedObject);
-  rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });
+               rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });
+            }
+            else
+            {
+               rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });              
             }
          }
       }
