@@ -27,12 +27,12 @@ restapiapp.get('/', function (req, res) {
         connection = conn;
 
 
-        rethink.db('lightning').table('rawpackets').orderBy(rethink.desc('received')).limit(1).run(connection, function(err, cursor) {
+      rethink.db('lightning').table('rawpackets').orderBy(rethink.desc('received')).limit(3).run(connection, function (err, cursor) {
             if (err) throw err;
 
             console.log(cursor);
             cursor.toArray().then(function(results) {
-                 res.render('index', { samples: results[0].data }); 
+                 res.render('index', { samples: results }); 
             });
        });
 });
