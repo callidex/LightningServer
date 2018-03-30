@@ -17,7 +17,7 @@ module.exports = {
       var tempObject = {
          "packetnumber": packetNumber,
          "packettype": packetType,
-         "recieved": Date.now(),
+         "received": Date.now(),
          "address" : dataChunk.address,
          "version" : dataChunk.version 
       }
