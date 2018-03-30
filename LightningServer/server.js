@@ -22,7 +22,7 @@ restapiapp.set('view engine', 'ejs');
 restapiapp.get('/', function (req, res) {
  
    var connection = null;
-   rethink.connect( {host: 'localhost', port: 28015}, function(err, conn) {
+   rethink.connect( {host: 's7.slashdit.com', port: 28015}, function(err, conn) {
         if (err) throw err;
         connection = conn;
 
@@ -32,7 +32,7 @@ restapiapp.get('/', function (req, res) {
 
             console.log(cursor);
             cursor.toArray().then(function(results) {
-                 res.render('index', { samples: new Uint8Array(results) }); 
+                 res.render('index', { samples: results[0].data }); 
             });
        });
 });
