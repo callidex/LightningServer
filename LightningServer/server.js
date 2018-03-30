@@ -92,7 +92,7 @@ stmserver.on("message",
 
 
 
-  rethink.connect({ host: 'localhost', port: 28015 }, function(err, conn) 
+  rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function(err, conn) 
    {
    if(err) throw err;
    
