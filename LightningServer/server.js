@@ -27,7 +27,7 @@ restapiapp.get('/', function (req, res) {
         connection = conn;
 
 
-      rethink.db('lightning').table('rawpackets').orderBy(rethink.desc('received')).limit(3).run(connection, function (err, cursor) {
+      rethink.db('lightning').table('datapackets').orderBy(rethink.desc('received')).limit(3).run(connection, function (err, cursor) {
             if (err) throw err;
 
             console.log(cursor);

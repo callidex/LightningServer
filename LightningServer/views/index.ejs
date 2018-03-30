@@ -10,26 +10,34 @@
   </head>
   <body>
     <div class="container">
-<div id="visualization1"></div>
-<div id="visualization2"></div>
+<div id="visualization"></div>
 <script type="text/javascript">
-    var container1 = document.getElementById('visualization1');
-    var container2 = document.getElementById('visualization2');
+    var container1 = document.getElementById('visualization');
+     var groups = new vis.DataSet();
+  <% 
 
-  var items1 = [
-  <% for(var i=0; i<samples[0].data.length; i++) {%>
-    { x: <%= i %> , y: <%= samples[0].data[i] %>},
+  for(var g=0; g<samples.length; g++) { %>
+     groups.add({
+        id: <%=g %>,
+         content: 'centripetal',
+        options: {
+            drawPoints: false,
+            interpolation: {
+                parametrization: 'centripetal'
+            }
+        }})
   <% } %>
-  ];
-  var items2 = [
-  <% for(var i=0; i<samples[1].data.length; i++) {%>
-    { x: <%= i %> , y: <%= samples[1].data[i] %>},
-  <% } %>
-  ];
 
 
-  var dataset1 = new vis.DataSet(items1);
-  var dataset2 = new vis.DataSet(items2);
+  var items = [
+  <% 
+  for(var g=0; g<samples.length; g++) { %>
+    <% for(var i=0; i<samples[g].data.length; i++) {%>
+       { x: <%= i %> , y: <%= samples[g].data[i] %>, group: <%=g %> },
+  <% }} %>
+  ];
+ 
+  var dataset = new vis.DataSet(items);
 
   var options = {
    drawPoints: {
@@ -39,8 +47,7 @@
       orientation: 'bottom' // top, bottom
     }
   };
-  var graph2d1 = new vis.Graph2d(container1, dataset1, options);
-  var graph2d2 = new vis.Graph2d(container2, dataset2, options);
+  var graph2d1 = new vis.Graph2d(container1, dataset, groups, options);
 
 </script>
 </div>
