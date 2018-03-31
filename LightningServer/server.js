@@ -77,7 +77,7 @@ stmserver.on("message",
          }
          else 
          { 
-            console.log('packet forwarded'); 
+            console.log('packet forwarded to Bob'); 
          }
          
          client.close();
@@ -93,13 +93,6 @@ stmserver.on("message",
          received: new Date().toString()
       };
 
-      db.insert(packet,
-         function (err, newDoc) {
-            if (err) throw err;
-            console.log("packet stored");
-            
-
-
 
   rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function(err, conn) 
    {
@@ -112,24 +105,16 @@ stmserver.on("message",
                   });//
    
 
-
-
               console.log("parsing object at " + packet.received);
       var parsedObject = dataParser.parseDataChunk(packet);
       if (parsedObject == null) {
          console.log("Unknown object");
       } else {
 
-         var persistResolvedData = function (dataObject) {
-
-            parseddb.insert(dataObject);
-         };
-
          if (parsedObject) {
             parsedObject.persistedDate = Date.now();
             if (parsedObject.packettype != "sample" && parsedObject.packettype != 0) {
                
-               persistResolvedData(parsedObject);
                rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });
             }
             else
@@ -138,7 +123,6 @@ stmserver.on("message",
             }
          }
       }
-      });
       });
    });
 
