@@ -70,37 +70,38 @@ stmserver.on("message",
             timestamp: now,
             received: new Date().toString()
         };
+       
 
-        db.insert(packet,
-            function (err, newDoc) {
-                if (err) throw err;
-                console.log("packet stored");
-                rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
-                    if (err) throw err;
-                    rethink.db('lightning').table('rawpackets').insert(packet).run(conn, function (err, res) {
-                        if (err) throw err;
-                        console.log(res);
-                    });//
+  rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function(err, conn) 
+   {
+   if(err) throw err;
+   
+      rethink.db('lightning').table('rawpackets').insert(packet).run(conn, function(err, res)
+                  {
+                  if(err) throw err;
+                   console.log(res);
+                  });//
+   
 
-                    console.log("parsing object at " + packet.received);
-                    var parsedObject = dataParser.parseDataChunk(packet);
-                    if (parsedObject == null) {
-                        console.log("Unknown object");
-                    } else {
-                        // store it in the correct table
-                        if (parsedObject) {
-                            parsedObject.persistedDate = Date.now();
-                            if (parsedObject.packettype != "sample" && parsedObject.packettype != 0) {
-                                //comment out if you don't want to store the packets
-                                rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function (err, res) { if (err) throw err; });
-                            }
-                            else {
-                                rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, function (err, res) { if (err) throw err; });
-                            }
-                        }
-                    }
-                });
-            });
-    });
+              console.log("parsing object at " + packet.received);
+      var parsedObject = dataParser.parseDataChunk(packet);
+      if (parsedObject == null) {
+         console.log("Unknown object");
+      } else {
+
+         if (parsedObject) {
+            parsedObject.persistedDate = Date.now();
+            if (parsedObject.packettype != "sample" && parsedObject.packettype != 0) {
+               
+               rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });
+            }
+            else
+            {
+               rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });              
+            }
+         }
+      }
+      });
+   });
 
 stmserver.bind(stmport, host);

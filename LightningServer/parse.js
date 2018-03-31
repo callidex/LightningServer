@@ -42,17 +42,21 @@ module.exports = {
 
 function parseADCSamplePacket(tempObject, buffer) {
 
-    tempObject.udpnumber = (buffer.readUInt32LE(0) >> 8) & 0x00ffffff;
-    tempObject.adcseq = buffer[4];
-    tempObject.detectoruid = (buffer.readUInt32LE(4) >> 14) & 0x3ffff;
-    tempObject.rtsecs = buffer.readUInt32LE(4) >> 26;
-    tempObject.ppstime = buffer.readUInt32LE(8);
-    tempObject.dmatime = buffer.readUInt32LE(12);
-    tempObject.data = [];
-    for (var i = 0; i < 728; i++) {
-        tempObject.data.push(buffer[16 + (2 * (i + 1))] << 8 | buffer[16 + (2 * i)])
-    }
-    return tempObject;
+  tempObject.udpnumber = (buffer.readUInt32LE(0) >> 8) & 0x00ffffff;
+  tempObject.adcseq = buffer[4];
+  tempObject.detectoruid = (buffer.readUInt32LE(4) >> 8) & 0x3ffff;      
+  tempObject.rtsecs = buffer.readUInt32LE(7) >> 2;
+  tempObject.ppstime = buffer.readUInt32LE(8);
+   tempObject.dmatime = buffer.readUInt32LE(12);
+   tempObject.data = [];
+   console.log("Data packet found from ");
+   console.log(tempObject.detectoruid);
+   for (var i = 0; i < 728; i++) {
+      tempObject.data.push(
+      buffer[16 + (2 * i) + 1] <<8 + 
+      buffer[16 + (2 * i)]);
+   }
+  return tempObject;
 }
 
 function parseStatusPacket(tempObject, buffer) {
