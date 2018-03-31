@@ -3,7 +3,6 @@
 var PacketTypeEnum = Object.freeze({ "sample": 0, "status": 1, "timedstatus": 2 });
 module.exports = {
     parseDataChunk: function (dataChunk) {
-
         var len = Object.keys(dataChunk.data).length;
         var buffer = new Buffer(len);
         for (var i = 0; i < len; i++) {
@@ -51,10 +50,17 @@ function parseADCSamplePacket(tempObject, buffer) {
    tempObject.data = [];
    console.log("Data packet found from ");
    console.log(tempObject.detectoruid);
-   for (var i = 0; i < 728; i++) {
-      tempObject.data.push(
-      buffer[16 + (2 * i) + 1] <<8 + 
-      buffer[16 + (2 * i)]);
+   for (var i = 0; i < 728; i=i+2) {
+      // be explicit for testing      
+      var val = buffer[i  +15];
+      var val2= buffer[(i+1) +15];
+      var val3= val << 8;
+      var number = val3+val2;
+      tempObject.data.push(number);
+
+
+      
+
    }
   return tempObject;
 }
@@ -76,7 +82,7 @@ function parseStatusPacket(tempObject, buffer) {
         tempObject.gps = gps;
     }
     tempObject.clocktrim = sliced.readUInt32LE(84);
-    tempObject.detectorID = sliced.readUInt32LE(88) & 0x3FFFF;
+    tempObject.detectoruid = sliced.readUInt32LE(88) & 0x3FFFF;
     tempObject.packetssent = sliced.readUInt32LE(92);
     tempObject.triggeroffset = sliced.readUInt16LE(96);
     tempObject.triggernoise = sliced.readUInt16LE(98);
@@ -87,18 +93,21 @@ function parseStatusPacket(tempObject, buffer) {
     tempObject.minorversion = sliced[113];
     tempObject.avgadcnoise = sliced.readUInt16LE(114);
 
+    // find the previous data packets between the last status packet for this detector and this one
+
+    backfilldatapacket(tempObject.clocktrim, tempObject.packetnumber, tempObject.detectoruid);
+
+    // get previous status packet for this dectectoruid
+
+
     return tempObject;
 }
-//Testing only
-//db.find({},
-//   function(err, docs) {
-//      if (err) throw err;
-//      console.log("Founds docs");
 
-//      for (var i = 0, len = docs.length; i < len; i++) {
-//         module.exports.parseDataChunk(docs[i].data);
-//      }
-//   });
+function backfilldatapacket( clocktrim, currentpacketnumber, detectoruid)
+{
+   
+
+}
 
 function distance(lat1, lon1, lat2, lon2, unit) {
     var radlat1 = Math.PI * lat1 / 180;

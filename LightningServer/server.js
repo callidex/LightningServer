@@ -1,3 +1,7 @@
+var memwatch = require('memwatch-next');
+memwatch.on('leak', (info) => {
+  console.error('Memory leak detected:\n', info);
+});
 var stmport = 5000;
 var host = "0.0.0.0";
 var rethink = require('rethinkdb');
@@ -19,7 +23,7 @@ restapiapp.get('/', function (req, res) {
     rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
         if (err) throw err;
         connection = conn;
-        rethink.db('lightning').table('datapackets').orderBy(rethink.desc('received')).limit(3).run(connection, function (err, cursor) {
+        rethink.db('lightning').table('datapackets').orderBy(rethink.desc('received')).limit(20).run(connection, function (err, cursor) {
             if (err) throw err;
             console.log(cursor);
             cursor.toArray().then(function (results) {

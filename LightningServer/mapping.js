@@ -1,33 +1,55 @@
 ﻿var Datastore = require("nedb");
 var parser = require("./parse");
-var parseddb = new Datastore({ filename: "../../parsed.db", autoload: true });
+var rethink = require('rethinkdb');
 
-var db = new Datastore({ filename: "../../datastore.db", autoload: true });
-db.find({},
-   function (err, docs) {
+function sleep(time) {
+    var stop = new Date().getTime();
+    while(new Date().getTime() < stop + time) {
+        ;
+    }
+}
 
-      var persistResolvedData = function (dataObject) {
-         parseddb.insert(dataObject);
-      };
-      if (err) {
-         console.log(err);
-         throw err;
-      }
-      console.log("found " + docs.length + " docs");
-      for (var i = 0, len = docs.length; i < len; i++) {
-         var data = parser.parseDataChunk(docs[i]);
+rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
+   if (err) throw err;
+   conn.use('lightning');
 
-         if (data) {
+   rethink.table('rawpackets').
+      orderBy(rethink.desc('received')).run(conn, function (err, cursor) {
+      if (err) throw err;
+      cursor.toArray().then(function (results) {   
+         for(var i=0;i<results.length;i++){
+            sleep(100);
+            try
+            {
+               console.log('parsing object ', i);
+               var parsedObject = parser.parseDataChunk(results[i]);
 
-            if (data.packettype != "undefined") {
-               persistResolvedData(data);
+               if (parsedObject == null) {
+                  console.log("Unknown object");	
+               } 
+               else 
+               {
+
+                  if (parsedObject) 
+                  {
+                     parsedObject.persistedDate = Date.now();
+                     if (parsedObject.packettype != "sample" && parsedObject.packettype != 0) {
+               
+                        rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });
+                     }
+                     else
+                     {
+                        rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });              
+                     }
+                  }
+               }
             }
-
-            if (data.packettype != 0) {
-               console.log(data.gps.lat);
-               console.log(data.gps.lon);
-               console.log(data.gps.height);
+            catch(e)
+            {
+               console.log(e);
+            }                 
             }
-         }
-      }
+      });
+      conn.close();
    });
+});
