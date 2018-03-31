@@ -10,6 +10,7 @@
     "ejs": "^2.5.8",
     "express": "^4.16.3",
     "int64-buffer": "^0.1.10",
+    "memwatch-next": "^0.3.0",
     "nedb": "^1.8.0",
     "node-bitarray": "^0.1.0",
     "rethinkdb": "^2.3.3"
