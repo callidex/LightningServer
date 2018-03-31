@@ -1,4 +1,4 @@
-
+const math = require('mathjs')
 
 var PacketTypeEnum = Object.freeze({ "sample": 0, "status": 1, "timedstatus": 2 });
 module.exports = {
@@ -50,19 +50,23 @@ function parseADCSamplePacket(tempObject, buffer) {
    tempObject.data = [];
    console.log("Data packet found from ");
    console.log(tempObject.detectoruid);
-   for (var i = 0; i < 728; i=i+2) {
+
+   for (var i = 0; i < 728; i = i + 2) {
       // be explicit for testing      
       var val = buffer[i  +15];
       var val2= buffer[(i+1) +15];
       var val3= val << 8;
       var number = val3+val2;
       tempObject.data.push(number);
-
-
-      
-
    }
-  return tempObject;
+   tempObject.maxval = math.max(tempObject.data);
+   tempObject.minval = math.min(tempObject.data);
+   tempObject.variance = tempObject.maxval - tempObject.minval;
+
+   tempObject.mean = math.mean(tempObject.data);
+   var squares = math.sum(tempObject.data.map(x => (x - tempObject.mean) * (x - tempObject.mean)));
+   tempObject.stddev = math.sqrt(squares / tempObject.data.length);
+   return tempObject;
 }
 
 function parseStatusPacket(tempObject, buffer) {
@@ -92,19 +96,17 @@ function parseStatusPacket(tempObject, buffer) {
     tempObject.majorversion = sliced[112];
     tempObject.minorversion = sliced[113];
     tempObject.avgadcnoise = sliced.readUInt16LE(114);
-
-    // find the previous data packets between the last status packet for this detector and this one
-
+   
     backfilldatapacket(tempObject.clocktrim, tempObject.packetnumber, tempObject.detectoruid);
-
-    // get previous status packet for this dectectoruid
-
 
     return tempObject;
 }
 
 function backfilldatapacket( clocktrim, currentpacketnumber, detectoruid)
 {
+
+   var rethink = require('rethinkdb');
+
    
 
 }

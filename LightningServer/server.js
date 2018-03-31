@@ -1,7 +1,4 @@
-var memwatch = require('memwatch-next');
-memwatch.on('leak', (info) => {
-  console.error('Memory leak detected:\n', info);
-});
+
 var stmport = 5000;
 var host = "0.0.0.0";
 var rethink = require('rethinkdb');
@@ -10,27 +7,32 @@ var dataParser = require("./parse");
 var dgram = require("dgram");
 var stmserver = dgram.createSocket("udp4");
 var express = require('express'),
-    restapiapp = express(),
-    port = 8080,
-    bodyParser = require('body-parser');
+   restapiapp = express(),
+   port = 8080,
+   bodyParser = require('body-parser');
 
 // restapiapp is for web service on port 8080, only / (or index.ejs file at the moment) 
 restapiapp.use(bodyParser.urlencoded({ extended: true }));
 restapiapp.use(bodyParser.json());
 restapiapp.set('view engine', 'ejs');
 restapiapp.get('/', function (req, res) {
-    var connection = null;
-    rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
-        if (err) throw err;
-        connection = conn;
-        rethink.db('lightning').table('datapackets').orderBy(rethink.desc('received')).limit(20).run(connection, function (err, cursor) {
+   var connection = null;
+   rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
+      if (err) throw err;
+      connection = conn;
+
+      rethink.db('lightning').table('datapackets').orderBy(rethink.desc('stddev'))
+
+         //      rethink.db('lightning').table('datapackets').orderBy(rethink.desc('received'))
+
+         .limit(5).run(connection, function (err, cursor) {
             if (err) throw err;
             console.log(cursor);
             cursor.toArray().then(function (results) {
-                res.render('index', { samples: results });
+               res.render('index', { samples: results });
             });
-        });
-    });
+         });
+   });
 })
 
 //setup the routes for the restapiapp
@@ -42,69 +44,67 @@ restapiapp.listen(port);
 console.log('REST API server started on: ' + port);
 
 stmserver.on("listening",
-    function () {
-        var address = stmserver.address();
-        console.log("UDP Server listening on " + address.address + ":" + address.port);
-    });
+   function () {
+      var address = stmserver.address();
+      console.log("UDP Server listening on " + address.address + ":" + address.port);
+   });
 
 
 stmserver.on("message",
-    function (message, remote) {
-        console.log(remote.address + ":" + remote.port);
-        var now = Date.now();
+   function (message, remote) {
+      console.log(remote.address + ":" + remote.port);
+      var now = Date.now();
 
-        // forward to Bob's Boing Machine
-        var client = dgram.createSocket('udp4');
-        client.send(message, 0, message.length, 5001, 'gate.wzone.co.uk', (err) => {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                console.log('packet forwarded');
-            }
-            client.close();
-        });
+      // forward to Bob's Boing Machine
+      var client = dgram.createSocket('udp4');
+      client.send(message, 0, message.length, 5001, 'gate.wzone.co.uk', (err) => {
+         if (err) {
+            console.log(err);
+         }
+         else {
+            console.log('packet forwarded');
+         }
+         client.close();
+      });
 
-        var packet = {
-            version: "0.3",
-            type: "data",
-            data: message,
-            address: remote.address,
-            port: remote.port,
-            timestamp: now,
-            received: new Date().toString()
-        };
-       
+      var packet = {
+         version: "0.3",
+         type: "data",
+         data: message,
+         address: remote.address,
+         port: remote.port,
+         timestamp: now,
+         received: new Date().toString()
+      };
 
-  rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function(err, conn) 
-   {
-   if(err) throw err;
-   
-      rethink.db('lightning').table('rawpackets').insert(packet).run(conn, function(err, res)
-                  {
-                  if(err) throw err;
-                   console.log(res);
-                  });//
-   
 
-              console.log("parsing object at " + packet.received);
-      var parsedObject = dataParser.parseDataChunk(packet);
-      if (parsedObject == null) {
-         console.log("Unknown object");
-      } else {
+      rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
+         if (err) throw err;
 
-         if (parsedObject) {
-            parsedObject.persistedDate = Date.now();
-            if (parsedObject.packettype != "sample" && parsedObject.packettype != 0) {
-               
-               rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });
-            }
-            else
-            {
-               rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });              
+         rethink.db('lightning').table('rawpackets').insert(packet).run(conn, function (err, res) {
+            if (err) throw err;
+            console.log(res);
+         });//
+
+
+         console.log("parsing object at " + packet.received);
+         var parsedObject = dataParser.parseDataChunk(packet);
+         if (parsedObject == null) {
+            console.log("Unknown object");
+         } else {
+
+            if (parsedObject) {
+               parsedObject.persistedDate = Date.now();
+               if (parsedObject.packettype != "sample" && parsedObject.packettype != 0) {
+
+                  rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function (err, res) { if (err) throw err; });
+               }
+               else {
+                  if (parsedObject.maxval < 4096)
+                     rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, function (err, res) { if (err) throw err; });
+               }
             }
          }
-      }
       });
    });
 

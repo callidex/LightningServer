@@ -18,7 +18,7 @@ rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
       if (err) throw err;
       cursor.toArray().then(function (results) {   
          for(var i=0;i<results.length;i++){
-            sleep(100);
+            sleep(10);
             try
             {
                console.log('parsing object ', i);
@@ -39,7 +39,9 @@ rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
                      }
                      else
                      {
-                        rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, function(err, res) { if(err) throw err; });              
+                        if (parsedObject.maxval < 4096)
+
+                        rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, function (err, res) { if (err) throw err; });              
                      }
                   }
                }

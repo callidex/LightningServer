@@ -15,7 +15,7 @@
     var container1 = document.getElementById('visualization');
      var groups = new vis.DataSet();
   <% 
-  for(var g=0; g<10; g++) { %>
+  for(var g=0; g<samples.length; g++) { %>
      groups.add({
         id: <%=g %>,
          content: '<%=samples[g].detectoruid %> <%=samples[g].received %>',
@@ -30,7 +30,7 @@
 
   var items = [
   <% 
-  for(var g=0; g<10; g++) { %>
+  for(var g=0; g<samples.length; g++) { %>
     <% for(var i=0; i<samples[g].data.length; i++) {%>
        { x: <%= i %> , y: <%= samples[g].data[i] %>, group: <%=g %> },
   <% }} %>
