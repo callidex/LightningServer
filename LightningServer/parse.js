@@ -1,4 +1,5 @@
 const math = require('mathjs')
+const peak = require("./peakdetect");
 
 var PacketTypeEnum = Object.freeze({ "sample": 0, "status": 1, "timedstatus": 2 });
 module.exports = {
@@ -66,6 +67,9 @@ function parseADCSamplePacket(tempObject, buffer) {
    tempObject.mean = math.mean(tempObject.data);
    var squares = math.sum(tempObject.data.map(x => (x - tempObject.mean) * (x - tempObject.mean)));
    tempObject.stddev = math.sqrt(squares / tempObject.data.length);
+
+   tempObject.signal = peak.calcpeak(tempObject.data, 5, 10);
+   tempObject.signalcnt = math.sum(tempObject.signal);
    return tempObject;
 }
 

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Waveform viewer</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+<div id="visualization"></div>
+<script type="text/javascript">
+    var container1 = document.getElementById('visualization');
+     var groups = new vis.DataSet();
+     groups.add({
+        id: 0,
+         content: '<%=samples[0].detectoruid %> <%=samples[0].received %>',
+        options: {
+              yAxisOrientation: 'left',
+            drawPoints: false,
+            interpolation: {
+                parametrization: 'centripetal'
+            }
+        }})
+     groups.add({
+        id: 1,
+         content: 'peaks',
+        options: {
+            drawPoints: true,
+        }})
+  
+
+  var items = [
+    <% for(var i=0; i<samples[0].data.length; i++) {%>
+       { x: <%= i %> , y: <%= samples[0].data[i] %>, group: 0  },
+  <% } %>
+    <% for(var i=0; i<samples[0].signal.length; i++) {%>
+       { x: <%= i %> , y: <%= (samples[0].signal[i] * 100)+ samples[0].mean %>, group: 1 },
+  <% } %>
+
+  ];
+ 
+  var dataset = new vis.DataSet(items);
+
+  var options = {
+      legend: {right: {position: 'top-left'}},   
+      drawPoints: {
+         style: 'circle' // square, circle
+    }
+  };
+  var graph2d1 = new vis.Graph2d(container1, dataset, groups, options);
+
+</script>
+</div>
+  </body>
+</html>

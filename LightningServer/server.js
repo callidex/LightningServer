@@ -21,9 +21,7 @@ restapiapp.get('/', function (req, res) {
       if (err) throw err;
       connection = conn;
 
-      rethink.db('lightning').table('datapackets').orderBy(rethink.desc('stddev'))
-
-         //      rethink.db('lightning').table('datapackets').orderBy(rethink.desc('received'))
+      rethink.db('lightning').table('datapackets').orderBy(rethink.desc('received'))
 
          .limit(5).run(connection, function (err, cursor) {
             if (err) throw err;
@@ -34,6 +32,22 @@ restapiapp.get('/', function (req, res) {
          });
    });
 })
+restapiapp.get('/signal', function (req, res) {
+   var connection = null;
+   rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
+      if (err) throw err;
+      connection = conn;
+
+      rethink.db('lightning').table('datapackets').filter(rethink.row("signalcnt").gt(0)). orderBy(rethink.desc('received')).limit(1).run(connection, function (err, cursor) {
+         if (err) throw err;
+         console.log(cursor);
+         cursor.toArray().then(function (results) {
+               res.render('signal', { samples: results });
+         });
+      });
+   });
+});
+
 
 //setup the routes for the restapiapp
 var routes = require('./api/routes/lightningRoutes');
@@ -48,7 +62,6 @@ stmserver.on("listening",
       var address = stmserver.address();
       console.log("UDP Server listening on " + address.address + ":" + address.port);
    });
-
 
 stmserver.on("message",
    function (message, remote) {
@@ -68,7 +81,7 @@ stmserver.on("message",
       });
 
       var packet = {
-         version: "0.3",
+         version: "0.4",
          type: "data",
          data: message,
          address: remote.address,
@@ -83,28 +96,26 @@ stmserver.on("message",
 
          rethink.db('lightning').table('rawpackets').insert(packet).run(conn, function (err, res) {
             if (err) throw err;
-            console.log(res);
-         });//
 
+            console.log("parsing object at " + packet.received);
+            var parsedObject = dataParser.parseDataChunk(packet);
+            if (parsedObject == null) {
+               console.log("Unknown object");
+            } else {
 
-         console.log("parsing object at " + packet.received);
-         var parsedObject = dataParser.parseDataChunk(packet);
-         if (parsedObject == null) {
-            console.log("Unknown object");
-         } else {
+               if (parsedObject) {
+                  parsedObject.persistedDate = Date.now();
+                  if (parsedObject.packettype != "sample" && parsedObject.packettype != 0) {
 
-            if (parsedObject) {
-               parsedObject.persistedDate = Date.now();
-               if (parsedObject.packettype != "sample" && parsedObject.packettype != 0) {
-
-                  rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function (err, res) { if (err) throw err; });
-               }
-               else {
-                  if (parsedObject.maxval < 4096)
-                     rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, function (err, res) { if (err) throw err; });
+                     rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function (err, res) { if (err) throw err; });
+                  }
+                  else {
+                     if (parsedObject.maxval < 4096)
+                        rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, function (err, res) { if (err) throw err; });
+                  }
                }
             }
-         }
+         });
       });
    });
 
