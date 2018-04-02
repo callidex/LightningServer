@@ -42,11 +42,11 @@ module.exports = {
 
 function parseADCSamplePacket(tempObject, buffer) {
 
-   tempObject.udpnumber = (buffer.readUInt32LE(0) >> 8) & 0x00ffffff;
-   tempObject.adcseq = buffer[4];
-   tempObject.detectoruid = (buffer.readUInt32LE(4) >> 8) & 0x3ffff;
-   tempObject.rtsecs = buffer.readUInt32LE(7) >> 2;
-   tempObject.ppstime = buffer.readUInt32LE(8);
+  tempObject.udpnumber = (buffer.readUInt32LE(0) >> 8) & 0x00ffffff;
+  tempObject.adcseq = buffer[4];
+  tempObject.detectoruid = (buffer.readUInt32LE(4) >> 8) & 0x3ffff;      
+  tempObject.rtsecs = buffer.readUInt32LE(7) >> 2;
+  tempObject.batchid = buffer[8];
    tempObject.dmatime = buffer.readUInt32LE(12);
    tempObject.data = [];
    console.log("Data packet found from ");
@@ -86,24 +86,25 @@ function parseStatusPacket(tempObject, buffer) {
       console.log("unknown status");
    }
 
-   var sliced = buffer.slice(4);
-   var gps = gpsNavPvt(sliced);
-   if (gps != null) {
-      tempObject.gps = gps;
-   }
-   tempObject.clocktrim = sliced.readUInt32LE(84);
-   tempObject.detectoruid = sliced.readUInt32LE(88) & 0x3FFFF;
-   tempObject.packetssent = sliced.readUInt32LE(92);
-   tempObject.triggeroffset = sliced.readUInt16LE(96);
-   tempObject.triggernoise = sliced.readUInt16LE(98);
-   tempObject.sysuptime = sliced.readUInt32LE(100);
-   tempObject.netuptime = sliced.readUInt32LE(104);
-   tempObject.gpsuptime = sliced.readUInt32LE(108);
-   tempObject.majorversion = sliced[112];
-   tempObject.minorversion = sliced[113];
-   tempObject.avgadcnoise = sliced.readUInt16LE(114);
-
-   backfilldatapacket(tempObject.clocktrim, tempObject.currentbatchid, tempObject.detectoruid);
+    var sliced = buffer.slice(4);
+    var gps = gpsNavPvt(sliced);
+    if (gps != null) {
+        tempObject.gps = gps;
+    }
+    tempObject.clocktrim = sliced.readUInt32LE(84);
+    tempObject.detectoruid = sliced.readUInt32LE(88) & 0x3FFFF;
+    tempObject.packetssent = sliced.readUInt32LE(92);
+    tempObject.triggeroffset = sliced.readUInt16LE(96);
+    tempObject.triggernoise = sliced.readUInt16LE(98);
+    tempObject.sysuptime = sliced.readUInt32LE(100);
+    tempObject.netuptime = sliced.readUInt32LE(104);
+    tempObject.gpsuptime = sliced.readUInt32LE(108);
+    tempObject.majorversion = sliced[112];
+    tempObject.minorversion = sliced[113];
+    tempObject.avgadcnoise = sliced.readUInt16LE(114);
+    tempObject.batchid = sliced[116];
+   
+    backfilldatapacket(tempObject.clocktrim, tempObject.packetnumber, tempObject.detectoruid);
 
    return tempObject;
 }
