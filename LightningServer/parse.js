@@ -46,7 +46,7 @@ function parseADCSamplePacket(tempObject, buffer) {
   tempObject.adcseq = buffer[4];
   tempObject.detectoruid = (buffer.readUInt32LE(4) >> 8) & 0x3ffff;      
   tempObject.rtsecs = buffer.readUInt32LE(7) >> 2;
-  tempObject.ppstime = buffer.readUInt32LE(8);
+  tempObject.batchid = buffer[8];
    tempObject.dmatime = buffer.readUInt32LE(12);
    tempObject.data = [];
    console.log("Data packet found from ");
@@ -100,6 +100,7 @@ function parseStatusPacket(tempObject, buffer) {
     tempObject.majorversion = sliced[112];
     tempObject.minorversion = sliced[113];
     tempObject.avgadcnoise = sliced.readUInt16LE(114);
+    tempObject.batchid = sliced[116];
    
     backfilldatapacket(tempObject.clocktrim, tempObject.packetnumber, tempObject.detectoruid);
 
