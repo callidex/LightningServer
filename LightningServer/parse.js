@@ -42,11 +42,11 @@ module.exports = {
 
 function parseADCSamplePacket(tempObject, buffer) {
 
-  tempObject.udpnumber = (buffer.readUInt32LE(0) >> 8) & 0x00ffffff;
-  tempObject.adcseq = buffer[4];
-  tempObject.detectoruid = (buffer.readUInt32LE(4) >> 8) & 0x3ffff;      
-  tempObject.rtsecs = buffer.readUInt32LE(7) >> 2;
-  tempObject.batchid = buffer[8];
+   tempObject.udpnumber = (buffer.readUInt32LE(0) >> 8) & 0x00ffffff;
+   tempObject.adcseq = buffer[4];
+   tempObject.detectoruid = (buffer.readUInt32LE(4) >> 8) & 0x3ffff;
+   tempObject.rtsecs = buffer.readUInt32LE(7) >> 2;
+   tempObject.batchid = buffer[8];
    tempObject.dmatime = buffer.readUInt32LE(12);
    tempObject.data = [];
    console.log("Data packet found from ");
@@ -86,33 +86,37 @@ function parseStatusPacket(tempObject, buffer) {
       console.log("unknown status");
    }
 
-    var sliced = buffer.slice(4);
-    var gps = gpsNavPvt(sliced);
-    if (gps != null) {
-        tempObject.gps = gps;
-    }
-    tempObject.clocktrim = sliced.readUInt32LE(84);
-    tempObject.detectoruid = sliced.readUInt32LE(88) & 0x3FFFF;
-    tempObject.packetssent = sliced.readUInt32LE(92);
-    tempObject.triggeroffset = sliced.readUInt16LE(96);
-    tempObject.triggernoise = sliced.readUInt16LE(98);
-    tempObject.sysuptime = sliced.readUInt32LE(100);
-    tempObject.netuptime = sliced.readUInt32LE(104);
-    tempObject.gpsuptime = sliced.readUInt32LE(108);
-    tempObject.majorversion = sliced[112];
-    tempObject.minorversion = sliced[113];
-    tempObject.avgadcnoise = sliced.readUInt16LE(114);
-    tempObject.batchid = sliced[116];
-   
-    backfilldatapacket(tempObject.clocktrim, tempObject.packetnumber, tempObject.detectoruid);
+   var sliced = buffer.slice(4);
+   var gps = gpsNavPvt(sliced);
+   if (gps != null) {
+      tempObject.gps = gps;
+   }
+   tempObject.clocktrim = sliced.readUInt32LE(84);
+   tempObject.detectoruid = sliced.readUInt32LE(88) & 0x3FFFF;
+   tempObject.packetssent = sliced.readUInt32LE(92);
+   tempObject.triggeroffset = sliced.readUInt16LE(96);
+   tempObject.triggernoise = sliced.readUInt16LE(98);
+   tempObject.sysuptime = sliced.readUInt32LE(100);
+   tempObject.netuptime = sliced.readUInt32LE(104);
+   tempObject.gpsuptime = sliced.readUInt32LE(108);
+   tempObject.majorversion = sliced[112];
+   tempObject.minorversion = sliced[113];
+   tempObject.avgadcnoise = sliced.readUInt16LE(114);
+   tempObject.batchid = sliced[116];
+
+   backfilldatapacket(tempObject.clocktrim, tempObject.packetnumber, tempObject.detectoruid);
 
    return tempObject;
 }
+var rethink = require('rethinkdb');
 
 function backfilldatapacket(clocktrim, currentbatchid, detectoruid) {
 
-   var rethink = require('rethinkdb');
-   rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
+   rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn2) {
+      if (err) throw err;
+      console.log(conn2);
+   });
+      rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
       if (err) throw err;
       // find all the needsprocessing = 1 && batchnumber = currentbatchid && detectoruid
 
@@ -127,25 +131,25 @@ function backfilldatapacket(clocktrim, currentbatchid, detectoruid) {
 
             cursor.toArray().then(function (results) {
                // results are all the data packets previously received
-               for (int i = 0; i < results.length; i++)
-            {
-               var changed = results[i];
-               changed.clocktrim = clocktrim;
-               // work out actual start
+               results.forEach(function (changed) {
+                  changed.needsprocessing = false;
+                  changed.clocktrim = clocktrim;
+                  // work out actual start
 
-               changed.secondlength = changed.dmatime / changed.clocktrim;
-
-               var err = rethink.db('lightning').table('datapackets').get(results[0].id).replace(changed);
-               if (err.first_error.len > 0) {
-                  throw err;
-               }
-            }
+                  //dmatime is number of cpucycles count at end of sample
+                  //clocktrim is cycles per second
+                  var endsampletime = changed.dmatime / changed.clocktrim;
+                  var endsampletimens = endsampletime * 1000000000;
+                  var nspersample = 373;  //1,000,000,000
+                  changed.firstsampletimestamp = endsampletimens - (728 * nspersample); 
+                  rethink.db('lightning').table('datapackets').get(results[0].id).replace(changed)
+                     .run(conn, function (err, result) {
+                     if (result.first_error.len > 0) { throw err; }
+                  });
+               });
+            });
          });
    });
-
-
-
-
 }
 
 function distance(lat1, lon1, lat2, lon2, unit) {
