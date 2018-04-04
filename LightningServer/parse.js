@@ -70,6 +70,9 @@ function parseADCSamplePacket(tempObject, buffer) {
 
    tempObject.signal = peak.calcpeak(tempObject.data, 5, 10);
    tempObject.signalcnt = math.sum(tempObject.signal);
+
+   tempObject.needsprocessing = 1;
+
    return tempObject;
 }
 
