@@ -36,9 +36,7 @@ restapiapp.get('/signal', function (req, res) {
    var connection = null;
    rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
       if (err) throw err;
-      connection = conn;
-
-      rethink.db('lightning').table('datapackets').filter(rethink.row("signalcnt").gt(0)). orderBy(rethink.desc('received')).limit(1).run(connection, function (err, cursor) {
+      rethink.db('lightning').table('datapackets').filter(rethink.row("signalcnt").gt(0)). orderBy(rethink.desc('received')).limit(1).run(conn, function (err, cursor) {
          if (err) throw err;
          console.log(cursor);
          cursor.toArray().then(function (results) {
