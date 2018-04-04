@@ -19,12 +19,13 @@
   for(var g=0; g<samples.length; g++) { %>
      groups.add({
         id: <%=g %>,
-         content: '<%=samples[g].detectoruid %> <%=samples[g].received %>',
+         content: '<%=samples[g].detectoruid %> <%=samples[g].received %> <%=samples[g].packetnumber %> ',
         options: {
-            drawPoints: false,
-            interpolation: {
-                parametrization: 'centripetal'
-            }
+            drawPoints: false
+//,
+//            interpolation: {
+//                parametrization: 'centripetal'
+//            }
         }})
   <% } %>
 
