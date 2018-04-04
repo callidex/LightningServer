@@ -16,6 +16,13 @@ module.exports = {
                     var windowstddev = math.std(window);
                     if (windowstddev > stddev) {
                         signal.push(1);
+                        // flag a signal at the highest point in the window
+                        for (var j = 0; j < window.length; j++)
+                        {
+                            if (window[j] == math.max(window)) {
+                                signal[i - lag + j] = 1;
+                            }
+                        }
                     }
                     else { signal.push(0); }
                 } else { signal.push(0); }
