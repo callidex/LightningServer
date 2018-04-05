@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+
+
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <% for (var i = 0; i < samples.length; i++) { %>
+                <div class="col">
+                    <div class="thumbnail"> 
+                        <div class="caption">
+
+			<div id="visualization<%=i%>"></div>
+<script type="text/javascript">
+var container = document.getElementById('visualization<%= i %>');
+
+var groups = new vis.DataSet();
+groups.add({
+   id: 0,
+   options: { 
+drawPoints:false,
+        interpolation: { 
+            parametrization: 'centripetal' 
+        }
+   }
+});
+     groups.add({
+        id: 1,
+         content: 'peaks',
+        options: {
+            drawPoints: true,
+        }})
+
+
+ var items = [
+    <% for(var k=3; k<samples[i].data.length; k++) {%>
+       { x: <%= k %> , y: <%= samples[i].data[k] %>, group: 0  },
+  <% } %>
+    <% for(var k=3; k<samples[i].signal.length; k++) {%>
+       { x: <%= k %> , y: <%= (samples[i].signal[k] * 100)+ samples[i].mean %>, group: 1 },
+  <% } %>
+
+  ];
+ var dataset = new vis.DataSet(items);
+
+  var options = {
+      legend: {right: {position: 'top-left'}},   
+      drawPoints: {
+         style: 'circle' // square, circle
+    }
+  };
+  var graph2d1 = new vis.Graph2d(container, dataset, groups, options);
+
+
+</script>
+
+
+                            <h3>PacketNo :<%= samples[i].packetnumber %></h4>
+                            <p>Detector: <%= samples[i].detectoruid %> Variance: <%= samples[i].variance %></p>
+	<p>BatchID: <%= samples[i].batchid %></p>
+                        </div>
+                  </div>   
+                </div>
+            <% } %>
+        </div>
+            <% if (pages > 0) { %>
+                <ul class="pagination text-center">
+                    <% if (current == 1) { %>
+                        <li class="disabled"><a>First</a></li>
+                    <% } else { %>
+                        <li><a href="/packets/1">First</a></li>
+                    <% } %>
+                    <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
+                    <% if (i !== 1) { %>
+                        <li class="disabled"><a>...</a></li>
+                    <% } %>
+                    <% for (; i <= (Number(current) + 4) && i <= pages; i++) { %>
+                        <% if (i == current) { %>
+                            <li class="active"><a><%= i %></a></li>
+                        <% } else { %>
+                            <li><a href="/packets/<%= i %>"><%= i %></a></li>
+                        <% } %>
+                        <% if (i == Number(current) + 4 && i < pages) { %>
+                            <li class="disabled"><a>...</a></li>
+                        <% } %>
+                    <% } %>
+                    <% if (current == pages) { %>
+                        <li class="disabled"><a>Last</a></li>
+                    <% } else { %>
+                        <li><a href="/packets/<%= pages %>">Last</a></li>
+                    <% } %>
+                </ul>
+            <% } %>
+    </div>
+</body>
+</html>

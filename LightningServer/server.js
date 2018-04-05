@@ -23,7 +23,7 @@ restapiapp.get('/', function (req, res) {
 
       rethink.db('lightning').table('datapackets').orderBy(rethink.desc('received'))
 
-         .limit(5).run(connection, function (err, cursor) {
+         .limit(7).run(connection, function (err, cursor) {
             if (err) throw err;
             console.log(cursor);
             cursor.toArray().then(function (results) {
@@ -32,6 +32,34 @@ restapiapp.get('/', function (req, res) {
          });
    });
 })
+restapiapp.get('/packets/:page', function(req, res, next)
+{
+  var perPage = 8;
+  var page = req.params.page || 1;
+  
+   var connection = null;
+   rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
+      if (err) throw err;
+      connection = conn;
+
+      rethink.db('lightning').table('datapackets').orderBy(rethink.desc('received')).skip((perPage * page) - perPage)
+      .limit(perPage).run(connection, function (err, cursor) {
+            if (err) throw err;
+            console.log(cursor);
+            cursor.toArray().then(function (results) {
+               rethink.db('lightning').table('datapackets').count().run(connection, function( err, count)
+               {
+                  if(err) throw err;
+                  
+                    res.render('packets', { samples: results, current: page, pages: count/perPage });
+               });
+            });
+         });
+   });
+
+
+
+});
 restapiapp.get('/signal', function (req, res) {
    var connection = null;
    rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
@@ -48,8 +76,8 @@ restapiapp.get('/signal', function (req, res) {
 
 
 //setup the routes for the restapiapp
-var routes = require('./api/routes/lightningRoutes');
-routes(restapiapp);
+//var routes = require('./api/routes/lightningRoutes');
+//routes(restapiapp);
 
 restapiapp.listen(port);
 
