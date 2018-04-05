@@ -42,7 +42,7 @@ restapiapp.get('/packets/:page', function(req, res, next)
       if (err) throw err;
       connection = conn;
 
-      rethink.db('lightning').table('datapackets').orderBy('received').skip((perPage * page) - perPage)
+      rethink.db('lightning').table('datapackets').orderBy(rethink.desc('received')).skip((perPage * page) - perPage)
       .limit(perPage).run(connection, function (err, cursor) {
             if (err) throw err;
             console.log(cursor);

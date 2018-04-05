@@ -13,8 +13,8 @@
     <div class="container">
         <div class="row">
             <% for (var i = 0; i < samples.length; i++) { %>
-                <div class="col-md-4">
-                    <div class="thumbnail">
+                <div class="col">
+                    <div class="thumbnail"> 
                         <div class="caption">
 
 			<div id="visualization<%=i%>"></div>
@@ -23,8 +23,9 @@ var container = document.getElementById('visualization<%= i %>');
 
 var groups = new vis.DataSet();
 groups.add({
-   id: 0, 
+   id: 0,
    options: { 
+drawPoints:false,
         interpolation: { 
             parametrization: 'centripetal' 
         }
@@ -39,10 +40,10 @@ groups.add({
 
 
  var items = [
-    <% for(var k=0; k<samples[i].data.length; k++) {%>
+    <% for(var k=3; k<samples[i].data.length; k++) {%>
        { x: <%= k %> , y: <%= samples[i].data[k] %>, group: 0  },
   <% } %>
-    <% for(var k=0; k<samples[i].signal.length; k++) {%>
+    <% for(var k=3; k<samples[i].signal.length; k++) {%>
        { x: <%= k %> , y: <%= (samples[i].signal[k] * 100)+ samples[i].mean %>, group: 1 },
   <% } %>
 
@@ -61,10 +62,11 @@ groups.add({
 </script>
 
 
-                            <h3><%= samples[i].packetnumber %></h3>
-                            <p><%= samples[i].detectoruid %></p>
+                            <h3>PacketNo :<%= samples[i].packetnumber %></h4>
+                            <p>Detector: <%= samples[i].detectoruid %> Variance: <%= samples[i].variance %></p>
+	<p>BatchID: <%= samples[i].batchid %></p>
                         </div>
-                    </div>
+                  </div>   
                 </div>
             <% } %>
         </div>
@@ -73,7 +75,7 @@ groups.add({
                     <% if (current == 1) { %>
                         <li class="disabled"><a>First</a></li>
                     <% } else { %>
-                        <li><a href="/samples/1">First</a></li>
+                        <li><a href="/packets/1">First</a></li>
                     <% } %>
                     <% var i = (Number(current) > 5 ? Number(current) - 4 : 1) %>
                     <% if (i !== 1) { %>
