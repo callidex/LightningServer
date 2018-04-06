@@ -147,7 +147,7 @@ stmserver.on("message",
          address: remote.address,
          port: remote.port,
           timestamp: now,
-         processed = 0,
+         processed: 0,
          received: new Date().toString()
          
       };
