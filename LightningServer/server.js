@@ -31,7 +31,8 @@ restapiapp.get('/', function (req, res) {
             });
          });
    });
-})
+});
+
 restapiapp.get('/packets/:page', function(req, res, next)
 {
   var perPage = 8;
@@ -56,10 +57,31 @@ restapiapp.get('/packets/:page', function(req, res, next)
             });
          });
    });
+});
+
+restapiapp.get('/timeline', function(req, res, next)
+{
+
+
+   var connection = null;
+
+   rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
+      if (err) throw err;
+      connection = conn;
+
+      rethink.db('lightning').table('datapackets').hasFields('gps').pluck('gps').run(connection, function (err, cursor) {
+            if (err) throw err;
+            cursor.toArray().then(function (results) {
+                    res.render('timeline', { samples: results });
+               });  // 
+      });  // db
+      
+   });// connect
 
 
 
 });
+
 restapiapp.get('/signal', function (req, res) {
    var connection = null;
    rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
