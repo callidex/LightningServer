@@ -15,7 +15,7 @@ rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
     conn.use('lightning');
 
     rethink.table('rawpackets').filter({ 'processed': 0 }).
-        orderBy('received').limit(1000).run(conn, function (err, cursor) {
+        orderBy('received').limit(4000).run(conn, function (err, cursor) {
             if (err) throw err;
             cursor.toArray().then(function (results) {
                 for (var i = 0; i < results.length; i++) {
