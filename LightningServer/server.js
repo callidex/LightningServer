@@ -59,6 +59,14 @@ restapiapp.get('/packets/:page', function(req, res, next)
    });
 });
 
+
+var groupBy = function (xs, key) {
+    return xs.reduce(function (rv, x) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
+    }, {});
+};
+
 restapiapp.get('/timeline', function(req, res, next)
 {
 
@@ -69,10 +77,14 @@ restapiapp.get('/timeline', function(req, res, next)
       if (err) throw err;
       connection = conn;
 
-      rethink.db('lightning').table('datapackets').hasFields('gps').pluck('gps').run(connection, function (err, cursor) {
+      rethink.db('lightning').table('datapackets').hasFields('gps').pluck('gps','detectoruid').run(connection, function (err, cursor) {
             if (err) throw err;
-            cursor.toArray().then(function (results) {
-                    res.render('timeline', { samples: results });
+          cursor.toArray().then(function (results) {
+
+var set =results.map(item => item.detectoruid).filter((value, index, self) => self.indexOf(value) === index);
+
+
+              res.render('timeline', { samples: results, detectors: set });
                });  // 
       });  // db
       
@@ -146,7 +158,7 @@ stmserver.on("message",
             if (err) throw err;
 
             console.log("parsing object at " + packet.received);
-            var parsedObject = dataParser.parseDataChunk(packet);
+            var parsedObject = dataParser.parseDataChunk(packet,conn);
             if (parsedObject == null) {
                console.log("Unknown object");
             } else {

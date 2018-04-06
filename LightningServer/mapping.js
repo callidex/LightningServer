@@ -14,18 +14,16 @@ rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
     if (err) throw err;
     conn.use('lightning');
 
-    rethink.table('rawpackets').
-        orderBy(rethink.desc('received')).run(conn, function (err, cursor) {
+    rethink.table('rawpackets').filter({ 'processed': 0 }).
+        orderBy('received').limit(1000).run(conn, function (err, cursor) {
             if (err) throw err;
             cursor.toArray().then(function (results) {
                 for (var i = 0; i < results.length; i++) {
+                    console.log('parsing object ', i);
+                    var parsedObject = parser.parseDataChunk(results[i], conn);
 
-                    try {
-
-
-                        console.log('parsing object ', i);
-                        var parsedObject = parser.parseDataChunk(results[i]);
-                        if (parsedObject.batchid > 0) {
+                    if (parsedObject.batchid > 0) {
+                        if (parsedObject.detectoruid != 74567) {
                             if (parsedObject == null) {
                                 console.log("Unknown object");
                             }
@@ -35,22 +33,29 @@ rethink.connect({ host: 's7.slashdit.com', port: 28015 }, function (err, conn) {
                                     parsedObject.persistedDate = Date.now();
                                     if (parsedObject.packettype != "sample" && parsedObject.packettype != 0) {
 
-                                       rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, function (err, res) { if (err) throw err; });
+                                        rethink.db('lightning').table('statuspackets').insert(parsedObject).run(conn, { durability: 'hard' }, function (err, res) {
+                                            if (err) throw err;
+
+                                            console.log('written status packet ', res);
+                                        });
                                     }
                                     else {
                                         if (parsedObject.maxval < 4096) {
-                                             rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, function (err, res) { if (err) throw err; });
+                                            rethink.db('lightning').table('datapackets').insert(parsedObject).run(conn, { durability: 'hard' }, function (err, res) {
+                                                if (err) throw err;
+                                                console.log('written data packet', res);
+
+                                            });
+                                        }
+                                        else {
+                                            console.log('crap packet');
                                         }
                                     }
                                 }
                             }
                         }
-
                     }
-                    catch (e) {
-                        console.log(parsedObject);
-                        throw e;
-                    }
+                    rethink.table('rawpackets').get(results[i].id).update({ processed: 1 }).run(conn);
                 }
             });
         });

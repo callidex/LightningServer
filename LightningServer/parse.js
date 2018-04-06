@@ -4,7 +4,7 @@ const peak = require("./peakdetect");
 
 var PacketTypeEnum = Object.freeze({ "sample": 0, "status": 1, "timedstatus": 2 });
 module.exports = {
-    parseDataChunk: function (dataChunk) {
+    parseDataChunk: function (dataChunk, conn) {
         var len = Object.keys(dataChunk.data).length;
         var buffer = new Buffer(len);
         for (var i = 0; i < len; i++) {
@@ -31,7 +31,7 @@ module.exports = {
             case PacketTypeEnum.timedstatus:
                 var feedcode = buffer.readUInt32BE(buffer.length - 4);
                 if (feedcode === 0xfeedc0de)
-                    return parseStatusPacket(tempObject, buffer)
+                    return parseStatusPacket(tempObject, buffer, conn)
                 break;
             default:
                 console.log("Unknown Packet Type");
@@ -53,7 +53,7 @@ function parseADCSamplePacket(tempObject, buffer) {
     console.log("Data packet found from ");
     console.log(tempObject.detectoruid);
 
-    for ( var i = 0; i < (728*2); i=i+2) {
+    for (var i = 0; i < (728 * 2); i = i + 2) {
         tempObject.data.push((buffer[i + 15] << 8) + buffer[i + 1 + 15]);
     }
     tempObject.maxval = math.max(tempObject.data);
@@ -71,7 +71,7 @@ function parseADCSamplePacket(tempObject, buffer) {
     return tempObject;
 }
 
-function parseStatusPacket(tempObject, buffer) {
+function parseStatusPacket(tempObject, buffer, conn) {
 
     console.log("status packet");
     if (buffer[0] & 2) {
@@ -99,53 +99,48 @@ function parseStatusPacket(tempObject, buffer) {
     tempObject.minorversion = sliced[113];
     tempObject.avgadcnoise = sliced.readUInt16LE(114);
     tempObject.batchid = sliced[116];
-
-    //backfilldatapacket(tempObject.clocktrim, tempObject.packetnumber, tempObject.detectoruid);
+    //tmp
+    if (tempObject.detectoruid != 74567)
+        backfilldatapacket(conn, tempObject.clocktrim, tempObject.packetnumber, tempObject.detectoruid, tempObject.gps);
 
     return tempObject;
 }
 var rethink = require('rethinkdb');
 
-function backfilldatapacket(clocktrim, currentbatchid, detectoruid) {
-    var p = rethink.connect(host = 's7.slashdit.com',
-        port = 28015);
-    p.then(function (conn) {
+function backfilldatapacket(connection, clocktrim, currentbatchid, detectoruid, gps ) {
+    //        find all the needsprocessing = 1 && batchnumber = currentbatchid && detectoruid
 
-        //        find all the needsprocessing = 1 && batchnumber = currentbatchid && detectoruid
+    rethink.db('lightning').table('datapackets')
+        .filter({
+            "needsprocessing": 1,
+            "batchid": currentbatchid,
+            "detectoruid": detectoruid
+        }).pluck('id', 'dmatime')
+        .run(connection, function (err, cursor) {
+            if (err) throw err;
 
-        rethink.db('lightning').table('datapackets')
-            .filter({
-                "needsprocessing": 1,
-                "batchid": currentbatchid,
-                "detectoruid": detectoruid
-            }).pluck('id', 'dmatime')
-            .run(conn, function (err, cursor) {
-                if (err) throw err;
+            cursor.toArray().then(function (results) {
+                // results are all the data packets previously received
+                results.forEach(function (changed) {
+                    // work out actual start
+                    //dmatime is number of cpucycles count at end of sample
+                    //clocktrim is cycles per second
+                    var endsampletime = changed.dmatime / clocktrim;
+                    var endsampletimens = endsampletime * 1000000000;
+                    var nspersample = 373;  //1,000,000,000
+                    var firstsampletimestamp = endsampletimens - (728 * nspersample);
+                    // firstsampletimestamp = no of ns since the first second
+                    rethink.db('lightning')
+                        .table('datapackets').get(changed.id)
+                        .update({ 'firstsampletimestamp': firstsampletimestamp, 'clocktrim': clocktrim , gps : gps})
+                        .run(connection, function (err, result) {
+                            if (err) { throw err; }
+                            console.log('updated');
+                        });
 
-                cursor.toArray().then(function (results) {
-                    // results are all the data packets previously received
-                    results.forEach(function (changed) {
-                        // work out actual start
-                        //dmatime is number of cpucycles count at end of sample
-                        //clocktrim is cycles per second
-                        var endsampletime = changed.dmatime / clocktrim;
-                        var endsampletimens = endsampletime * 1000000000;
-                        var nspersample = 373;  //1,000,000,000
-                        var firstsampletimestamp = endsampletimens - (728 * nspersample);
-                        rethink.db('lightning')
-                            .table('datapackets')
-                            .filter({ "id": id })
-                            .update({ 'firstsampletimestamp': firstsampletimestamp, 'clocktrim': clocktrim })
-                            .run(conn, function (err, result) {
-                                if (result.first_error.len > 0) { throw err; }
-                                conn.close();
-                            });
-                        
-                    });
                 });
             });
-       
-    });
+        });
 }
 
 function distance(lat1, lon1, lat2, lon2, unit) {

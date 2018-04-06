@@ -13,24 +13,32 @@
     <div class="container">
 			<div id="visualization"></div>
 <script type="text/javascript">
-var container = document.getElementById('visualization');
+	var container = document.getElementById('visualization');
 
- var items = [
-    <% for(var k=3; k<samples.length; k++) {%>
-        
-       { x: <%= k %> , y: '<%= samples[k].year %>-<%= samples[k].month %>-<%= samples[k].day %>'},
+	var groups = new vis.DataSet();
+
+	<% for(var j=0; j<detectors.length; j++) {%>
+	
+		groups.add( {id: <%=detectors[j]; %>});
+	<% } %>
+
+
+	var items = [
+ 
+
+    <% for(var k=0; k<samples.length; k++) {%>
+       { id: <%= k %> , content: 'pop', 
+	   
+	   start: '<%= new Date(samples[k].gps.year,samples[k].gps.month -1 ,samples[k].gps.day ,samples[k].gps.hour,samples[k].gps.min,samples[k].gps.sec ); %>' , group: <%= samples[k].detectoruid %>, content: '<%= samples[k].detectoruid %>'  ,  type: 'point'},
   <% } %>
   ];
  var dataset = new vis.DataSet(items);
 
-  var options = {
-      legend: {right: {position: 'top-left'}},   
-      drawPoints: {
-         style: 'circle' // square, circle
-    }
+var options = {
+    groupOrder: 'content'  // groupOrder can be a property name or a sorting function
   };
-
-  var graph2d1 = new vis.Graph2d(container, dataset, options);
+  var graph2d1 = new vis.Timeline(container, dataset, options);
+  graph2d1.setGroups(groups);
 
 
 </script>
