@@ -18,38 +18,39 @@
                         <div class="caption">
 
 			<div id="visualization<%=i%>"></div>
+			<div id="filter<%=i%>"></div>
 <script type="text/javascript">
 var container = document.getElementById('visualization<%= i %>');
+var containerfilter = document.getElementById('filter<%= i %>');
 
 var groups = new vis.DataSet();
-groups.add({
-   id: 0,
-   options: { 
-drawPoints:false,
-        interpolation: { 
-            parametrization: 'centripetal' 
-        }
-   }
-});
-     groups.add({
-        id: 1,
-         content: 'peaks',
-        options: {
-            drawPoints: true,
-        }})
+var groupsfilter = new vis.DataSet();
+
+groupsfilter.add({id:0, content: 'highpass',  options: { drawPoints:false, interpolation: { parametrization: 'centripetal'} } });
+
+groups.add({    id: 0, options: { drawPoints:false, interpolation: { parametrization: 'centripetal'} } });
+groups.add({    id: 1, content: 'peaks', options: { drawPoints: true  }});
 
 
  var items = [
     <% for(var k=3; k<samples[i].data.length; k++) {%>
        { x: <%= k %> , y: <%= samples[i].data[k] %>, group: 0  },
-  <% } %>
-    <% for(var k=3; k<samples[i].signal.length; k++) {%>
        { x: <%= k %> , y: <%= (samples[i].signal[k] * 100)+ samples[i].mean %>, group: 1 },
   <% } %>
 
-  ];
- var dataset = new vis.DataSet(items);
 
+
+  ];
+
+var filteritems = [
+    <% for(var k=3; k<samples[i].data.length; k++) {%>
+       { x: <%= k %> , y: <%= filter[i][k] %> , group: 0 %> },
+  <% } %>
+
+
+];
+ var dataset = new vis.DataSet(items);
+  var datasetfilter = new vis.DataSet(filteritems);
   var options = {
       legend: {right: {position: 'top-left'}},   
       drawPoints: {
@@ -57,7 +58,8 @@ drawPoints:false,
     }
   };
   var graph2d1 = new vis.Graph2d(container, dataset, groups, options);
-
+ var graph2d2 = new vis.Graph2d(containerfilter, datasetfilter,
+groupsfilter, options);
 
 </script>
 
