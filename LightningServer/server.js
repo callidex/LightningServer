@@ -23,34 +23,34 @@ mysqlcon.connect();
 restapiapp.use(bodyParser.urlencoded({ extended: true }));
 restapiapp.use(bodyParser.json());
 restapiapp.set('view engine', 'ejs');
-restapiapp.get('/', function(req, res) {
+restapiapp.get('/', function (req, res) {
 
     var sql = "select * from lightning.datapackets order by received desc limit 7";
-    mysqlcon.query(sql, function(err, result) {
+    mysqlcon.query(sql, function (err, result) {
         if (err) throw err;
         console.log(cursor);
-        cursor.toArray().then(function(results) {
+        cursor.toArray().then(function (results) {
             res.render('index', { samples: results });
         });
     });
 });
 
-restapiapp.get('/packets/:page', function(req, res, next) {
+restapiapp.get('/packets/:page', function (req, res, next) {
     var perPage = 8;
     var page = req.params.page || 1;
 
     var calc = (perPage * page) - perPage;
     var sql = "select * from lightning.datapackets order by received desc limit " + calc + " , " + perPage;
-    mysqlcon.query(sql, function(err, results) {
+    mysqlcon.query(sql, function (err, results) {
         if (err) throw err;
         res.render('packets', { samples: results, current: page, pages: 1, filter: filters });
     });
 });
 
 
-restapiapp.get('/timeline', function(req, res, next) {
+restapiapp.get('/timeline', function (req, res, next) {
     var sql = "select gpshour, gpsminute, gpssecond, detectoruid from lightning.datapackets";
-    mysqlcon.query(sql, function(err, result) {
+    mysqlcon.query(sql, function (err, result) {
         if (err) throw err;
         var set = results.map(item => item.detectoruid).filter((value, index, self) => self.indexOf(value) === index);
         res.render('timeline', { samples: results, detectors: set });
@@ -83,13 +83,13 @@ restapiapp.listen(port);
 console.log('REST API server started on: ' + port);
 
 stmserver.on("listening",
-    function() {
+    function () {
         var address = stmserver.address();
         console.log("UDP Server listening on " + address.address + ":" + address.port);
     });
 
 stmserver.on("message",
-    function(message, remote) {
+    function (message, remote) {
         console.log(remote.address + ":" + remote.port);
         var now = Date.now();
         // forward to Bob's Boing Machine
@@ -108,11 +108,11 @@ stmserver.on("message",
 
         };
         var sql = "insert into rawpackets (address, type, data, port, processed, received, timestamp, version) VALUES ('" + packet.address + "', '" + packet.type + "',?, '" + packet.port + "', " + packet.processed + ", '" + packet.received + "'," + packet.timestamp + ",'" + packet.version + "')";
-        mysqlcon.prepare(sql, function(err, statement) {
+        mysqlcon.prepare(sql, function (err, statement) {
             if (err) {
                 throw err;
             }
-            statement.execute([packet.data], function(err, rows, columns) {
+            statement.execute([packet.data], function (err, rows, columns) {
                 if (err) {
                     throw err;
                 }
@@ -127,6 +127,7 @@ stmserver.on("message",
                             storeStatusPacketInMysql(parsedObject, mysqlcon, rows.insertId);
                         }
                         else {
+                            console.log("third byte", packet.data[17], "fourth ", packet.data[18], (packet.data[17] << 8) + packet.data[18]);
                             storeDataPacketInMysql(parsedObject, mysqlcon, rows.insertId);
                         }
                     }
@@ -139,27 +140,54 @@ stmserver.on("message",
 
 stmserver.bind(stmport, host);
 
-var storeDataPacketInMysql = function(parsedObject, con, rawpacketid) {
+function repairendian(array) {
+    var fixeddata = [];
+    for (var i = 0; i < array.length; i++) {
+        fixeddata.push(array[i] >> 8);
+        fixeddata.push(array[i] & 0xFF);
+    }
+    return fixeddata;
+}
+
+
+var storeDataPacketInMysql = function (parsedObject, con, rawpacketid) {
     if (parsedObject.maxval < 4096) {
-        var sql = "INSERT INTO lightning.datapackets(rawpacketid, adcseq, address, batchid, data, detectoruid, dmatime, maxval, mean, needsprocessing, packetnumber, packettype, persisteddate, received, rtsecs, signaldata, signalcnt, stddev, udpnumber, variance, version ) VALUES  (" + rawpacketid + "," + parsedObject.adcseq + ",'" + parsedObject.address + "'," + parsedObject.batchid + ",?," + parsedObject.detectoruid + "," + parsedObject.dmatime + "," + parsedObject.maxval + "," + parsedObject.mean + "," + parsedObject.needsprocessing + "," + parsedObject.packetnumber + "," + parsedObject.packettype + "," + clean(parsedObject.persisteddate) + "," + parsedObject.received + "," + parsedObject.rtsecs + ",?," + parsedObject.signalcnt + "," + parsedObject.stddev + "," + parsedObject.udpnumber + "," + parsedObject.variance + "," + clean(parsedObject.version) + ")";
-        con.prepare(sql, function(err, statement) {
-            if (err) {
-                throw err;
-            }
-            var data = new Uint16Array(parsedObject.data);
-            var signal = new Uint16Array(parsedObject.signal);
-            if (parsedObject.data != undefined && parsedObject.signal != undefined) {
-                statement.execute([data.buffer, signal.buffer], function(err, rows, columns) {
-                    if (err) { throw err; }
-                    backfilldatapacketfromstatus(con, parsedObject.batchid, parsedObject.detectoruid);
-                });
-                statement.close();
-            }
-        });
+        if (parsedObject.data != undefined && parsedObject.signal != undefined) {
+            var fixeddata = repairendian(parsedObject.data);
+            var fixedsignal = repairendian(parsedObject.signal);
+
+            var query = "INSERT INTO `datapackets` SET ?",
+                values = {
+                    rawpacketid: rawpacketid,
+                    adcseq: parsedObject.adcseq,
+                    dmatime: parsedObject.dmatime,
+                    maxval: parsedObject.maxval,
+                    mean: parsedObject.mean,
+                    needsprocessing: 1,
+                    packetnumber: parsedObject.packetnumber,
+                    packettype: parsedObject.packettype,
+                    received: parsedObject.received,
+                    rtsecs: parsedObject.rtsecs,
+                    signaldata: new Buffer(fixedsignal),
+                    signalcnt: parsedObject.signalcnt,
+                    stddev: parsedObject.stddev,
+                    udpnumber: parsedObject.udpnumber,
+                    variance: parsedObject.variance,
+                    version: clean(parsedObject.version),
+                    address: parsedObject.address,
+                    batchid: parsedObject.batchid,
+                    detectoruid: parsedObject.detectoruid,
+                    data: new Buffer(fixeddata),
+                };
+            con.query(query, values, function (er, da) {
+                if (er) throw er;
+                backfilldatapacketfromstatus(con, parsedObject.batchid, parsedObject.detectoruid);
+            });
+        }
     }
 }
 
-var storeStatusPacketInMysql = function(parsedObject, con, rawpacketid) {
+var storeStatusPacketInMysql = function (parsedObject, con, rawpacketid) {
     var sql = "insert into lightning.statuspackets (rawpacketid, address, avgadcnoise, batchid, clocktrim, detectoruid, gpsday, gpsfixtype, gpsflags, gpsgspeed, gpshacc, gpshmsl, gpsheading, gpsheadingacc, gpsheight, gpshour, gpsitow, gpslat, gpslon, gpsmin, gpsmonth, gpsnano, gpsnumsv, gpspdop, gpsres1, gpsres2, gpsres3, gpssacc, gpssec, gpstacc, gpsvacc, gpsvalid, gpsveld, gpsvele, gpsveln, gpsyear, gpsuptime, majorversion, minorversion, netuptime, packetnumber, packetssent, packettype, received, sysuptime, triggernoise, triggeroffset, version)" +
         "VALUES (" + rawpacketid + ",'" + parsedObject.address + "'," + parsedObject.avgadcnoise + "," + parsedObject.batchid + "," + parsedObject.clocktrim + "," + parsedObject.detectoruid
         + "," + parsedObject.gps.day
@@ -193,7 +221,7 @@ var storeStatusPacketInMysql = function(parsedObject, con, rawpacketid) {
         + "," + parsedObject.gps.velN
         + "," + parsedObject.gps.year + "," + parsedObject.gpsuptime + "," + parsedObject.majorversion + "," + parsedObject.minorversion + "," + parsedObject.netuptime + "," + parsedObject.packetnumber + "," + parsedObject.packetssent + "," + parsedObject.packettype + "," + parsedObject.received + "," + parsedObject.sysuptime + "," + parsedObject.triggernoise + "," + parsedObject.triggeroffset + "," + parsedObject.version + ")";
 
-    con.execute(sql, function(err, rows) {
+    con.execute(sql, function (err, rows) {
         if (err) {
             throw err;
         }
@@ -217,34 +245,34 @@ function backfilldatapacketfromstatus(connection, currentbatchid, detectoruid) {
             if (err) throw err;
 
         });
-    
-   /* connection.query("SELECT id, dmatime from datapackets where needsprocessing = 1 and batchid = " + currentbatchid + " and detectoruid = " + detectoruid, function (err, rows) {
-        rows.forEach(function(changed) {
-            // work out actual start
-            //dmatime is number of cpucycles count at end of sample
-            //clocktrim is cycles per second
-            var endsampletime = changed.dmatime / clocktrim;
-            var endsampletimens = endsampletime * 1000000000;
-            var nspersample = 373;  //1,000,000,000
-            var firstsampletimestamp = endsampletimens - (728 * nspersample);
-            // firstsampletimestamp = no of ns since the first second
-            var sql = "update datapackets set needsprocessing = 0, status_fk = " + statusrow + ", firstsampletimestamp = " + firstsampletimestamp + ", clocktrim = " + clocktrim + ", gpshour = " + gps.hour + ",gpsmin = " + gps.min + ", gpssec = " + gps.sec + " where id = " + changed.id;
-            connection.execute(sql);
 
-        });
-    });
-// sod it, we're back to relational databases now, do the calcs later, just marry the tables up for now
-
-    */
+    /* connection.query("SELECT id, dmatime from datapackets where needsprocessing = 1 and batchid = " + currentbatchid + " and detectoruid = " + detectoruid, function (err, rows) {
+         rows.forEach(function(changed) {
+             // work out actual start
+             //dmatime is number of cpucycles count at end of sample
+             //clocktrim is cycles per second
+             var endsampletime = changed.dmatime / clocktrim;
+             var endsampletimens = endsampletime * 1000000000;
+             var nspersample = 373;  //1,000,000,000
+             var firstsampletimestamp = endsampletimens - (728 * nspersample);
+             // firstsampletimestamp = no of ns since the first second
+             var sql = "update datapackets set needsprocessing = 0, status_fk = " + statusrow + ", firstsampletimestamp = " + firstsampletimestamp + ", clocktrim = " + clocktrim + ", gpshour = " + gps.hour + ",gpsmin = " + gps.min + ", gpssec = " + gps.sec + " where id = " + changed.id;
+             connection.execute(sql);
+ 
+         });
+     });
+ // sod it, we're back to relational databases now, do the calcs later, just marry the tables up for now
+ 
+     */
 }
 
 /* helper functions */
-var clean = function(val) {
+var clean = function (val) {
     if (val = 'undefined') return null;
     return val;
 }
 
-var valid = function(obj) {
+var valid = function (obj) {
     return (obj != null);
 }
 

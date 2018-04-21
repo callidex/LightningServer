@@ -53,7 +53,7 @@ function parseADCSamplePacket(tempObject, buffer) {
     console.log("Data packet with batchid ", tempObject.batchid);
     tempObject.dmatime = buffer.readUInt32LE(12);
     tempObject.data = [];
-    for (var i = 0; i < (728 * 2); i = i + 2) {
+    for (var i = 0; i < (728*2); i = i + 2) {
         tempObject.data.push((buffer[i + 15] << 8) + buffer[i + 1 + 15]);
     }
     tempObject.maxval = math.max(tempObject.data);
