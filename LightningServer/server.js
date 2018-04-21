@@ -39,9 +39,9 @@ restapiapp.get('/packets/:page', function(req, res, next) {
     var perPage = 8;
     var page = req.params.page || 1;
 
-
-    var sql = "select * from lightning.datapackets order by received desc limit " + (perPage * page) - perPage + " " + perPage;
-    mysqlcon.query(sql, function(err, result) {
+    var calc = (perPage * page) - perPage;
+    var sql = "select * from lightning.datapackets order by received desc limit " + calc + " , " + perPage;
+    mysqlcon.query(sql, function(err, results) {
         if (err) throw err;
         res.render('packets', { samples: results, current: page, pages: 1, filter: filters });
     });
@@ -146,9 +146,12 @@ var storeDataPacketInMysql = function(parsedObject, con, rawpacketid) {
             if (err) {
                 throw err;
             }
+            var data = new Uint16Array(parsedObject.data);
+            var signal = new Uint16Array(parsedObject.signal);
             if (parsedObject.data != undefined && parsedObject.signal != undefined) {
-                statement.execute([new Uint16Array(parsedObject.data), new Uint16Array(parsedObject.signal)], function(err, rows, columns) {
+                statement.execute([data.buffer, signal.buffer], function(err, rows, columns) {
                     if (err) { throw err; }
+                    backfilldatapacketfromstatus(con, parsedObject.batchid, parsedObject.detectoruid);
                 });
                 statement.close();
             }
@@ -157,7 +160,7 @@ var storeDataPacketInMysql = function(parsedObject, con, rawpacketid) {
 }
 
 var storeStatusPacketInMysql = function(parsedObject, con, rawpacketid) {
-    var sql = "insert into lightning.statuspackets (rawpacketid, address, avgadcnoise, batchid, clocktrim, detectoruid, gpsday, gpsfixtype, gpsflags, gpsgspeed, gpshacc, gpshmsl, gpsheading, gpsheadingacc, gpsheight, gpshour, gpsitow, gpslat, gpslon, gpsmin, gpsmonth, gpsnano, gpsnumsv, gpspdop, gpsres1, gpsres2, gpsres3, gpssacc, gpssec, gpstacc, gpsvacc, gpsvalid, gpsveld, gpsvele, gpsveln, gpsyear, gpsuptime, majorversion, minorversion, netuptime, packetnumber, packetssent, packettype, persisteddate, received, sysuptime, triggernoise, triggeroffset, version)" +
+    var sql = "insert into lightning.statuspackets (rawpacketid, address, avgadcnoise, batchid, clocktrim, detectoruid, gpsday, gpsfixtype, gpsflags, gpsgspeed, gpshacc, gpshmsl, gpsheading, gpsheadingacc, gpsheight, gpshour, gpsitow, gpslat, gpslon, gpsmin, gpsmonth, gpsnano, gpsnumsv, gpspdop, gpsres1, gpsres2, gpsres3, gpssacc, gpssec, gpstacc, gpsvacc, gpsvalid, gpsveld, gpsvele, gpsveln, gpsyear, gpsuptime, majorversion, minorversion, netuptime, packetnumber, packetssent, packettype, received, sysuptime, triggernoise, triggeroffset, version)" +
         "VALUES (" + rawpacketid + ",'" + parsedObject.address + "'," + parsedObject.avgadcnoise + "," + parsedObject.batchid + "," + parsedObject.clocktrim + "," + parsedObject.detectoruid
         + "," + parsedObject.gps.day
         + "," + parsedObject.gps.fixType
@@ -188,13 +191,51 @@ var storeStatusPacketInMysql = function(parsedObject, con, rawpacketid) {
         + "," + parsedObject.gps.velD
         + "," + parsedObject.gps.velE
         + "," + parsedObject.gps.velN
-        + "," + parsedObject.gps.year + "," + parsedObject.gpsuptime + "," + parsedObject.majorversion + "," + parsedObject.minorversion + "," + parsedObject.netuptime + "," + parsedObject.packetnumber + "," + parsedObject.packetssent + "," + parsedObject.packettype + "," + clean(parsedObject.persisteddate) + "," + parsedObject.received + "," + parsedObject.sysuptime + "," + parsedObject.triggernoise + "," + parsedObject.triggeroffset + "," + parsedObject.version + ")";
+        + "," + parsedObject.gps.year + "," + parsedObject.gpsuptime + "," + parsedObject.majorversion + "," + parsedObject.minorversion + "," + parsedObject.netuptime + "," + parsedObject.packetnumber + "," + parsedObject.packetssent + "," + parsedObject.packettype + "," + parsedObject.received + "," + parsedObject.sysuptime + "," + parsedObject.triggernoise + "," + parsedObject.triggeroffset + "," + parsedObject.version + ")";
 
-    con.execute(sql, function(err, statement) {
+    con.execute(sql, function(err, rows) {
         if (err) {
             throw err;
         }
+
+        if (parsedObject.packettype == 1)  // end of sequence
+        {
+            console.log("Backfilling from batchid ", parsedObject.batchid);
+            backfilldatapacketfromstatus(con, parsedObject.batchid, parsedObject.detectoruid);
+        }
+
+
+
     });
+}
+
+function backfilldatapacketfromstatus(connection, currentbatchid, detectoruid) {
+
+    connection.query("UPDATE  datapackets d JOIN statuspackets s ON d.batchid = s.batchid and d.detectoruid = s.detectoruid SET d.status_fk = s.id, d.needsprocessing = 0 WHERE   d.needsprocessing = 1;",
+        function (err, rows) {
+
+            if (err) throw err;
+
+        });
+    
+   /* connection.query("SELECT id, dmatime from datapackets where needsprocessing = 1 and batchid = " + currentbatchid + " and detectoruid = " + detectoruid, function (err, rows) {
+        rows.forEach(function(changed) {
+            // work out actual start
+            //dmatime is number of cpucycles count at end of sample
+            //clocktrim is cycles per second
+            var endsampletime = changed.dmatime / clocktrim;
+            var endsampletimens = endsampletime * 1000000000;
+            var nspersample = 373;  //1,000,000,000
+            var firstsampletimestamp = endsampletimens - (728 * nspersample);
+            // firstsampletimestamp = no of ns since the first second
+            var sql = "update datapackets set needsprocessing = 0, status_fk = " + statusrow + ", firstsampletimestamp = " + firstsampletimestamp + ", clocktrim = " + clocktrim + ", gpshour = " + gps.hour + ",gpsmin = " + gps.min + ", gpssec = " + gps.sec + " where id = " + changed.id;
+            connection.execute(sql);
+
+        });
+    });
+// sod it, we're back to relational databases now, do the calcs later, just marry the tables up for now
+
+    */
 }
 
 /* helper functions */

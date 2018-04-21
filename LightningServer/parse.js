@@ -18,7 +18,7 @@ module.exports = {
         var tempObject = {
             "packetnumber": packetNumber,
             "packettype": packetType,
-            "received": Date.now(),
+            "received": dataChunk.timestamp,
             "address": dataChunk.address,
             "version": dataChunk.version
         }
@@ -31,7 +31,9 @@ module.exports = {
             case PacketTypeEnum.timedstatus:
                 var feedcode = buffer.readUInt32BE(buffer.length - 4);
                 if (feedcode === 0xfeedc0de)
+                {
                     return parseStatusPacket(tempObject, buffer, conn)
+                }
                 break;
             default:
                 console.log("Unknown Packet Type");
@@ -48,10 +50,9 @@ function parseADCSamplePacket(tempObject, buffer) {
     tempObject.detectoruid = (buffer.readUInt32LE(4) >> 8) & 0x3ffff;
     tempObject.rtsecs = buffer.readUInt32LE(7) >> 2;
     tempObject.batchid = buffer[8];
+    console.log("Data packet with batchid ", tempObject.batchid);
     tempObject.dmatime = buffer.readUInt32LE(12);
     tempObject.data = [];
-    console.log("Data packet found from ", tempObject.detectoruid);
-
     for (var i = 0; i < (728 * 2); i = i + 2) {
         tempObject.data.push((buffer[i + 15] << 8) + buffer[i + 1 + 15]);
     }
@@ -72,15 +73,6 @@ function parseADCSamplePacket(tempObject, buffer) {
 
 function parseStatusPacket(tempObject, buffer, conn) {
 
-    console.log("status packet");
-    if (buffer[0] & 2) {
-        console.log("timed status");
-    } else if (buffer[0] & 1) {
-        console.log("end seq status");
-    } else {
-        console.log("unknown status");
-    }
-
     var sliced = buffer.slice(4);
     var gps = gpsNavPvt(sliced);
     if (gps != null) {
@@ -98,32 +90,9 @@ function parseStatusPacket(tempObject, buffer, conn) {
     tempObject.minorversion = sliced[113];
     tempObject.avgadcnoise = sliced.readUInt16LE(114);
     tempObject.batchid = sliced[116];
-    //tmp
-    backfilldatapacket(conn, tempObject.clocktrim, tempObject.packetnumber, tempObject.detectoruid, tempObject.gps);
-
     return tempObject;
 }
-var rethink = require('rethinkdb');
 
-function backfilldatapacket(connection, clocktrim, currentbatchid, detectoruid, gps ) {
-
-    connection.query("SELECT id, dmatime from datapackets where needsprocessing = 1 and batchid = " + currentbatchid + " and detectoruid = " + detectoruid, function(err, rows) {
-        rows.forEach(function (changed) {
-                    // work out actual start
-                    //dmatime is number of cpucycles count at end of sample
-                    //clocktrim is cycles per second
-                    var endsampletime = changed.dmatime / clocktrim;
-                    var endsampletimens = endsampletime * 1000000000;
-                    var nspersample = 373;  //1,000,000,000
-                    var firstsampletimestamp = endsampletimens - (728 * nspersample);
-                    // firstsampletimestamp = no of ns since the first second
-
-            connection.execute("update datapackets set needsprocessing = 0, firstsampletimestamp = " + firstsampletimestamp + ", clocktrim = " + clocktrim + ", gpshour = " + gps.hour + ",gpsminute = " + gps.min + ", gpssecond = " + gps.sec + " where id = changed.id");
-
-                });
-            });
-        
-}
 
 function distance(lat1, lon1, lat2, lon2, unit) {
     var radlat1 = Math.PI * lat1 / 180;
