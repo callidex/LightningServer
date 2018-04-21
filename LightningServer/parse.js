@@ -50,8 +50,7 @@ function parseADCSamplePacket(tempObject, buffer) {
     tempObject.batchid = buffer[8];
     tempObject.dmatime = buffer.readUInt32LE(12);
     tempObject.data = [];
-    console.log("Data packet found from ");
-    console.log(tempObject.detectoruid);
+    console.log("Data packet found from ", tempObject.detectoruid);
 
     for (var i = 0; i < (728 * 2); i = i + 2) {
         tempObject.data.push((buffer[i + 15] << 8) + buffer[i + 1 + 15]);
@@ -100,28 +99,16 @@ function parseStatusPacket(tempObject, buffer, conn) {
     tempObject.avgadcnoise = sliced.readUInt16LE(114);
     tempObject.batchid = sliced[116];
     //tmp
-    if (tempObject.detectoruid != 74567)
-        backfilldatapacket(conn, tempObject.clocktrim, tempObject.packetnumber, tempObject.detectoruid, tempObject.gps);
+    backfilldatapacket(conn, tempObject.clocktrim, tempObject.packetnumber, tempObject.detectoruid, tempObject.gps);
 
     return tempObject;
 }
 var rethink = require('rethinkdb');
 
 function backfilldatapacket(connection, clocktrim, currentbatchid, detectoruid, gps ) {
-    //        find all the needsprocessing = 1 && batchnumber = currentbatchid && detectoruid
 
-    rethink.db('lightning').table('datapackets')
-        .filter({
-            "needsprocessing": 1,
-            "batchid": currentbatchid,
-            "detectoruid": detectoruid
-        }).pluck('id', 'dmatime')
-        .run(connection, function (err, cursor) {
-            if (err) throw err;
-
-            cursor.toArray().then(function (results) {
-                // results are all the data packets previously received
-                results.forEach(function (changed) {
+    connection.query("SELECT id, dmatime from datapackets where needsprocessing = 1 and batchid = " + currentbatchid + " and detectoruid = " + detectoruid, function(err, rows) {
+        rows.forEach(function (changed) {
                     // work out actual start
                     //dmatime is number of cpucycles count at end of sample
                     //clocktrim is cycles per second
@@ -130,17 +117,12 @@ function backfilldatapacket(connection, clocktrim, currentbatchid, detectoruid, 
                     var nspersample = 373;  //1,000,000,000
                     var firstsampletimestamp = endsampletimens - (728 * nspersample);
                     // firstsampletimestamp = no of ns since the first second
-                    rethink.db('lightning')
-                        .table('datapackets').get(changed.id)
-                        .update({ 'firstsampletimestamp': firstsampletimestamp, 'clocktrim': clocktrim , gps : gps})
-                        .run(connection, function (err, result) {
-                            if (err) { throw err; }
-                            console.log('updated');
-                        });
+
+            connection.execute("update datapackets set firstsampletimestamp = " + firstsampletimestamp + ", clocktrim = " + clocktrim + ", gpshour = " + gps.hour + ",gpsminute = " + gps.min + ", gpssecond = " + gps.sec + " where id = changed.id");
 
                 });
             });
-        });
+        
 }
 
 function distance(lat1, lon1, lat2, lon2, unit) {
