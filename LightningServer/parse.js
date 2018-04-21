@@ -118,7 +118,7 @@ function backfilldatapacket(connection, clocktrim, currentbatchid, detectoruid, 
                     var firstsampletimestamp = endsampletimens - (728 * nspersample);
                     // firstsampletimestamp = no of ns since the first second
 
-            connection.execute("update datapackets set firstsampletimestamp = " + firstsampletimestamp + ", clocktrim = " + clocktrim + ", gpshour = " + gps.hour + ",gpsminute = " + gps.min + ", gpssecond = " + gps.sec + " where id = changed.id");
+            connection.execute("update datapackets set needsprocessing = 0, firstsampletimestamp = " + firstsampletimestamp + ", clocktrim = " + clocktrim + ", gpshour = " + gps.hour + ",gpsminute = " + gps.min + ", gpssecond = " + gps.sec + " where id = changed.id");
 
                 });
             });
