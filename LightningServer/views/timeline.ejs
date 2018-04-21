@@ -25,11 +25,14 @@
 
 	var items = [
  
+ 
+
 
     <% for(var k=0; k<samples.length; k++) {%>
+
        { id: <%= k %> , content: 'pop', 
 	   
-	   start: '<%= new Date(samples[k].gps.year,samples[k].gps.month -1 ,samples[k].gps.day ,samples[k].gps.hour,samples[k].gps.min,samples[k].gps.sec ); %>' , group: <%= samples[k].detectoruid %>, content: '<%= samples[k].detectoruid %>'  ,  type: 'point'},
+	   start: '<%= new Date(samples[k].gpsyear,samples[k].gpsmonth,samples[k].gpsday ,samples[k].gpshour,samples[k].gpsmin,samples[k].gpssec ); %>' , group: <%= samples[k].detectoruid %>, content: '<%= samples[k].detectoruid %>'  ,  type: 'point'},
   <% } %>
   ];
  var dataset = new vis.DataSet(items);

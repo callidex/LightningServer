@@ -36,21 +36,33 @@ restapiapp.get('/', function (req, res) {
 });
 
 restapiapp.get('/packets/:page', function (req, res, next) {
-    var perPage = 8;
+    var perPage = 30;
     var page = req.params.page || 1;
 
     var calc = (perPage * page) - perPage;
-    var sql = "select * from lightning.datapackets order by received desc limit " + calc + " , " + perPage;
+    var sql = "select * from lightning.datapackets d join lightning.statuspackets s on s.id = d.status_fk order by d.received desc limit " + calc + " , " + perPage;
     mysqlcon.query(sql, function (err, results) {
         if (err) throw err;
-        res.render('packets', { samples: results, current: page, pages: 1, filter: filters });
+        results.forEach(function (result) {
+            result.data = compressdataarray(result.data);
+        });
+        res.render('packets', { samples: results, current: page, pages: 1 });
     });
 });
 
+var compressdataarray = function (arr) {
+    var t = [];
+    for (var i = 0; i < (728 * 2); i = i + 2) {
+        t.push((arr[i + 1 + 15] << 8) + arr[i + 15]);
+    }
+    return t;
+}
+
 
 restapiapp.get('/timeline', function (req, res, next) {
-    var sql = "select gpshour, gpsminute, gpssecond, detectoruid from lightning.datapackets";
-    mysqlcon.query(sql, function (err, result) {
+
+    var sql = "select s.gpsyear, s.gpsmonth -1 as gpsmonth, s.gpsday, s.gpshour, s.gpsmin, s.gpssec, s.detectoruid from lightning.datapackets d join lightning.statuspackets s on s.id = d.status_fk";
+    mysqlcon.query(sql, function (err, results) {
         if (err) throw err;
         var set = results.map(item => item.detectoruid).filter((value, index, self) => self.indexOf(value) === index);
         res.render('timeline', { samples: results, detectors: set });
