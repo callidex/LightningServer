@@ -61,7 +61,7 @@ var compressdataarray = function (arr) {
 
 restapiapp.get('/timeline', function (req, res, next) {
 
-    var sql = "select s.gpsyear, s.gpsmonth -1 as gpsmonth, s.gpsday, s.gpshour, s.gpsmin, s.gpssec, s.detectoruid from lightning.datapackets d join lightning.statuspackets s on s.id = d.status_fk";
+    var sql = "select s.gpsyear, s.gpsmonth -1 as gpsmonth, s.gpsday, s.gpshour, s.gpsmin, s.gpssec, s.detectoruid from lightning.datapackets d join lightning.statuspackets s on s.id = d.status_fk group by gpsyear, gpsmonth, gpsday, gpshour, gpsmin, gpssec, detectoruid";
     mysqlcon.query(sql, function (err, results) {
         if (err) throw err;
         var set = results.map(item => item.detectoruid).filter((value, index, self) => self.indexOf(value) === index);
