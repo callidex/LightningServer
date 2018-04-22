@@ -10,6 +10,7 @@ var express = require('express'),
     bodyParser = require('body-parser');
 
 const mysql = require('mysql2');
+const peak = require("./peakdetect");
 
 var mysqlcon = mysql.createConnection({
     host: "localhost",
@@ -46,6 +47,7 @@ restapiapp.get('/packets/:page', function (req, res, next) {
         if (err) throw err;
         results.forEach(function (result) {
             result.data = compressdataarray(result.data);
+            result.signaldata = peak.calcpeak(result.data, 10);
         });
         res.render('packets', { samples: results, current: page, pages: 1 });
     });
@@ -107,7 +109,7 @@ stmserver.on("message",
         var now = Date.now();
         // forward to Bob's Boing Machine
 
-        //  forwardToBob(message);
+        forwardToBob(message);
 
         var packet = {
             version: "0.4",
