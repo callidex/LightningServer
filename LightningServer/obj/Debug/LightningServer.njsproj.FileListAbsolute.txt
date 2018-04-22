@@ -1,3 +1,6 @@
 C:\GitHub\LightningServer\LightningServer\obj\Debug\LightningServer.njsproj.CoreCompileInputs.cache
 C:\GitHub\LightningServer\LightningServer\bin\Microsoft.NodejsTools.WebRole.dll
 C:\GitHub\LightningServer\LightningServer\obj\Debug\LightningServer.njsprojResolveAssemblyReference.cache
+D:\GitHub\LightningServer\LightningServer\obj\Debug\LightningServer.njsprojResolveAssemblyReference.cache
+D:\GitHub\LightningServer\LightningServer\obj\Debug\LightningServer.njsproj.CoreCompileInputs.cache
+D:\GitHub\LightningServer\LightningServer\bin\Microsoft.NodejsTools.WebRole.dll

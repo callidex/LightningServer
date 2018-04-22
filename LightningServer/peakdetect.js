@@ -20,9 +20,9 @@ module.exports = {
                 if (windowstddev > stddev) {
                     if (windowstddev > maxstddev) {
                         // flag a signal at the highest point in the window
-                        var localmax = math.max(window);
+                        var localmax = Math.max.apply(null, window.map(Math.abs));
                         for (var j = 0; j < window.length; j++) {
-                            if (window[j] == localmax) {
+                            if (Math.abs(window[j]) == localmax) {
                                 signal[i - lag + j] = 1;
                             }
                         }

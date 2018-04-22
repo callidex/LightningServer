@@ -17,7 +17,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d44a4436-d7a0-43b6-b75b-c91d70ccf974</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>mapping.js</StartupFile>
+    <StartupFile>server.js</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -42,9 +42,19 @@
     </Compile>
     <Compile Include="peakdetect.js" />
     <Compile Include="server.js" />
+    <Compile Include="solve.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="testclient.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="views\index.ejs" />
+    <Content Include="views\packets.ejs" />
+    <Content Include="views\filter.ejs" />
+    <Content Include="views\signal.ejs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="views\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
