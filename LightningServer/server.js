@@ -26,13 +26,14 @@ restapiapp.set('view engine', 'ejs');
 restapiapp.get('/', function (req, res) {
 
     var sql = "select * from lightning.datapackets order by received desc limit 7";
-    mysqlcon.query(sql, function (err, result) {
+    mysqlcon.query(sql, function (err, results) {
         if (err) throw err;
-        console.log(cursor);
-        cursor.toArray().then(function (results) {
-            res.render('index', { samples: results });
+        results.forEach(function (result) {
+            result.data = compressdataarray(result.data);
         });
+        res.render('index', { samples: results });
     });
+
 });
 
 restapiapp.get('/packets/:page', function (req, res, next) {
