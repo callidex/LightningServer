@@ -3,7 +3,7 @@ var math = require('mathjs');
 module.exports = {
     calcpeak: function (buffer, lag) {
         var maxstddev = 0;
-        
+
         var tbuf = buffer.filter(Boolean);
         var avg = math.mean(tbuf);
         tbuf = tbuf.map(function (item, index) {
@@ -15,14 +15,14 @@ module.exports = {
             var window = tbuf.slice(i - lag, i);
             if (window.length > 0) {
                 var windowavg = math.mean(window);
-                
+
                 var windowstddev = math.std(window);
                 if (windowstddev > stddev) {
                     if (windowstddev > maxstddev) {
                         // flag a signal at the highest point in the window
-                        var localmax = math.max(window);
+                        var localmax = Math.max.apply(null, window.map(Math.abs));
                         for (var j = 0; j < window.length; j++) {
-                            if (window[j] == localmax) {
+                            if (Math.abs(window[j]) == localmax) {
                                 signal[i - lag + j] = 1;
                             }
                         }
