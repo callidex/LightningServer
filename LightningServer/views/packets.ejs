@@ -31,7 +31,7 @@ groups.add({    id: 1, content: 'peaks', options: { drawPoints: true  }});
  var items = [
     <% for(var k=3; k<samples[i].data.length; k++) {%>
        { x: <%= k %> , y: <%= samples[i].data[k] %>, group: 0  },
-       { x: <%= k %> , y: <%= (samples[i].signaldata[k] * 100)+ samples[i].mean %>, group: 1 },
+       { x: <%= k %> , y: <%= (samples[i].signaldata[k] * 100)+ samples[i].mean %>, group: 1, label: { <% if(samples[i].signaldata[k] >0) { %> content : <%= k %> <% } %>} }, 
   <% } %>
 
 

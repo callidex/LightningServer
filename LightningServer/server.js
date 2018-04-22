@@ -38,7 +38,7 @@ restapiapp.get('/', function (req, res) {
 });
 
 restapiapp.get('/packets/:page', function (req, res, next) {
-    var perPage = 30;
+    var perPage = 1;
     var page = req.params.page || 1;
 
     var calc = (perPage * page) - perPage;
