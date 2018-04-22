@@ -11,7 +11,7 @@ var express = require('express'),
 
 const mysql = require('mysql2');
 const peak = require("./peakdetect");
-
+const math = require('mathjs');
 var mysqlcon = mysql.createConnection({
     host: "localhost",
     user: "mapping",
@@ -38,18 +38,21 @@ restapiapp.get('/', function (req, res) {
 });
 
 restapiapp.get('/packets/:page', function (req, res, next) {
-    var perPage = 1;
+    var perPage = 10;
     var page = req.params.page || 1;
+    mysqlcon.query("select count(*) as c from lightning.datapackets d join lightning.statuspackets s on s.id = d.status_fk ", function (err, count) {
+        var calc = (perPage * page) - perPage;
+        var sql = "select * from lightning.datapackets d join lightning.statuspackets s on s.id = d.status_fk order by d.received desc limit " + calc + " , " + perPage;
+        mysqlcon.query(sql, function (err, results) {
+            if (err) throw err;
+            results.forEach(function (result) {
+                result.data = compressdataarray(result.data);
+                result.signaldata = peak.calcpeak(result.data, 10);
+            });
 
-    var calc = (perPage * page) - perPage;
-    var sql = "select * from lightning.datapackets d join lightning.statuspackets s on s.id = d.status_fk order by d.received desc limit " + calc + " , " + perPage;
-    mysqlcon.query(sql, function (err, results) {
-        if (err) throw err;
-        results.forEach(function (result) {
-            result.data = compressdataarray(result.data);
-            result.signaldata = peak.calcpeak(result.data, 10);
+            res.render('packets', { samples: results, current: page, pages: math.floor(count[0].c / perPage) });
         });
-        res.render('packets', { samples: results, current: page, pages: 1 });
+
     });
 });
 
