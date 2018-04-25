@@ -256,11 +256,14 @@ var storeStatusPacketInMysql = function (parsedObject, con, rawpacketid) {
 }
 
 function backfilldatapacketfromstatus(connection, currentbatchid, detectoruid) {
-
-    connection.query("UPDATE  datapackets d JOIN statuspackets s ON d.batchid = s.batchid and d.detectoruid = s.detectoruid SET d.status_fk = s.id, d.needsprocessing = 0 WHERE   d.needsprocessing = 1;",
+    
+    connection.query("UPDATE  datapackets d JOIN statuspackets s ON d.batchid = s.batchid and d.detectoruid = s.detectoruid SET d.status_fk = s.id, d.needsprocessing = 0 WHERE   d.needsprocessing = 1 and d.detectoruid = " + detectoruid + " and d.batchid = " + currentbatchid,
         function (err, rows) {
 
-            if (err) throw err;
+            if (err) {
+                console.log("Error in backtrace");
+                throw err;
+            }
 
         });
 
