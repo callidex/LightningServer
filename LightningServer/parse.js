@@ -65,7 +65,7 @@ function parseADCSamplePacket(tempObject, buffer) {
     tempObject.stddev = math.sqrt(squares / tempObject.data.length);
 
     tempObject.signal = peak.calcpeak(tempObject.data, 5);
-    tempObject.signalcnt = math.sum(tempObject.signal);
+    tempObject.signalcnt = tempObject.signal.reduce(function (a, b) { return a + b; }, 0);
 
     tempObject.needsprocessing = 1;
     return tempObject;
