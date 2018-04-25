@@ -255,36 +255,34 @@ var storeStatusPacketInMysql = function (parsedObject, con, rawpacketid) {
     });
 }
 
+
 function backfilldatapacketfromstatus(connection, currentbatchid, detectoruid) {
-    
-    connection.query("UPDATE  datapackets d JOIN statuspackets s ON d.batchid = s.batchid and d.detectoruid = s.detectoruid SET d.status_fk = s.id, d.needsprocessing = 0 WHERE   d.needsprocessing = 1 and d.detectoruid = " + detectoruid + " and d.batchid = " + currentbatchid,
-        function (err, rows) {
+
+    connection.query("select id from datapackets d WHERE d.needsprocessing = 1 and d.detectoruid = " + detectoruid + " and d.batchid = " + currentbatchid,
+        function (err, datapacketsrows) {
 
             if (err) {
                 console.log("Error in backtrace");
                 throw err;
             }
 
-        });
+            connection.query("select id from statuspackets d WHERE d.detectoruid = " + detectoruid + " and d.batchid = " + currentbatchid + " order by received desc LIMIT 1",
+                function (err, statuspacketrows) {
 
-    /* connection.query("SELECT id, dmatime from datapackets where needsprocessing = 1 and batchid = " + currentbatchid + " and detectoruid = " + detectoruid, function (err, rows) {
-         rows.forEach(function(changed) {
-             // work out actual start
-             //dmatime is number of cpucycles count at end of sample
-             //clocktrim is cycles per second
-             var endsampletime = changed.dmatime / clocktrim;
-             var endsampletimens = endsampletime * 1000000000;
-             var nspersample = 373;  //1,000,000,000
-             var firstsampletimestamp = endsampletimens - (728 * nspersample);
-             // firstsampletimestamp = no of ns since the first second
-             var sql = "update datapackets set needsprocessing = 0, status_fk = " + statusrow + ", firstsampletimestamp = " + firstsampletimestamp + ", clocktrim = " + clocktrim + ", gpshour = " + gps.hour + ",gpsmin = " + gps.min + ", gpssec = " + gps.sec + " where id = " + changed.id;
-             connection.execute(sql);
- 
-         });
-     });
- // sod it, we're back to relational databases now, do the calcs later, just marry the tables up for now
- 
-     */
+                    if (err) {
+                        console.log("Error in 2nd level");
+                        throw err;
+                    }
+                    // 1 status, multiple data packets    
+                    var dataids = [];
+                    for (var i = 0; i < datapacketsrows.length; i++) {
+                        dataids.push(datapacketsrows[i].id);
+                    }
+                    var sql = "update datapackets set needsprocessing = 1,  status_fk = " + statuspacketrows[0].id + " where id in (" + dataids.join() + ");";
+                    connection.query(sql);
+                });
+
+        });
 }
 
 /* helper functions */
