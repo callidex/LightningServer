@@ -187,7 +187,7 @@ var storeDataPacketInMysql = function (parsedObject, con, rawpacketid) {
                     received: parsedObject.received,
                     rtsecs: parsedObject.rtsecs,
                     signaldata: new Buffer(fixedsignal),
-                    signalcnt: parsedObject.signalcnt,
+                    signalcnt: 0,  //parsedObject.signalcnt,
                     stddev: parsedObject.stddev,
                     udpnumber: parsedObject.udpnumber,
                     variance: parsedObject.variance,
