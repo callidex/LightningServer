@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.18.1/vis.min.css">
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.min.js"></script>
+
+
+</head>
+<body>
+    <div class="container">
+			<div id="visualization"></div>
+<script type="text/javascript">
+	var container = document.getElementById('visualization');
+
+	var groups = new vis.DataSet();
+
+	<% for(var j=0; j<detectors.length; j++) {%>
+	
+		groups.add( {id: <%=detectors[j]; %>});
+	<% } %>
+
+
+	var items = [
+ 
+ 
+
+
+    <% for(var k=0; k<samples.length; k++) {%>
+
+       { id: <%= k %> , content: 'pop', 
+	   
+	   start: '<%= new Date(samples[k].gpsyear,samples[k].gpsmonth,samples[k].gpsday ,samples[k].gpshour,samples[k].gpsmin,samples[k].gpssec ); %>' , group: <%= samples[k].detectoruid %>, content: '<%= samples[k].detectoruid %>'  ,  type: 'point'},
+  <% } %>
+  ];
+ var dataset = new vis.DataSet(items);
+
+var options = {
+    groupOrder: 'content'  // groupOrder can be a property name or a sorting function
+  };
+  var graph2d1 = new vis.Timeline(container, dataset, options);
+  graph2d1.setGroups(groups);
+
+
+</script>
+
+
+    </div>
+</body>
+</html>

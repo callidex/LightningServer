@@ -10,10 +10,12 @@
   </head>
   <body>
     <div class="container">
-<div id="visualization"></div>
-<script type="text/javascript">
+		<div id="visualization"></div>
+		<div id="filter"></div>
+		<script type="text/javascript">
     var container1 = document.getElementById('visualization');
-     var groups = new vis.DataSet();
+    var filter = document.getElementById('filter');
+	var groups = new vis.DataSet();
      groups.add({
         id: 0,
          content: '<%=samples[0].detectoruid %> <%=samples[0].received %>',
@@ -30,7 +32,14 @@
         options: {
             drawPoints: true,
         }})
-  
+     groups.add({
+        id: 2,
+         content: 'highpass',
+        options: {
+            drawPoints: false,
+        }})
+ 
+ 
 
   var items = [
     <% for(var i=0; i<samples[0].data.length; i++) {%>
@@ -40,10 +49,15 @@
        { x: <%= i %> , y: <%= (samples[0].signal[i] * 200)+ samples[0].mean %>, group: 1 },
   <% } %>
 
+      <% for(var i=0; i<filter.length; i++) {%>
+       { x: <%= i %> , y: <%= filter[i] %>, group: 2 },
+  <% } %>
+
+
   ];
  
   var dataset = new vis.DataSet(items);
-
+ 
   var options = {
       legend: {right: {position: 'top-left'}},   
       drawPoints: {
@@ -51,7 +65,7 @@
     }
   };
   var graph2d1 = new vis.Graph2d(container1, dataset, groups, options);
-
+ 
 </script>
 </div>
   </body>
