@@ -19,6 +19,7 @@ namespace core
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+ .UseUrls("http://0.0.0.0:5050")
                 .UseStartup<Startup>()
                 .Build();
     }
