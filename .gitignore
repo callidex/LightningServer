@@ -1,3 +1,7 @@
 *~
 .vs/LightningServer/v15/.suo
 /.vs/config/applicationhost.config
+/node_modules
+/LightningServer/node_modules/@types/mathjs
+/core/.vs/core/v15/Server/sqlite3/db.lock
+/core/.vs/core/v15/.suo
