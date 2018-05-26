@@ -10,6 +10,8 @@ import { HomeComponent } from './components/home/home.component';
 import { FetchDataComponent } from './components/fetchdata/fetchdata.component';
 import { CounterComponent } from './components/counter/counter.component';
 
+import { AgmCoreModule } from '@agm/core';
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -28,7 +30,10 @@ import { CounterComponent } from './components/counter/counter.component';
             { path: 'counter', component: CounterComponent },
             { path: 'fetch-data', component: FetchDataComponent },
             { path: '**', redirectTo: 'home' }
-        ])
+       ]),
+       AgmCoreModule.forRoot({
+          apiKey: 'AIzaSyAzHkF3OKTxPo-D8dB-P9iGhuBxSXcSs2Y'
+       })        
     ]
 })
 export class AppModuleShared {
