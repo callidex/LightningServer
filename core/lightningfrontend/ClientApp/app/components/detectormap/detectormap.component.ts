@@ -9,18 +9,27 @@ import { Http } from '@angular/http';
 
 export class DetectorMapComponent {
     title: string = 'Detectors';
-    lat: number = 51.678418;
-    lng: number = 7.809007;
 
-       public detectors: Detector[];
+    public detectors: Detector[] | undefined;
 
-constructor(http: Http, @Inject('BASE_URL') baseUrl: string) {
-  http.get(baseUrl + 'api/SampleData/Detectors').subscribe(result => {
-  this.detectors = result.json() as Detector[];
-  }, error => console.error(error));
-   }
+    lat: number = 0;
+    lon: number = 0;
+    label: string = "";
 
+
+    constructor(http: Http, @Inject('BASE_URL') baseUrl: string) {
+        http.get(baseUrl + 'api/SampleData/Detectors').subscribe(result => {
+            this.detectors = result.json() as Detector[];
+            if (this.detectors.length > 0) {
+                this.lat = this.detectors[0].Lat;
+                this.lon = this.detectors[0].Lon;
+                this.label = this.detectors[0].Name;
+            }
+        }, error => console.error(error));
+
+    }
 }
+
 interface Detector {
     Name: string;
     Lat: number;

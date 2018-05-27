@@ -18,8 +18,20 @@ namespace lightningfrontend.Controllers
         public IEnumerable<Detector> Detectors()
         {
             List<Detector> l = new List<Detector>();
-            l.Add(new Detector());
-            l.Add(new Detector());
+
+            lightningContext x = new lightningContext();
+            var detectorIDs = x.Statuspackets.Select(s => new
+            {
+                s.Detectoruid,
+                s.Gpslon,
+                s.Gpslat
+            }).Distinct();
+
+            foreach (var d in detectorIDs)
+            {
+                l.Add(new Detector() { Name = d.Detectoruid.ToString(), Lat = (decimal)d.Gpslat, Lon = (decimal)d.Gpslon });
+
+            }
             return l;
         }
 

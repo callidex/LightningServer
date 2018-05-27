@@ -7,7 +7,7 @@ import { platformDynamicServer, PlatformState, INITIAL_CONFIG } from '@angular/p
 import { createServerRenderer, RenderResult } from 'aspnet-prerendering';
 import { AppModule } from './app/app.server.module';
 
-enableProdMode();
+//enableProdMode();
 
 export default createServerRenderer(params => {
     const providers = [
@@ -19,8 +19,7 @@ export default createServerRenderer(params => {
     return platformDynamicServer(providers).bootstrapModule(AppModule).then(moduleRef => {
         const appRef: ApplicationRef = moduleRef.injector.get(ApplicationRef);
         const state = moduleRef.injector.get(PlatformState);
-        const zone = moduleRef.injector.get(NgZone);
-
+        const zone: NgZone = moduleRef.injector.get(NgZone);
         return new Promise<RenderResult>((resolve, reject) => {
             zone.onError.subscribe((errorInfo: any) => reject(errorInfo));
             appRef.isStable.first(isStable => isStable).subscribe(() => {

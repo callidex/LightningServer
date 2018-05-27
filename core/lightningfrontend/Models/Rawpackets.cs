@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace core
+namespace lightningContext
 {
     public partial class Rawpackets
     {

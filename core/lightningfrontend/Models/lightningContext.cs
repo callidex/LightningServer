@@ -1,8 +1,9 @@
 ﻿using System;
+using lightningContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace core
+namespace lightningfrontend
 {
     public partial class lightningContext : DbContext
     {

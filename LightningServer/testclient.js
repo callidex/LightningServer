@@ -1,5 +1,5 @@
-var port = 5000;
-var host = "127.0.0.1";
+var port = 8080;
+var host = "slashdit.com";
 
 var dgram = require("dgram");
 var message = new Buffer("Test data, arbtrary byte buffer ");

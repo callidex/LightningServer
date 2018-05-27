@@ -31,17 +31,17 @@ namespace core
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                //    app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-                //    {
-                //        HotModuleReplacement = true
-                //    });
+                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
+                {
+                    HotModuleReplacement = true
+                });
             }
             else
             {
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles();
+            //            app.UseStaticFiles();
 
             app.UseMvc(routes =>
             {
