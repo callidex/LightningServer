@@ -1,6 +1,5 @@
 ﻿import { Component, Inject } from '@angular/core';
-import { Http } from '@angular/http';
-
+import { HttpClient } from '@angular/common/http';
 @Component({
     selector: 'detectormap',
     templateUrl: './detectormap.component.html',
@@ -17,16 +16,15 @@ export class DetectorMapComponent {
     label: string = "";
 
 
-    constructor(http: Http, @Inject('BASE_URL') baseUrl: string) {
-        http.get(baseUrl + 'api/SampleData/Detectors').subscribe(result => {
-            this.detectors = result.json() as Detector[];
+    constructor(httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+        httpClient.get<Detector[]>(baseUrl + 'api/SampleData/Detectors').subscribe(result => {
+            this.detectors = result;
             if (this.detectors.length > 0) {
                 this.lat = this.detectors[0].Lat;
                 this.lon = this.detectors[0].Lon;
                 this.label = this.detectors[0].Name;
             }
         }, error => console.error(error));
-
     }
 }
 
