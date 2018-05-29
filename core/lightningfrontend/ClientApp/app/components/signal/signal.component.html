@@ -1,4 +1,6 @@
 <p>
     signal-component works!
 </p>
-<ngb-pagination [collectionSize]="70" [(page)]="page" aria-label="Default pagination"></ngb-pagination>
+<div *ngIf="chart">
+    <canvas id="canvas">{{ chart }}</canvas>
+</div>
