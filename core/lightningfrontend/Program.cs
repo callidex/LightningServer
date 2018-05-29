@@ -31,7 +31,6 @@ namespace lightningfrontend
                 .Build();
         public static void ServerThread()
         {
-
             UdpClient udpClient = new UdpClient(8080);
             while (true)
             {

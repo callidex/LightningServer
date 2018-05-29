@@ -7,11 +7,11 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './components/app/app.component';
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { HomeComponent } from './components/home/home.component';
-import { FetchDataComponent } from './components/fetchdata/fetchdata.component';
 import { CounterComponent } from './components/counter/counter.component';
 import { DetectorMapComponent } from './components/detectormap/detectormap.component';
 
 import { AgmCoreModule } from '@agm/core';
+import { SignalComponent } from './components/signal/signal.component';
 
 
 @NgModule({
@@ -19,9 +19,9 @@ import { AgmCoreModule } from '@agm/core';
         AppComponent,
         NavMenuComponent,
         CounterComponent,
-        FetchDataComponent,
         HomeComponent,
-        DetectorMapComponent
+        DetectorMapComponent,
+        SignalComponent
     ],
     imports: [
         CommonModule,
@@ -31,8 +31,8 @@ import { AgmCoreModule } from '@agm/core';
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
             { path: 'counter', component: CounterComponent },
-            { path: 'fetch-data', component: FetchDataComponent },
             { path: 'detectors', component: DetectorMapComponent },
+            { path: 'signals', component: SignalComponent },
             { path: '**', redirectTo: 'home' }
         ]),
         AgmCoreModule.forRoot({
