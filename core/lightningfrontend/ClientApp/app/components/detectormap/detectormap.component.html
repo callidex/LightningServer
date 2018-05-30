@@ -1,6 +1,4 @@
 ﻿
-<p *ngIf="!detectors"><em>Finding detectors...</em></p>
-
 <agm-map [latitude]="lat" [longitude]="lng">
     <agm-marker *ngFor="let detector of detectors"
                 [latitude]="detector.lat"
@@ -9,6 +7,10 @@
     </agm-marker>
 </agm-map>
 
+
+<p *ngIf="!detectors"><em>Finding detectors...</em></p>
+
+<p *ngIf="homeDetector">{{homeDetector.Name}} {{homeDetector.Lat}} {{homeDetector.Lon}}</p>
 
 <table class='table' *ngIf="detectors">
     <thead>

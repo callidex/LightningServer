@@ -24,10 +24,12 @@
 
   <ItemGroup>
     <None Remove="ClientApp\app\components\detectormap\detectormap.component.ts" />
+    <None Remove="ClientApp\app\geo-location.service.ts" />
   </ItemGroup>
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\app\components\detectormap\detectormap.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\geo-location.service.ts" />
   </ItemGroup>
 
   <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
