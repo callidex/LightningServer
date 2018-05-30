@@ -17,58 +17,35 @@ namespace lightningfrontend.Controllers
         [HttpGet("[action]")]
         public IEnumerable<Detector> Detectors()
         {
-            List<Detector> l = new List<Detector>();
+            List<Detector> detectorList = new List<Detector>();
 
-            lightningContext x = new lightningContext();
-            var detectorIDs = x.Statuspackets.Select(s => new
+            lightningContext context = new lightningContext();
+            var detectorIDs = context.Statuspackets.Select(s => new
             {
                 s.Detectoruid,
                 s.Gpslon,
-                s.Gpslat
-            }).Distinct();
+                s.Gpslat,
+                Received = s.Received??0
 
-            foreach (var d in detectorIDs)
+            }).Where(x=>x.Gpslon!=0 && x.Gpslat != 0).Distinct().GroupBy(x => x.Detectoruid).Select(x => x.Select(d => new Detector()
             {
-                l.Add(new Detector() { Name = d.Detectoruid.ToString(), Lat = (decimal)d.Gpslat, Lon = (decimal)d.Gpslon });
+                Name = d.Detectoruid.ToString(),
+                Lat = (decimal)d.Gpslat,
+                Lon = (decimal)d.Gpslon,
+                Received = d.Received
+            }));
 
-            }
-            return l;
-        }
-
-        [HttpGet("[action]")]
-        public IEnumerable<WeatherForecast> WeatherForecasts()
-        {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                DateFormatted = DateTime.Now.AddDays(index).ToString("d"),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            });
+            detectorList.AddRange(detectorIDs.SelectMany(x=>x.OrderByDescending(y=>y.Received).Take(1)));
+            return detectorList;
         }
 
         public class Detector
         {
             public decimal Lat { get; set; }
             public decimal Lon { get; set; }
-
+            public long Received { get; set; }
             public string Name { get; set; }
 
-        }
-
-        public class WeatherForecast
-        {
-            public string DateFormatted { get; set; }
-            public int TemperatureC { get; set; }
-            public string Summary { get; set; }
-
-            public int TemperatureF
-            {
-                get
-                {
-                    return 32 + (int)(TemperatureC / 0.5556);
-                }
-            }
         }
     }
 }

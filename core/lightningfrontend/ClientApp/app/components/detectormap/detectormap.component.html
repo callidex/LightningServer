@@ -3,10 +3,10 @@
 
 <agm-map [latitude]="lat" [longitude]="lng">
     <agm-marker *ngFor="let detector of detectors"
-                [label]="detector.name"
                 [latitude]="detector.lat"
-                [longitude]="detector.lon"></agm-marker>
-
+                [longitude]="detector.lon">
+        <agm-info-window isOpen="true">{{detector.name}}</agm-info-window>
+    </agm-marker>
 </agm-map>
 
 
@@ -16,14 +16,15 @@
             <th>Name</th>
             <th>Latitude</th>
             <th>Longitude</th>
+            <th>Received</th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let detector of detectors">
-            <td>Test</td>
             <td>{{ detector.name}}</td>
             <td>{{ detector.lon}}</td>
             <td>{{ detector.lat}}</td>
+            <td>{{ detector.received}}</td>
         </tr>
     </tbody>
 </table>

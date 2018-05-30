@@ -32,4 +32,5 @@ interface Detector {
     Name: string;
     Lat: number;
     Lon: number;
+    Received: number;
 }
