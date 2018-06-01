@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace lightningfrontend
 {
-    public partial class lightningContext : DbContext
+    public partial class LightningContext : DbContext
     {
         public virtual DbSet<Datapackets> Datapackets { get; set; }
         public virtual DbSet<Rawpackets> Rawpackets { get; set; }
-        public virtual DbSet<Statuspackets> Statuspackets { get; set; }
+        public virtual DbSet<Statuspacket> Statuspackets { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -165,7 +165,7 @@ namespace lightningfrontend
                     .HasMaxLength(45);
             });
 
-            modelBuilder.Entity<Statuspackets>(entity =>
+            modelBuilder.Entity<Statuspacket>(entity =>
             {
                 entity.ToTable("statuspackets");
 

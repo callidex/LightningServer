@@ -25,10 +25,10 @@ namespace lightningfrontend
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                  .UseUrls("http://0.0.0.0:5050")
-
+                .UseUrls("http://0.0.0.0:5050")
                 .UseStartup<Startup>()
                 .Build();
+
         public static void ServerThread()
         {
             UdpClient udpClient = new UdpClient(8080);

@@ -1,10 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace lightningContext
 {
-    public partial class Statuspackets
+    public partial class Statuspacket
     {
+        
+        public Statuspacket(byte[] rawBytes)
+        {
+            Address = rawBytes.Skip(0).ToString();
+        }
+
         public long Id { get; set; }
         public string Address { get; set; }
         public int? Avgadcnoise { get; set; }

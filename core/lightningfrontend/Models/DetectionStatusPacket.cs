@@ -1,4 +1,5 @@
-﻿using System;
+﻿using lightningContext;
+using System;
 using System.Threading;
 
 namespace lightningfrontend.Models
@@ -12,11 +13,18 @@ namespace lightningfrontend.Models
             this.incomingRawUdpPacket = incomingRawUdpPacket;
         }
 
-        public void StoreInDB()
+        public async void StoreInDB()
         {
             Console.WriteLine($"Status Packet storing on thread {Thread.CurrentThread.ManagedThreadId}");
 
-            throw new System.NotImplementedException();
+            //TODO: Strip out raw bytes into db object, EF push
+ 
+            Statuspacket packet = new Statuspacket(this.incomingRawUdpPacket.RawBytes);
+            using (var context = new LightningContext())
+            {
+                context.Add(packet);
+                await context.SaveChangesAsync();
+            }
         }
     }
 }
