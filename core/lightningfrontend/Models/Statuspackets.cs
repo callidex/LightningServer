@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace lightningContext
 {
     public partial class Statuspacket
     {
-
+        public const int PACKET_SIZE = 160;
         public Statuspacket(byte[] rawBytes)
         {
+            if (rawBytes.Length != PACKET_SIZE) throw new InvalidDataException("Packet incorrect size");
             //TODO: break out the bytes from the new format
             //These offsets all need fixing up
             Gpsitow = BitConverter.ToInt32(rawBytes, 4);

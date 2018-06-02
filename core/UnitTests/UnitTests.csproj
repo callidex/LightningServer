@@ -16,4 +16,13 @@
     <ProjectReference Include="..\lightningfrontend\lightningfrontend.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Packets\emptystatuscapture.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Packets\statuscapture.bin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

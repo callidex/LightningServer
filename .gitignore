@@ -5,3 +5,6 @@
 /LightningServer/node_modules/@types/mathjs
 /core/.vs/core/v15/Server/sqlite3/db.lock
 /core/.vs/core/v15/.suo
+/core/UnitTests/bin/Debug/netcoreapp2.0
+/core/UnitTests/obj
+/core/lightningfrontend/package-lock.json

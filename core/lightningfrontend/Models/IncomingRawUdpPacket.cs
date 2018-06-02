@@ -37,9 +37,6 @@ namespace lightningfrontend.Models
                     return PacketType.Status;
 
             }
-
-
-
             return PacketType.Unknown;
         }
 

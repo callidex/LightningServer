@@ -1,5 +1,6 @@
 ﻿using lightningContext;
 using System;
+using System.IO;
 using System.Threading;
 
 namespace lightningfrontend.Models
@@ -17,7 +18,7 @@ namespace lightningfrontend.Models
 
         public async void StoreInDB()
         {
-            if (!packet.IsReady()) throw new InvalidOperationException("Packet not constructed properly");
+            if (!packet.IsReady()) throw new InvalidDataException("Packet not constructed properly");
             using (var context = new LightningContext())
             {
                 context.Add(packet);
