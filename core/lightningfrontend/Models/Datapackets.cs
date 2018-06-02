@@ -17,10 +17,14 @@ namespace lightningContext
         }
         public bool IsReady() => _isReady;
 
+        private bool _isReady;
+
+        /* Do not edit below, generated from database structure*/
+
+
         public long Id { get; set; }
         public int? Adcseq { get; set; }
 
-        private bool _isReady;
 
         public string Address { get; set; }
         public int Batchid { get; set; }

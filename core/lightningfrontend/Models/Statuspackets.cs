@@ -7,42 +7,45 @@ namespace lightningContext
 {
     public partial class Statuspacket
     {
+
         public const int PACKET_SIZE = 160;
         public Statuspacket(byte[] rawBytes)
         {
             if (rawBytes.Length != PACKET_SIZE) throw new InvalidDataException($"Packet incorrect size ({rawBytes.Length})");
+
+            ArrayPopper p = new ArrayPopper(rawBytes);
             //TODO: break out the bytes from the new format
             //These offsets all need fixing up
-            Gpsitow = BitConverter.ToInt32(rawBytes, 4);
-            Gpsyear = BitConverter.ToInt16(rawBytes, 8);
-            Gpsmonth = BitConverter.ToChar(rawBytes, 6);
-            Gpsday = BitConverter.ToChar(rawBytes, 7);
-            Gpshour = BitConverter.ToChar(rawBytes, 7);
-            Gpsmin = BitConverter.ToChar(rawBytes, 7);
-            Gpssec = BitConverter.ToChar(rawBytes, 7);
-            Gpsvalid = BitConverter.ToChar(rawBytes, 7);
-            Gpstacc = BitConverter.ToChar(rawBytes, 7);
-            Gpsnano = BitConverter.ToChar(rawBytes, 7);
-            Gpsfixtype = BitConverter.ToChar(rawBytes, 7);
-            Gpsflags = BitConverter.ToChar(rawBytes, 7);
-            Gpsres1 = BitConverter.ToChar(rawBytes, 7);
-            Gpsres2 = BitConverter.ToChar(rawBytes, 7);
-            Gpsres3 = BitConverter.ToChar(rawBytes, 7);
-            Gpsnumsv = BitConverter.ToChar(rawBytes, 7);
-            Gpslon = BitConverter.ToChar(rawBytes, 7);
-            Gpslat = BitConverter.ToChar(rawBytes, 7);
-            Gpsheight = BitConverter.ToChar(rawBytes, 7);
-            Gpshmsl = BitConverter.ToChar(rawBytes, 7);
-            Gpshacc = BitConverter.ToChar(rawBytes, 7);
-            Gpsvacc = BitConverter.ToChar(rawBytes, 7);
-            Gpsveln = BitConverter.ToChar(rawBytes, 7);
-            Gpsvele = BitConverter.ToChar(rawBytes, 7);
-            Gpsveld = BitConverter.ToChar(rawBytes, 7);
-            Gpsgspeed = BitConverter.ToChar(rawBytes, 7);
-            Gpsheading = BitConverter.ToChar(rawBytes, 7);
-            Gpssacc = BitConverter.ToChar(rawBytes, 7);
-            Gpsheadingacc = BitConverter.ToChar(rawBytes, 7);
-            Gpspdop = BitConverter.ToChar(rawBytes, 7);
+            Gpsitow = BitConverter.ToUInt32(rawBytes, 4);
+            Gpsyear = BitConverter.ToUInt16(rawBytes, 8);
+            Gpsmonth = rawBytes[6];
+            Gpsday = rawBytes[6];
+            Gpshour = rawBytes[6];
+            Gpsmin = rawBytes[6];
+            Gpssec = rawBytes[6];
+            Gpsvalid = rawBytes[6];
+            Gpstacc = BitConverter.ToUInt32(rawBytes, 7);
+            Gpsnano = BitConverter.ToInt32(rawBytes, 7);
+            Gpsfixtype = rawBytes[7];
+            Gpsflags = rawBytes[7];
+            Gpsres1 = rawBytes[7];
+            Gpsres2 = rawBytes[7];
+            Gpsres3 = rawBytes[7];
+            Gpsnumsv = rawBytes[7];
+            Gpslon = BitConverter.ToInt32(rawBytes, 7);
+            Gpslat = BitConverter.ToInt32(rawBytes, 7);
+            Gpsheight = BitConverter.ToInt32(rawBytes, 7);
+            Gpshmsl = BitConverter.ToInt32(rawBytes, 7);
+            Gpshacc = BitConverter.ToUInt32(rawBytes, 7);
+            Gpsvacc = BitConverter.ToUInt32(rawBytes, 7);
+            Gpsveln = BitConverter.ToInt32(rawBytes, 7);
+            Gpsvele = BitConverter.ToInt32(rawBytes, 7);
+            Gpsveld = BitConverter.ToInt32(rawBytes, 7);
+            Gpsgspeed = BitConverter.ToInt32(rawBytes, 7);
+            Gpsheading = BitConverter.ToInt32(rawBytes, 7);
+            Gpssacc = BitConverter.ToUInt32(rawBytes, 7);
+            Gpsheadingacc = BitConverter.ToInt32(rawBytes, 7);
+            Gpspdop = BitConverter.ToUInt16(rawBytes, 7);
 
             Clocktrim = BitConverter.ToChar(rawBytes, 7);
             Detectoruid = BitConverter.ToChar(rawBytes, 7);
@@ -60,12 +63,14 @@ namespace lightningContext
         }
         public bool IsReady() => _isReady;
 
+        private bool _isReady;
+
+        /* Do not edit below, generated from database structure*/
+
         public long Id { get; set; }
         public string Address { get; set; }
         public int? Avgadcnoise { get; set; }
         public int? Batchid { get; set; }
-
-        private bool _isReady;
 
         public long? Clocktrim { get; set; }
         public int? Detectoruid { get; set; }
