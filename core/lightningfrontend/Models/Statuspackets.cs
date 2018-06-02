@@ -6,16 +6,65 @@ namespace lightningContext
 {
     public partial class Statuspacket
     {
-        
+
         public Statuspacket(byte[] rawBytes)
         {
-            Address = rawBytes.Skip(0).ToString();
+            //TODO: break out the bytes from the new format
+            //These offsets all need fixing up
+            Gpsitow = BitConverter.ToInt32(rawBytes, 4);
+            Gpsyear = BitConverter.ToInt16(rawBytes, 8);
+            Gpsmonth = BitConverter.ToChar(rawBytes, 6);
+            Gpsday = BitConverter.ToChar(rawBytes, 7);
+            Gpshour = BitConverter.ToChar(rawBytes, 7);
+            Gpsmin = BitConverter.ToChar(rawBytes, 7);
+            Gpssec = BitConverter.ToChar(rawBytes, 7);
+            Gpsvalid = BitConverter.ToChar(rawBytes, 7);
+            Gpstacc = BitConverter.ToChar(rawBytes, 7);
+            Gpsnano = BitConverter.ToChar(rawBytes, 7);
+            Gpsfixtype = BitConverter.ToChar(rawBytes, 7);
+            Gpsflags = BitConverter.ToChar(rawBytes, 7);
+            Gpsres1 = BitConverter.ToChar(rawBytes, 7);
+            Gpsres2 = BitConverter.ToChar(rawBytes, 7);
+            Gpsres3 = BitConverter.ToChar(rawBytes, 7);
+            Gpsnumsv = BitConverter.ToChar(rawBytes, 7);
+            Gpslon = BitConverter.ToChar(rawBytes, 7);
+            Gpslat = BitConverter.ToChar(rawBytes, 7);
+            Gpsheight = BitConverter.ToChar(rawBytes, 7);
+            Gpshmsl = BitConverter.ToChar(rawBytes, 7);
+            Gpshacc = BitConverter.ToChar(rawBytes, 7);
+            Gpsvacc = BitConverter.ToChar(rawBytes, 7);
+            Gpsveln = BitConverter.ToChar(rawBytes, 7);
+            Gpsvele = BitConverter.ToChar(rawBytes, 7);
+            Gpsveld = BitConverter.ToChar(rawBytes, 7);
+            Gpsgspeed = BitConverter.ToChar(rawBytes, 7);
+            Gpsheading = BitConverter.ToChar(rawBytes, 7);
+            Gpssacc = BitConverter.ToChar(rawBytes, 7);
+            Gpsheadingacc = BitConverter.ToChar(rawBytes, 7);
+            Gpspdop = BitConverter.ToChar(rawBytes, 7);
+
+            Clocktrim = BitConverter.ToChar(rawBytes, 7);
+            Detectoruid = BitConverter.ToChar(rawBytes, 7);
+            Packetssent = BitConverter.ToChar(rawBytes, 7);
+            Triggernoise = BitConverter.ToChar(rawBytes, 7);
+            Triggeroffset = BitConverter.ToChar(rawBytes, 7);
+            Sysuptime = BitConverter.ToChar(rawBytes, 7);
+            Netuptime = BitConverter.ToChar(rawBytes, 7);
+            Gpsuptime = BitConverter.ToChar(rawBytes, 7);
+            Majorversion = BitConverter.ToChar(rawBytes, 7);
+            Avgadcnoise = BitConverter.ToChar(rawBytes, 7);
+            Batchid = BitConverter.ToChar(rawBytes, 7);
+
+            _isReady = true;
         }
+        public bool IsReady() => _isReady;
 
         public long Id { get; set; }
         public string Address { get; set; }
         public int? Avgadcnoise { get; set; }
         public int? Batchid { get; set; }
+
+        private bool _isReady;
+
         public long? Clocktrim { get; set; }
         public int? Detectoruid { get; set; }
         public int? Gpsday { get; set; }

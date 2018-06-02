@@ -7,7 +7,7 @@ namespace lightningfrontend
 {
     public partial class LightningContext : DbContext
     {
-        public virtual DbSet<Datapackets> Datapackets { get; set; }
+        public virtual DbSet<Datapacket> Datapackets { get; set; }
         public virtual DbSet<Rawpackets> Rawpackets { get; set; }
         public virtual DbSet<Statuspacket> Statuspackets { get; set; }
 
@@ -22,7 +22,7 @@ namespace lightningfrontend
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Datapackets>(entity =>
+            modelBuilder.Entity<Datapacket>(entity =>
             {
                 entity.ToTable("datapackets");
 

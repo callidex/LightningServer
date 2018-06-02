@@ -1,6 +1,6 @@
 ﻿import { Component, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { GeoLocationService  } from '../../geo-location.service';
+import { GeoLocationService } from '../../geo-location.service';
 
 @Component({
     selector: 'detectormap',
@@ -13,25 +13,20 @@ export class DetectorMapComponent {
     public detectors: IDetector[] | undefined;
     homeDetector: HomeDetector | undefined;
 
-    constructor(httpClient: HttpClient, private  geoLocationService: GeoLocationService, @Inject('BASE_URL') baseUrl: string) {
+    constructor(httpClient: HttpClient, private geoLocationService: GeoLocationService, @Inject('BASE_URL') baseUrl: string) {
 
-     
+
         httpClient.get<IDetector[]>(baseUrl + 'api/SampleData/Detectors').subscribe(result => {
             this.detectors = result;
-            
-            navigator.geolocation.getCurrentPosition((position) => {
-                this.homeDetector = new HomeDetector();
-                this.homeDetector.Lat = (position.coords.latitude);
-                this.homeDetector.Lon = (position.coords.longitude);
-            }
 
-            );
-
-
-        }, error => console.error(error));
+        }, error => console.error(error), () => navigator.geolocation.getCurrentPosition((position) => {
+            this.homeDetector = new HomeDetector();
+            this.homeDetector.Lat = (position.coords.latitude);
+            this.homeDetector.Lon = (position.coords.longitude);
+        }));
     }
 }
-class HomeDetector implements IDetector  {
+class HomeDetector implements IDetector {
     Name: string = "You are here";
     Lat: number = 0;
     Lon: number = 0;

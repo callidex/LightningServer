@@ -7,19 +7,17 @@ namespace lightningfrontend.Models
     internal class DetectionStatusPacket : IDetectionPacket
     {
         private IncomingRawUdpPacket incomingRawUdpPacket;
+        private Statuspacket packet;
 
         public DetectionStatusPacket(IncomingRawUdpPacket incomingRawUdpPacket)
         {
             this.incomingRawUdpPacket = incomingRawUdpPacket;
+            packet = new Statuspacket(this.incomingRawUdpPacket.RawBytes);
         }
 
         public async void StoreInDB()
         {
-            Console.WriteLine($"Status Packet storing on thread {Thread.CurrentThread.ManagedThreadId}");
-
-            //TODO: Strip out raw bytes into db object, EF push
- 
-            Statuspacket packet = new Statuspacket(this.incomingRawUdpPacket.RawBytes);
+            if (!packet.IsReady()) throw new InvalidOperationException("Packet not constructed properly");
             using (var context = new LightningContext())
             {
                 context.Add(packet);

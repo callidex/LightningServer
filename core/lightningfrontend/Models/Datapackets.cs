@@ -1,12 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime;
 
 namespace lightningContext
 {
-    public partial class Datapackets
+    public partial class Datapacket
     {
+        public Datapacket(byte[] rawBytes)
+        {
+            //TODO: break out the bytes from the new format
+            Adcseq = BitConverter.ToInt32(rawBytes, 20);
+
+
+            _isReady = true;
+        }
+        public bool IsReady() => _isReady;
+
         public long Id { get; set; }
         public int? Adcseq { get; set; }
+
+        private bool _isReady;
+
         public string Address { get; set; }
         public int Batchid { get; set; }
         public long? Clocktrim { get; set; }
