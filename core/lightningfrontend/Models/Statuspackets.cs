@@ -10,6 +10,10 @@ namespace lightningContext
 
     public partial class Statuspacket
     {
+        /* for discussion, move the version to the beginning of the packet so we can switch.  There will be a time where there are multiple versions live do we 
+        cater for that or just force upgrade to latest? */
+        
+        
         [StructLayout(LayoutKind.Sequential)]
         public struct Statpkt
         {
