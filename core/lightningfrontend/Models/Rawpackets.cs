@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace lightningContext
 {
-    public partial class Rawpackets
+    public partial class Rawpacket
     {
         public long Id { get; set; }
         public string Address { get; set; }

@@ -8,7 +8,7 @@ namespace lightningfrontend
     public partial class LightningContext : DbContext
     {
         public virtual DbSet<Datapacket> Datapackets { get; set; }
-        public virtual DbSet<Rawpackets> Rawpackets { get; set; }
+        public virtual DbSet<Rawpacket> Rawpackets { get; set; }
         public virtual DbSet<Statuspacket> Statuspackets { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -123,7 +123,7 @@ namespace lightningfrontend
                 entity.Property(e => e.Version).HasColumnName("version");
             });
 
-            modelBuilder.Entity<Rawpackets>(entity =>
+            modelBuilder.Entity<Rawpacket>(entity =>
             {
                 entity.ToTable("rawpackets");
 

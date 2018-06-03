@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using lightningContext;
+using System.Net;
 
 namespace lightningfrontend.Models
 {
@@ -21,6 +22,17 @@ namespace lightningfrontend.Models
         public IncomingRawUdpPacket(byte[] incomingByteArray)
         {
             RawBytes = incomingByteArray;
+        }
+
+        public async void StoreInDB()
+        {
+            Rawpacket packet = new Rawpacket();
+
+            using (var context = new LightningContext())
+            {
+                context.Add(packet);
+                await context.SaveChangesAsync();
+            }
         }
 
         public PacketType GetPacketType()

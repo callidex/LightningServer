@@ -42,12 +42,15 @@ namespace lightningfrontend
                 Console.WriteLine($"Packet incoming on thread {Thread.CurrentThread.ManagedThreadId}");
                 if (potentialPacket.GetPacketType() != Models.PacketType.Unknown)
                 {
+                    //Store the raw packet
+                    Task.Run(() => potentialPacket.StoreInDB());
+
+                    //Process and store the generated packet
                     Task.Run(() => potentialPacket.Generate().StoreInDB());
                 }
                 else
                 {
-                    Task.Run(() => Console.WriteLine($"Unknown Packet incoming on thread {Thread.CurrentThread.ManagedThreadId}")
-    );
+                    Task.Run(() => Console.WriteLine($"Unknown Packet incoming on thread {Thread.CurrentThread.ManagedThreadId}"));
                 }
             }
         }
