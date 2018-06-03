@@ -5,10 +5,11 @@ using System.Threading;
 
 namespace lightningfrontend.Models
 {
-    internal class DetectionStatusPacket : IDetectionPacket
+    public class DetectionStatusPacket : IDetectionPacket
     {
         private IncomingRawUdpPacket incomingRawUdpPacket;
         private Statuspacket packet;
+        public Statuspacket GetPacket() => packet;
 
         public DetectionStatusPacket(IncomingRawUdpPacket incomingRawUdpPacket)
         {

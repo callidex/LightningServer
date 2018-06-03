@@ -1,3 +1,4 @@
+using lightningContext;
 using lightningfrontend;
 using lightningfrontend.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -34,12 +35,15 @@ namespace UnitTests
             IncomingRawUdpPacket packet = new IncomingRawUdpPacket(testPacket);
             Assert.IsTrue(packet.GetPacketType() == PacketType.Status);
 
-            IDetectionPacket statusPacket = packet.Generate();
-            Assert.IsNotNull(statusPacket);
-            using (var lightningContext = new LightningContext())
-            {
+            DetectionStatusPacket detPacket = ((DetectionStatusPacket)packet.Generate());
+            Assert.IsNotNull(detPacket);
 
-            }
+            var statusPacket = detPacket.GetPacket();
+
+            Assert.IsTrue(statusPacket.Gpsday == 2);
+            Assert.IsTrue(statusPacket.Gpsmonth == 6);
+            Assert.IsTrue(statusPacket.Gpshour == 6);
+            Assert.IsTrue(statusPacket.Gpslat == -275603936);
 
         }
 
