@@ -14,7 +14,7 @@ namespace lightningContext
         cater for that or just force upgrade to latest? */
         
         
-        [StructLayout(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential, Pack = 2)]
         public struct Statpkt
         {
             public UInt32 udpcount;      // udp packet sent index (24 bits, other 8 bits are packet type)
