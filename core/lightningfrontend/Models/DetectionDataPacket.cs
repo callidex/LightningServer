@@ -22,11 +22,21 @@ namespace lightningfrontend.Models
         public async void StoreInDB()
         {
             if (!packet.IsReady()) throw new InvalidOperationException("Packet not constructed properly");
+            try
+            {
+            
+                
             using (var context = new LightningContext())
             {
                 context.Add(packet);
                 await context.SaveChangesAsync();
             }
+            }
+            catch( Exception e)
+            {
+            Console.WriteLine(e.Message);
+            }
+            
         }
     }
 

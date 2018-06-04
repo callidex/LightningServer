@@ -27,7 +27,7 @@ namespace lightningfrontend.Models
         public async void StoreInDB()
         {
             Rawpacket packet = new Rawpacket();
-
+            packet.Data = RawBytes;    
             using (var context = new LightningContext())
             {
                 context.Add(packet);
