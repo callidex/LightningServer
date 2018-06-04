@@ -12,24 +12,30 @@ namespace lightningfrontend.Models
         {
             if (instances.Any())
             {
+                // select the first (not in any order)
                 var rootDetector = instances.First();
-
                 List<DetectorDelta> detectorDeltas = new List<DetectorDelta>();
 
+                // create the intersections
                 foreach (var secondaryDetector in instances.Where(x => x != rootDetector))
                 {
                     detectorDeltas.Add(new DetectorDelta
                     {
-                        deltaLat = rootDetector.detectorLat - secondaryDetector.detectorLat,
-                        deltaLon = rootDetector.detectorLon - secondaryDetector.detectorLon,
-                        deltaTime = rootDetector.detectionTime - secondaryDetector.detectionTime
+                        deltaLat = rootDetector.DetectorLat - secondaryDetector.DetectorLat,
+                        deltaLon = rootDetector.DetectorLon - secondaryDetector.DetectorLon,
+                        deltaTime = rootDetector.DetectionTime - secondaryDetector.DetectionTime
                     });
+                }
+
+                foreach (var delta in detectorDeltas)
+                {
+
                 }
             }
             return null;
         }
-
     }
+
     public struct DetectorDelta
     {
         internal decimal deltaLat;
@@ -37,19 +43,18 @@ namespace lightningfrontend.Models
         internal decimal deltaTime;
     }
 
-
     public class Strike
     {
-        public decimal strikeLat { get; set; }
-        public decimal strikeLon { get; set; }
-        public decimal strikeTime { get; set; }
+        public decimal StrikeLat { get; set; }
+        public decimal StrikeLon { get; set; }
+        public decimal StrikeTime { get; set; }
 
     }
     public class DetectionInstance
     {
-        public decimal detectorLat { get; set; }
-        public decimal detectorLon { get; set; }
-        public decimal detectionTime { get; set; }
+        public decimal DetectorLat { get; set; }
+        public decimal DetectorLon { get; set; }
+        public decimal DetectionTime { get; set; }
 
     }
 }
