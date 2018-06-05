@@ -7,6 +7,15 @@ namespace lightningfrontend
 {
     public partial class LightningContext : DbContext
     {
+        public class Detector
+        {
+            public string Unique { get; set; }
+            public int ID { get; set; }
+        }
+
+
+        public virtual DbSet<Detector> Detectors { get; set; }
+
         public virtual DbSet<Datapacket> Datapackets { get; set; }
         public virtual DbSet<Rawpacket> Rawpackets { get; set; }
         public virtual DbSet<Statuspacket> Statuspackets { get; set; }
