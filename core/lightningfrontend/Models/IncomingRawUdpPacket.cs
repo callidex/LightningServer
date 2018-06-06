@@ -24,14 +24,16 @@ namespace lightningfrontend.Models
             RawBytes = incomingByteArray;
         }
 
-        public async void StoreInDB()
+        public void StoreInDB()
         {
-            Rawpacket packet = new Rawpacket();
-            packet.Data = RawBytes;    
+            Rawpacket packet = new Rawpacket
+            {
+                Data = RawBytes
+            };
             using (var context = new LightningContext())
             {
                 context.Add(packet);
-                await context.SaveChangesAsync();
+                context.SaveChanges();
             }
         }
 

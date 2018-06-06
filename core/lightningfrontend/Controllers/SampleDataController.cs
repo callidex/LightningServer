@@ -13,24 +13,25 @@ namespace lightningfrontend.Controllers
         public IEnumerable<Detector> Detectors()
         {
             List<Detector> detectorList = new List<Detector>();
-
-            LightningContext context = new LightningContext();
-            var detectorIDs = context.Statuspackets.Select(s => new
+            using (var context = new LightningContext())
             {
-                s.Detectoruid,
-                s.Gpslon,
-                s.Gpslat,
-                Received = s.Received??0
+                var detectorIDs = context.Statuspackets.Select(s => new
+                {
+                    s.Detectoruid,
+                    s.Gpslon,
+                    s.Gpslat,
+                    Received = s.Received ?? 0
 
-            }).Where(x=>x.Gpslon!=0 && x.Gpslat != 0).Distinct().GroupBy(x => x.Detectoruid).Select(x => x.Select(d => new Detector()
-            {
-                Name = d.Detectoruid.ToString(),
-                Lat = (decimal)d.Gpslat,
-                Lon = (decimal)d.Gpslon,
-                Received = d.Received
-            }));
+                }).Where(x => x.Gpslon != 0 && x.Gpslat != 0).Distinct().GroupBy(x => x.Detectoruid).Select(x => x.Select(d => new Detector()
+                {
+                    Name = d.Detectoruid.ToString(),
+                    Lat = (decimal)d.Gpslat,
+                    Lon = (decimal)d.Gpslon,
+                    Received = d.Received
+                }));
 
-            detectorList.AddRange(detectorIDs.SelectMany(x=>x.OrderByDescending(y=>y.Received).Take(1)));
+                detectorList.AddRange(detectorIDs.SelectMany(x => x.OrderByDescending(y => y.Received).Take(1)));
+            }
             return detectorList;
         }
 
