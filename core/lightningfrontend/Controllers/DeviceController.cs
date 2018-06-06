@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lightningfrontend.Controllers
@@ -7,7 +10,7 @@ namespace lightningfrontend.Controllers
     [Route("api/[controller]")]
     public class DeviceController : Controller
     {
-        [HttpGet("{name}")]
+        [HttpGet("{unique}")]
         public int Register(string unique)
         {
             if (unique == null) return 0;
