@@ -18,7 +18,7 @@ namespace lightningfrontend.Models
             Console.WriteLine($"Status Packet storing on thread {Thread.CurrentThread.ManagedThreadId}");
 
             //TODO: Strip out raw bytes into db object, EF push
- 
+
             Statuspacket packet = new Statuspacket(this.incomingRawUdpPacket.RawBytes);
             using (var context = new LightningContext())
             {

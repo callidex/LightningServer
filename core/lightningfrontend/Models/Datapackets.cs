@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace lightningContext
+﻿namespace lightningContext
 {
     public partial class Datapackets
     {

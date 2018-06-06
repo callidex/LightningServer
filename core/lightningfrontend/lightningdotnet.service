@@ -1,0 +1,21 @@
+[Unit]
+
+Description=VK4YA Lightning
+[Service]
+WorkingDirectory=/var/lightning
+
+ExecStart=/usr/bin/dotnet /var/lightning/aspnetcoredemo.dll
+
+Restart=always
+
+RestartSec=10
+
+SyslogIdentifier=dotnet-lightning
+
+User=www-data
+
+Environment=ASPNETCORE_ENVIRONMENT=Development
+
+[Install]
+
+WantedBy=multi-user.target

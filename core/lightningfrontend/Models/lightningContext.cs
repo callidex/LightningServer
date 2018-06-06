@@ -1,12 +1,11 @@
-﻿using System;
-using lightningContext;
+﻿using lightningContext;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace lightningfrontend
 {
     public partial class LightningContext : DbContext
     {
+        public virtual DbSet<DetectorRegistration> DetectorRegistrations { get; set; }
         public virtual DbSet<Datapackets> Datapackets { get; set; }
         public virtual DbSet<Rawpackets> Rawpackets { get; set; }
         public virtual DbSet<Statuspacket> Statuspackets { get; set; }
@@ -22,6 +21,21 @@ namespace lightningfrontend
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<DetectorRegistration>(entity =>
+            {
+                    entity.ToTable("detectors");
+                    entity.HasIndex(e => e.ID)
+                    .HasName("iddetectors_UNIQUE")
+                    .IsUnique();
+                    entity.Property(e => e.ID)
+                        .HasColumnName("id")
+                        .HasColumnType("int(8)");
+
+                    entity.Property(e => e.UniqueDeviceCode)
+                    .HasColumnName("devicecode")
+                    .HasMaxLength(45);
+            });
+
             modelBuilder.Entity<Datapackets>(entity =>
             {
                 entity.ToTable("datapackets");
