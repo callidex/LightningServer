@@ -25,13 +25,13 @@ namespace lightningfrontend
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseUrls("http://0.0.0.0:5050")
+                .UseUrls("http://0.0.0.0:8080")
                 .UseStartup<Startup>()
                 .Build();
 
         public static void ServerThread()
         {
-            UdpClient udpClient = new UdpClient(8080);
+            UdpClient udpClient = new UdpClient(5000);
             while (true)
             {
                 IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
@@ -42,12 +42,15 @@ namespace lightningfrontend
                 Console.WriteLine($"Packet incoming on thread {Thread.CurrentThread.ManagedThreadId}");
                 if (potentialPacket.GetPacketType() != Models.PacketType.Unknown)
                 {
+                    //Store the raw packet
+                    Task.Run(() => potentialPacket.StoreInDB());
+
+                    //Process and store the generated packet
                     Task.Run(() => potentialPacket.Generate().StoreInDB());
                 }
                 else
                 {
-                    Task.Run(() => Console.WriteLine($"Unknown Packet incoming on thread {Thread.CurrentThread.ManagedThreadId}")
-    );
+                    Task.Run(() => Console.WriteLine($"Unknown Packet incoming on thread {Thread.CurrentThread.ManagedThreadId}"));
                 }
             }
         }

@@ -1,22 +1,42 @@
-﻿using System;
-using System.Threading;
+﻿using lightningContext;
+using System;
 
 namespace lightningfrontend.Models
 {
     public class DetectionDataPacket : IDetectionPacket
     {
         private IncomingRawUdpPacket incomingRawUdpPacket;
+        private Datapacket packet;
 
-        public DetectionDataPacket(IncomingRawUdpPacket incomingRawUdpPacket)
+        private DetectionDataPacket()
         {
-            this.incomingRawUdpPacket = incomingRawUdpPacket;
+
         }
 
-        public void StoreInDB()
+        public DetectionDataPacket(IncomingRawUdpPacket packetWrapper)
         {
-            Console.WriteLine($"Data Packet storing on thread {Thread.CurrentThread.ManagedThreadId}");
+            this.incomingRawUdpPacket = packetWrapper;
+            packet = new Datapacket(packetWrapper.RawBytes);
+        }
 
-            throw new NotImplementedException();
+        public async void StoreInDB()
+        {
+            if (!packet.IsReady()) throw new InvalidOperationException("Packet not constructed properly");
+            try
+            {
+            
+                
+            using (var context = new LightningContext())
+            {
+                context.Add(packet);
+                await context.SaveChangesAsync();
+            }
+            }
+            catch( Exception e)
+            {
+            Console.WriteLine(e.Message);
+            }
+            
         }
     }
 

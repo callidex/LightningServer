@@ -137,7 +137,7 @@ namespace lightningfrontend
                 entity.Property(e => e.Version).HasColumnName("version");
             });
 
-            modelBuilder.Entity<Rawpackets>(entity =>
+            modelBuilder.Entity<Rawpacket>(entity =>
             {
                 entity.ToTable("rawpackets");
 

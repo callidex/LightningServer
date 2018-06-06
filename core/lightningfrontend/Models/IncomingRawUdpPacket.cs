@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using lightningContext;
+using System.Net;
 
 namespace lightningfrontend.Models
 {
@@ -23,6 +24,17 @@ namespace lightningfrontend.Models
             RawBytes = incomingByteArray;
         }
 
+        public async void StoreInDB()
+        {
+            Rawpacket packet = new Rawpacket();
+            packet.Data = RawBytes;    
+            using (var context = new LightningContext())
+            {
+                context.Add(packet);
+                await context.SaveChangesAsync();
+            }
+        }
+
         public PacketType GetPacketType()
         {
             if (RawBytes == null || RawBytes.Length < 3)
@@ -37,9 +49,6 @@ namespace lightningfrontend.Models
                     return PacketType.Status;
 
             }
-
-
-
             return PacketType.Unknown;
         }
 

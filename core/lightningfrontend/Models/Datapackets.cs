@@ -1,9 +1,29 @@
-﻿namespace lightningContext
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime;
+
+namespace lightningContext
 {
-    public partial class Datapackets
+    public partial class Datapacket
     {
+        public Datapacket(byte[] rawBytes)
+        { 
+
+
+            //_isReady = true;
+        }
+        public bool IsReady() => _isReady;
+
+        private bool _isReady;
+
+        /* Do not edit below, generated from database structure*/
+
+
         public long Id { get; set; }
         public int? Adcseq { get; set; }
+
+
         public string Address { get; set; }
         public int Batchid { get; set; }
         public long? Clocktrim { get; set; }

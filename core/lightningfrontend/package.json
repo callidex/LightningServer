@@ -50,20 +50,21 @@
     "preboot": "6.0.0-beta.4",
     "raw-loader": "0.5.1",
     "reflect-metadata": "0.1.12",
-    "rxjs": "6.2.0",
+    "rxjs": "^6.2.0",
     "style-loader": "0.21.0",
     "to-string-loader": "1.1.5",
     "typescript": "^2.8.3",
     "url-loader": "1.0.1",
     "webpack": "^4.10.1",
     "webpack-cli": "^2.1.4",
-    "webpack-dev-middleware": "^3.1.3",  
+    "webpack-dev-middleware": "^3.1.3",
     "webpack-hot-middleware": "2.22.2",
     "webpack-merge": "4.1.2",
     "zone.js": "0.8.26"
   },
   "dependencies": {
     "@agm/core": "^1.0.0-beta.3",
-    "popper.js": "^1.14.3" 
+    "popper.js": "^1.14.3",
+    "rxjs-compat": "^6.2.0"
   }
 }
