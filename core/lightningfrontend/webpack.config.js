@@ -28,7 +28,7 @@ module.exports = (env) => {
 
     // Configuration for client-side bundle suitable for running in browsers
     const clientBundleOutputDir = './wwwroot/dist';
-    const clientBundleConfig = merge(sharedConfig, {
+    const clientBundleConfig = merge(sharedConfig, {        
         entry: { 'main-client': './ClientApp/boot.browser.ts' },
         output: { path: path.join(__dirname, clientBundleOutputDir) },
         plugins: [
@@ -44,7 +44,7 @@ module.exports = (env) => {
             })
         ] : [
             // Plugins that apply in production builds only
-            new webpack.optimize.UglifyJsPlugin(),
+            //new webpack.optimize.UglifyJsPlugin(),
             new AngularCompilerPlugin({
                 tsConfigPath: './tsconfig.json',
                 entryModule: path.join(__dirname, 'ClientApp/app/app.browser.module#AppModule'),

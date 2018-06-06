@@ -25,9 +25,11 @@ const nonTreeShakableModules = [
 const allModules = treeShakableModules.concat(nonTreeShakableModules);
 
 module.exports = (env) => {
+ 
     const extractCSS = new ExtractTextPlugin('vendor.css');
     const isDevBuild = !(env && env.prod);
     const sharedConfig = {
+        mode: 'development',
         stats: { modules: false },
         resolve: { extensions: [ '.js' ] },
         module: {
@@ -67,7 +69,7 @@ module.exports = (env) => {
                 name: '[name]_[hash]'
             })
         ].concat(isDevBuild ? [] : [
-            new webpack.optimize.UglifyJsPlugin()
+            //new webpack.optimize.UglifyJsPlugin()
         ])
     });
 
