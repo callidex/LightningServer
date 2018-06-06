@@ -108,8 +108,8 @@ namespace lightningContext
             Gpsres2 = s.gpsnavpvt.reserved2;
             Gpsres3 = (int)s.gpsnavpvt.reserved3;
             Gpsnumsv = s.gpsnavpvt.numSV;
-            Gpslon = s.gpsnavpvt.lon;
-            Gpslat = s.gpsnavpvt.lat;
+            Gpslon = s.gpsnavpvt.lon  / 1e7f;
+            Gpslat = s.gpsnavpvt.lat / 1e7f;
             Gpsheight = s.gpsnavpvt.height;
             Gpshmsl = s.gpsnavpvt.hMSL;
             Gpshacc = s.gpsnavpvt.hAcc;

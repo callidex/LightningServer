@@ -19,7 +19,7 @@ namespace lightningfrontend.Models
             packet = new Datapacket(packetWrapper.RawBytes);
         }
 
-        public async void StoreInDB()
+        public void StoreInDB()
         {
             if (!packet.IsReady()) throw new InvalidOperationException("Packet not constructed properly");
             try
@@ -29,7 +29,7 @@ namespace lightningfrontend.Models
             using (var context = new LightningContext())
             {
                 context.Add(packet);
-                await context.SaveChangesAsync();
+                context.SaveChanges();
             }
             }
             catch( Exception e)

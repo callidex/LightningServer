@@ -26,7 +26,7 @@ namespace lightningfrontend.Controllers
                 {
                     var nextId = context.DetectorRegistrations.Sum(x => x.ID)+1;
                     context.DetectorRegistrations.Add(new DetectorRegistration() { ID = nextId, UniqueDeviceCode = unique });
-                    context.SaveChangesAsync();
+                    context.SaveChanges();
                     return nextId;
                 }
             }

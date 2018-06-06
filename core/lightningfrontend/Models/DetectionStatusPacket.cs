@@ -17,14 +17,14 @@ namespace lightningfrontend.Models
             packet = new Statuspacket(this.incomingRawUdpPacket.RawBytes);
         }
 
-        public async void StoreInDB()
+        public void StoreInDB()
         {
             if (!packet.IsReady()) throw new InvalidDataException("Packet not constructed properly");
             Console.WriteLine($"Status Packet storing on thread {Thread.CurrentThread.ManagedThreadId}");
             using (var context = new LightningContext())
             {
                 context.Add(packet);
-                await context.SaveChangesAsync();
+                context.SaveChanges();
             }
         }
     }
