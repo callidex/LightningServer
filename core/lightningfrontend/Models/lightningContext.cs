@@ -6,8 +6,8 @@ namespace lightningfrontend
     public partial class LightningContext : DbContext
     {
         public virtual DbSet<DetectorRegistration> DetectorRegistrations { get; set; }
-        public virtual DbSet<Datapackets> Datapackets { get; set; }
-        public virtual DbSet<Rawpackets> Rawpackets { get; set; }
+        public virtual DbSet<Datapacket> Datapackets { get; set; }
+        public virtual DbSet<Rawpacket> Rawpackets { get; set; }
         public virtual DbSet<Statuspacket> Statuspackets { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -36,7 +36,7 @@ namespace lightningfrontend
                     .HasMaxLength(45);
             });
 
-            modelBuilder.Entity<Datapackets>(entity =>
+            modelBuilder.Entity<Datapacket>(entity =>
             {
                 entity.ToTable("datapackets");
 
