@@ -8,3 +8,7 @@
 /core/.vs/core/DesignTimeBuild
 /core/.vs/core/v15/sqlite3/storage.ide
 /core/UnitTests/obj
+/core/.vs/core/v15/Server/sqlite3/storage.ide
+/core/.vs/core/v15/Server/sqlite3/storage.ide-shm
+/core/.vs/core/v15/Server/sqlite3/storage.ide-wal
+/core/.vs/config/applicationhost.config
