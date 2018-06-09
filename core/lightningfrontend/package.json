@@ -6,7 +6,6 @@
     "test": "karma start ClientApp/test/karma.conf.js",
     "build": "webpack --config webpack.config.js",
     "build-dev": "webpack --config webpack.config.js --mode=development --progress"
-
   },
   "devDependencies": {
     "@angular/animations": "6.0.3",

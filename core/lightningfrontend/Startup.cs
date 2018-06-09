@@ -30,11 +30,13 @@ namespace lightningfrontend
         {
             if (env.IsDevelopment())
             {
+#if DEBUG
                 app.UseDeveloperExceptionPage();
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
                     HotModuleReplacement = true
                 });
+#endif
             }
             else
             {
