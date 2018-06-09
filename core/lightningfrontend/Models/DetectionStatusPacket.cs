@@ -15,6 +15,7 @@ namespace lightningfrontend.Models
         {
             this.incomingRawUdpPacket = incomingRawUdpPacket;
             packet = new Statuspacket(this.incomingRawUdpPacket.RawBytes);
+
         }
 
         public void StoreInDB()

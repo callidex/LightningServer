@@ -10,14 +10,15 @@ namespace UnitTests
     [TestClass]
     public class UnitTest1
     {
-        [TestMethod, ExpectedException(typeof(InvalidDataException))]
+        [TestMethod]
         public void BadStatusPacketTest()
         {
             var captureFilePath = "Packets\\emptystatuscapture.bin";
             byte[] testPacket = File.ReadAllBytes(captureFilePath);
             IncomingRawUdpPacket packet = new IncomingRawUdpPacket(testPacket);
             Assert.IsTrue(packet.GetPacketType() == PacketType.Status);
-            IDetectionPacket statusPacket = packet.Generate();
+            DetectionStatusPacket statusPacket = (DetectionStatusPacket)packet.Generate();
+            Assert.IsFalse(statusPacket.GetPacket().IsReady());
 
         }
 
@@ -38,12 +39,16 @@ namespace UnitTests
             DetectionStatusPacket detPacket = ((DetectionStatusPacket)packet.Generate());
             Assert.IsNotNull(detPacket);
 
+
             var statusPacket = detPacket.GetPacket();
+            Assert.IsTrue(statusPacket.IsReady());
+
 
             Assert.IsTrue(statusPacket.Gpsday == 2);
             Assert.IsTrue(statusPacket.Gpsmonth == 6);
             Assert.IsTrue(statusPacket.Gpshour == 6);
-            Assert.IsTrue(statusPacket.Gpslat == -275603936);
+            Assert.IsTrue(statusPacket.Gpslat < -27);
+            Assert.IsTrue(statusPacket.Gpslat > -28);
 
         }
 

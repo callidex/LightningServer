@@ -12,8 +12,8 @@ namespace lightningContext
     {
         /* for discussion, move the version to the beginning of the packet so we can switch.  There will be a time where there are multiple versions live do we 
         cater for that or just force upgrade to latest? */
-        
-        
+
+
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
         public struct Statpkt
         {
@@ -108,7 +108,7 @@ namespace lightningContext
             Gpsres2 = s.gpsnavpvt.reserved2;
             Gpsres3 = (int)s.gpsnavpvt.reserved3;
             Gpsnumsv = s.gpsnavpvt.numSV;
-            Gpslon = s.gpsnavpvt.lon  / 1e7f;
+            Gpslon = s.gpsnavpvt.lon / 1e7f;
             Gpslat = s.gpsnavpvt.lat / 1e7f;
             Gpsheight = s.gpsnavpvt.height;
             Gpshmsl = s.gpsnavpvt.hMSL;
@@ -134,8 +134,9 @@ namespace lightningContext
             Majorversion = s.majorversion;
             Avgadcnoise = s.adcnoise;
             Batchid = (int)(s.auxstatus1 << 24);
-
-            _isReady = true;
+            Marker = s.telltale1;
+            if (Marker == 0x00000000dec0edfe)
+                _isReady = true;
         }
         public bool IsReady() => _isReady;
 
@@ -143,6 +144,7 @@ namespace lightningContext
 
         /* Do not edit below, generated from database structure*/
 
+        public long Marker { get; set; }
         public long Id { get; set; }
         public string Address { get; set; }
         public int? Avgadcnoise { get; set; }
@@ -161,8 +163,8 @@ namespace lightningContext
         public int? Gpsheight { get; set; }
         public int? Gpshour { get; set; }
         public long? Gpsitow { get; set; }
-        public float? Gpslat { get; set; }
-        public float? Gpslon { get; set; }
+        public Double Gpslat { get; set; }
+        public Double Gpslon { get; set; }
         public int? Gpsmin { get; set; }
         public int? Gpsmonth { get; set; }
         public long? Gpsnano { get; set; }
