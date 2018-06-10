@@ -22,18 +22,23 @@ namespace lightningfrontend.Models
                         deltaLat = rootDetector.DetectorLat - secondaryDetector.DetectorLat,
                         deltaLon = rootDetector.DetectorLon - secondaryDetector.DetectorLon,
                         deltaTime = rootDetector.DetectionTime - secondaryDetector.DetectionTime,
-                        primary = rootDetector,
-                        secondary = secondaryDetector
+                        Primary = rootDetector,
+                        Secondary = secondaryDetector
                     });
                 }
                 detectorDeltas = detectorDeltas.OrderBy(x => x.deltaTime).ToList();  // order by earliest heard
                 foreach (var delta in detectorDeltas)
                 {
-                    Console.WriteLine($"Distance = {delta.GetKilometers()} K");
-                    Console.WriteLine($"Time diff = {delta.deltaTime}");
-                    if(delta.deltaTime>0)
+                    var distance = delta.GetKilometers();
+                    var timeDiff = delta.deltaTime;
+                    Console.WriteLine(distance);
+                    if (timeDiff > 0)
                     {
                         //first detector heard it last
+                    }
+                    else
+                    {
+
                     }
                 }
             }
@@ -53,13 +58,14 @@ namespace lightningfrontend.Models
             Miles
         }
 
-        public DetectionInstance secondary { get; internal set; }
-        public DetectionInstance primary { get; internal set; }
+        public DetectionInstance Secondary { get; internal set; }
+        public DetectionInstance Primary { get; internal set; }
 
         public double GetKilometers()
         {
-            return Distance(primary.DetectorLat, primary.DetectorLon, secondary.DetectorLat, secondary.DetectorLon, DistanceMeasure.Kilometers);
+            return Distance(Primary.DetectorLat, Primary.DetectorLon, Secondary.DetectorLat, Secondary.DetectorLon, DistanceMeasure.Kilometers);
         }
+
         private double Distance(double lat1, double lon1, double lat2, double lon2, DistanceMeasure unit)
         {
             double dist = Math.Sin(Deg2rad(lat1)) * Math.Sin(Deg2rad(lat2)) + Math.Cos(Deg2rad(lat1)) * Math.Cos(Deg2rad(lat2)) * Math.Cos(Deg2rad(lon1 - lon2));

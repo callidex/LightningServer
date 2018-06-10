@@ -72,5 +72,22 @@ namespace UnitTests
 
         }
 
+        [TestMethod]
+        public void TOATest()
+        {
+            DetectionInstance strike1 = new DetectionInstance() { DetectorLat = 153.221, DetectorLon = -27.5604, DetectionTime = 0 };
+            DetectionInstance strike2 = new DetectionInstance() { DetectorLat = 153.265, DetectorLon = -27.5583, DetectionTime = 0 };
+            DetectionInstance strike3 = new DetectionInstance() { DetectorLat = 153.24211, DetectorLon = -27.5241, DetectionTime = 0 };
+
+            var strikedetections = new System.Collections.Generic.List<DetectionInstance>
+            {
+                strike1,
+                strike2,
+                strike3
+            };
+
+            Strike final = TOACorrelator.Correlate(strikedetections);
+
+        }
     }
 }
