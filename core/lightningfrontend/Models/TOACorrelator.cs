@@ -108,8 +108,11 @@ namespace lightningfrontend.Models
 
         public static DetectionInstance FromPacket(DetectionDataPacket packet)
         {
-            // pull out the peak from the datapacket and produce the detection time epoch
-            return new DetectionInstance();
+            // Detection data packet has epoch, calc first peak, related status, create detection instance
+            var possibleStrikeTime = packet.Epoch + peakPosition;
+            //TODO: pull out the peak from the datapacket and produce the detection time epoch
+            //TODO: confirm time types
+            return new DetectionInstance() { DetectionTime = possibleStrikeTime; }
         }
     }
 }
