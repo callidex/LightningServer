@@ -38,7 +38,8 @@ namespace lightningContext
                     data[i] = s.data[i];
                 }
             }
-
+            Data = new byte[data.Length * sizeof(UInt16)];
+            Buffer.BlockCopy(data, 0, Data, 0, data.Length);
             _isReady = true;
         }
         public bool IsReady() => _isReady;

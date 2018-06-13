@@ -34,7 +34,7 @@ namespace UnitTests
 
             IncomingRawUdpPacket packet = new IncomingRawUdpPacket(testPacket);
             Assert.IsTrue(packet.GetPacketType() == PacketType.Detection);
-
+            packet.IPAddress = "1.1.1.1";
             DetectionDataPacket detPacket = ((DetectionDataPacket)packet.Generate());
             Assert.IsNotNull(detPacket);
 
@@ -86,14 +86,13 @@ namespace UnitTests
             Assert.IsTrue(testPacket.Length > 0);
 
             IncomingRawUdpPacket packet = new IncomingRawUdpPacket(testPacket);
+            packet.IPAddress = "0.0.0.0";
             Assert.IsTrue(packet.GetPacketType() == PacketType.Detection);
 
-            IDetectionPacket statusPacket = packet.Generate();
-            Assert.IsNotNull(statusPacket);
-            using (var lightningContext = new LightningContext())
-            {
+            IDetectionPacket p = packet.Generate();
+            Assert.IsNotNull(p);
 
-            }
+            p.StoreInDB();
 
         }
 

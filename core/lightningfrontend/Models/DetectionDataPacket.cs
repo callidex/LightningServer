@@ -18,25 +18,20 @@ namespace lightningfrontend.Models
         public DetectionDataPacket(IncomingRawUdpPacket packetWrapper)
         {
             this.incomingRawUdpPacket = packetWrapper;
+
             packet = new Datapacket(packetWrapper.RawBytes);
+            packet.Address = incomingRawUdpPacket.IPAddress;
         }
 
         public void StoreInDB()
         {
             if (!packet.IsReady()) throw new InvalidOperationException("Packet not constructed properly");
-            try
-            {
 
 
-                using (var context = new LightningContext())
-                {
-                    context.Add(packet);
-                    context.SaveChanges();
-                }
-            }
-            catch (Exception e)
+            using (var context = new LightningContext())
             {
-                Console.WriteLine(e.Message);
+                context.Add(packet);
+                context.SaveChanges();
             }
 
         }

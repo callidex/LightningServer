@@ -11,12 +11,11 @@ namespace lightningfrontend.Models
             {
                 case PacketType.Detection: return new DetectionDataPacket(this);
                 case PacketType.Status: return new DetectionStatusPacket(this);
-
             }
             return null;
         }
         public byte[] RawBytes { get; set; }
-        public IPAddress IPAddress { get; private set; }
+        public string IPAddress { get; set; }
         public int IPPort { get; private set; }
 
         public IncomingRawUdpPacket(byte[] incomingByteArray)
@@ -29,7 +28,7 @@ namespace lightningfrontend.Models
             Rawpacket packet = new Rawpacket
             {
                 Data = RawBytes,
-                Port= IPPort.ToString(),
+                Port = IPPort.ToString(),
                 Address = IPAddress.ToString(),
             };
             using (var context = new LightningContext())
@@ -58,7 +57,7 @@ namespace lightningfrontend.Models
 
         internal void PopulateFromIncomingPacket(IPEndPoint remoteIpEndPoint)
         {
-            IPAddress = remoteIpEndPoint.Address;
+            IPAddress = remoteIpEndPoint.Address.ToString();
             IPPort = remoteIpEndPoint.Port;
         }
     }
