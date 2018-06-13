@@ -24,11 +24,36 @@ namespace UnitTests
 
 
         [TestMethod]
+        public void DataPacketTest()
+        {
+            var captureFilePath = "Packets\\Raw3.bin";
+            byte[] testPacket = File.ReadAllBytes(captureFilePath).ToArray();
+
+            Assert.IsNotNull(testPacket);
+            Assert.IsTrue(testPacket.Length > 0);
+
+            IncomingRawUdpPacket packet = new IncomingRawUdpPacket(testPacket);
+            Assert.IsTrue(packet.GetPacketType() == PacketType.Detection);
+
+            DetectionDataPacket detPacket = ((DetectionDataPacket)packet.Generate());
+            Assert.IsNotNull(detPacket);
+
+            var detectionPacket = detPacket.GetPacket();
+            Assert.IsTrue(detectionPacket.IsReady());
+
+            // from analysis (delphi)
+            Assert.AreEqual(1002, detectionPacket.Detectoruid);
+            Assert.AreEqual(293, detectionPacket.Packetnumber);
+            Assert.AreEqual(51, detectionPacket.Batchid);
+            Assert.AreEqual((System.Int32)0, (System.Int32)detectionPacket.Epoch - 1527921364);
+        }
+
+
+        [TestMethod]
         public void StatusPacketTest()
         {
             var captureFilePath = "Packets\\Raw3.bin";
-            byte[] testPacketAll = File.ReadAllBytes(captureFilePath)
-                ;
+            byte[] testPacketAll = File.ReadAllBytes(captureFilePath);
             byte[] testPacket = testPacketAll.Skip(1472).ToArray();
             Assert.IsNotNull(testPacket);
             Assert.IsTrue(testPacket.Length > 0);

@@ -106,5 +106,10 @@ namespace lightningfrontend.Models
         public double DetectorLon { get; set; }
         public decimal DetectionTime { get; set; }
 
+        public static DetectionInstance FromPacket(DetectionDataPacket packet)
+        {
+            // pull out the peak from the datapacket and produce the detection time epoch
+            return new DetectionInstance();
+        }
     }
 }

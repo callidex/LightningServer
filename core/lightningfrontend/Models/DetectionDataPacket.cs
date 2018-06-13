@@ -7,6 +7,8 @@ namespace lightningfrontend.Models
     {
         private IncomingRawUdpPacket incomingRawUdpPacket;
         private Datapacket packet;
+        public Datapacket GetPacket() => packet;
+
 
         private DetectionDataPacket()
         {
@@ -24,19 +26,19 @@ namespace lightningfrontend.Models
             if (!packet.IsReady()) throw new InvalidOperationException("Packet not constructed properly");
             try
             {
-            
-                
-            using (var context = new LightningContext())
+
+
+                using (var context = new LightningContext())
+                {
+                    context.Add(packet);
+                    context.SaveChanges();
+                }
+            }
+            catch (Exception e)
             {
-                context.Add(packet);
-                context.SaveChanges();
+                Console.WriteLine(e.Message);
             }
-            }
-            catch( Exception e)
-            {
-            Console.WriteLine(e.Message);
-            }
-            
+
         }
     }
 

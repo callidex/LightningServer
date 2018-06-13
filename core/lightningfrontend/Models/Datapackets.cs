@@ -1,17 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime;
+using System.Runtime.InteropServices;
 
 namespace lightningContext
 {
+
     public partial class Datapacket
     {
+        [StructLayout(LayoutKind.Sequential, Pack = 2)]
+        public unsafe struct Datapkt
+        {
+
+            public UInt32 udpcount;      // udp packet sent index (24 bits, other 8 bits are packet type)
+            public byte buffnum_pps;    // first 2 bits are adc buffer number
+            public byte adcseq;
+            public UInt16 detectorId;
+            public UInt32 epoch;
+            public fixed UInt16 data[728];
+
+        }
         public Datapacket(byte[] rawBytes)
-        { 
+        {
+            IntPtr intPtr = Marshal.AllocHGlobal(rawBytes.Length);
+            Marshal.Copy(rawBytes, 0, intPtr, rawBytes.Length);
+            Datapkt s = (Datapkt)Marshal.PtrToStructure(intPtr, typeof(Datapkt));
+            Marshal.FreeHGlobal(intPtr);
+            Batchid = s.adcseq;
+            Packetnumber = (int?)s.udpcount;
+            Detectoruid = s.detectorId;
+            Epoch = s.epoch;
 
+            unsafe
+            {
+                // Pin the buffer to a fixed location in memory.
+                // Access safely through the index:
+                for (int i = 0; i < 728; i++)
+                {
+                    data[i] = s.data[i];
+                }
+            }
 
-            //_isReady = true;
+            _isReady = true;
         }
         public bool IsReady() => _isReady;
 
@@ -19,6 +47,7 @@ namespace lightningContext
 
         /* Do not edit below, generated from database structure*/
 
+        public UInt16[] data = new UInt16[728];
 
         public long Id { get; set; }
         public int? Adcseq { get; set; }
@@ -47,5 +76,7 @@ namespace lightningContext
         public int? Udpnumber { get; set; }
         public float? Variance { get; set; }
         public float? Version { get; set; }
+        public UInt32 Epoch;
+
     }
 }
