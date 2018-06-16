@@ -28,5 +28,10 @@ namespace lightningfrontend.Models
                 context.SaveChanges();
             }
         }
+
+        public void Process()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

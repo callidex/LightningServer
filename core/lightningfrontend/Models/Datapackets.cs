@@ -18,6 +18,8 @@ namespace lightningContext
             public fixed UInt16 data[728];
 
         }
+        public Datapacket() { }
+
         public Datapacket(byte[] rawBytes)
         {
             IntPtr intPtr = Marshal.AllocHGlobal(rawBytes.Length);

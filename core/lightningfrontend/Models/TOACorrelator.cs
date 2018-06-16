@@ -1,4 +1,5 @@
-﻿using System;
+﻿using lightningContext;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -106,13 +107,12 @@ namespace lightningfrontend.Models
         public double DetectorLon { get; set; }
         public decimal DetectionTime { get; set; }
 
-        public static DetectionInstance FromPacket(DetectionDataPacket packet)
+        public static DetectionInstance FromPacket(Datapacket packet)
         {
             // Detection data packet has epoch, calc first peak, related status, create detection instance
-            var dbData = packet.GetPacket();
-            decimal possibleStrikeTime = dbData.Epoch;
+            decimal possibleStrikeTime = packet.Epoch;
 
-            var peakData = dbData.Data.GetPeak();
+            var peakData = packet.Data.GetPeak();
 
             possibleStrikeTime += (decimal)peakData.Item1 * 1 / 3.6e6M;
 

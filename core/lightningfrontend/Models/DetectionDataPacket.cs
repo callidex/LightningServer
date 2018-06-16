@@ -1,5 +1,6 @@
 ﻿using lightningContext;
 using System;
+using System.Linq;
 
 namespace lightningfrontend.Models
 {
@@ -23,6 +24,40 @@ namespace lightningfrontend.Models
             packet.Address = incomingRawUdpPacket.IPAddress;
         }
 
+        public void Process()
+        {
+            using (var context = new LightningContext())
+            {
+                var limit = 1;
+                var closePackets = context.Datapackets.Where(x => x.Epoch > this.packet.Epoch - limit);
+
+                var fullInfo = (from data in closePackets
+                                join
+                                  status in context.Statuspackets
+                                  on data.Batchid equals status.Batchid
+                                select new
+                                {
+                                    DetectionInstance = DetectionInstance.FromPacket(data),
+                                    Status = status
+                                }).ToList();
+                foreach (var x in fullInfo)
+                {
+                    x.DetectionInstance.DetectorLat = x.Status.Gpslat;
+                    x.DetectionInstance.DetectorLon = x.Status.Gpslon;
+                }
+
+                Strike strike = TOACorrelator.Correlate(fullInfo.Select(x => x.DetectionInstance).ToList());
+
+                if (strike != null)
+                {
+                    context.Add(strike);
+                    context.SaveChanges();
+
+                }
+            }
+        }
+
+
         public void StoreInDB()
         {
             if (!packet.IsReady()) throw new InvalidOperationException("Packet not constructed properly");
@@ -33,7 +68,7 @@ namespace lightningfrontend.Models
                 context.Add(packet);
                 context.SaveChanges();
             }
-
+            Process();
         }
     }
 
