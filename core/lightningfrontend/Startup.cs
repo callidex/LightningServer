@@ -30,8 +30,8 @@ namespace lightningfrontend
         {
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
-                var context = serviceScope.ServiceProvider.GetRequiredService<LightningContext>();
-                context.Database.EnsureCreated();
+                //          var context = serviceScope.ServiceProvider.GetRequiredService<LightningContext>();
+                //        context.Database.EnsureCreated();
             }
 
 

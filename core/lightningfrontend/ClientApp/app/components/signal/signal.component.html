@@ -1,6 +1,8 @@
-<p>
-    signal-component works!
-</p>
-<div *ngIf="chart">
-    <canvas id="canvas">{{ chart }}</canvas>
-</div>
+<p *ngIf="!signals"><em>Loading data...</em></p>
+
+<table *ngIf="signals">
+    <tr *ngFor="let s of signals">
+        <td>test</td>
+        <td>{{s}}</td>
+    </tr>
+</table>

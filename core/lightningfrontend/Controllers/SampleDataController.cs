@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using lightningContext;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lightningfrontend.Controllers
@@ -7,8 +9,23 @@ namespace lightningfrontend.Controllers
     [Route("api/[controller]")]
     public class SampleDataController : Controller
     {
-   
-    
+        [HttpGet("[action]")]
+        public IEnumerable<UInt16[]> Signals()
+        {
+            using (var context = new LightningContext())
+            {
+                var output = new List<UInt16[]>();
+                foreach (var d in context.Datapackets.OrderByDescending(x => x.Id).Take(10).Select(x => x.Data)
+                    .ToList())
+                {
+                    var o = new UInt16[728];
+                    Buffer.BlockCopy(d, 0, o, 0, 728);
+                    output.Add(o);
+                };
+                return output;
+            }
+        }
+
         [HttpGet("[action]")]
         public IEnumerable<Detector> Detectors()
         {

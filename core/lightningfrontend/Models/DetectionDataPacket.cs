@@ -14,6 +14,7 @@ namespace lightningfrontend.Models
         private DetectionDataPacket()
         {
 
+
         }
 
         public DetectionDataPacket(IncomingRawUdpPacket packetWrapper)
@@ -24,53 +25,44 @@ namespace lightningfrontend.Models
             packet.Address = incomingRawUdpPacket.IPAddress;
         }
 
-        public void Process()
+        public void Process(LightningContext context)
         {
-            using (var context = new LightningContext())
+            var limit = 1;
+            var closePackets = context.Datapackets.Where(x => x.Epoch > this.packet.Epoch - limit);
+
+            var fullInfo = (from data in closePackets
+                            join
+                              status in context.Statuspackets
+                              on data.Batchid equals status.Batchid
+                            select new
+                            {
+                                DetectionInstance = DetectionInstance.FromPacket(data),
+                                Status = status
+                            }).ToList();
+            foreach (var x in fullInfo)
             {
-                var limit = 1;
-                var closePackets = context.Datapackets.Where(x => x.Epoch > this.packet.Epoch - limit);
+                x.DetectionInstance.DetectorLat = x.Status.Gpslat;
+                x.DetectionInstance.DetectorLon = x.Status.Gpslon;
+            }
 
-                var fullInfo = (from data in closePackets
-                                join
-                                  status in context.Statuspackets
-                                  on data.Batchid equals status.Batchid
-                                select new
-                                {
-                                    DetectionInstance = DetectionInstance.FromPacket(data),
-                                    Status = status
-                                }).ToList();
-                foreach (var x in fullInfo)
-                {
-                    x.DetectionInstance.DetectorLat = x.Status.Gpslat;
-                    x.DetectionInstance.DetectorLon = x.Status.Gpslon;
-                }
+            Strike strike = TOACorrelator.Correlate(fullInfo.Select(x => x.DetectionInstance).ToList());
 
-                Strike strike = TOACorrelator.Correlate(fullInfo.Select(x => x.DetectionInstance).ToList());
+            if (strike != null)
+            {
+                context.Add(strike);
+                context.SaveChanges();
 
-                if (strike != null)
-                {
-                    context.Add(strike);
-                    context.SaveChanges();
-
-                }
             }
         }
 
 
-        public void StoreInDB()
+        public void StoreInDB(LightningContext context)
         {
             if (!packet.IsReady()) throw new InvalidOperationException("Packet not constructed properly");
 
-
-            using (var context = new LightningContext())
-            {
-                context.Add(packet);
-                context.SaveChanges();
-            }
-            Process();
+            context.Add(packet);
+            Process(context);
+            context.SaveChanges();
         }
     }
-
-
 }

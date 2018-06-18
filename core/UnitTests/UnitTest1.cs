@@ -85,15 +85,20 @@ namespace UnitTests
             Assert.IsNotNull(testPacket);
             Assert.IsTrue(testPacket.Length > 0);
 
-            IncomingRawUdpPacket packet = new IncomingRawUdpPacket(testPacket);
-            packet.IPAddress = "0.0.0.0";
+            IncomingRawUdpPacket packet = new IncomingRawUdpPacket(testPacket)
+            {
+                IPAddress = "0.0.0.0"
+            };
             Assert.IsTrue(packet.GetPacketType() == PacketType.Detection);
 
             IDetectionPacket p = packet.Generate();
             Assert.IsNotNull(p);
 
-            p.StoreInDB();
+            using (var context = new LightningContext())
 
+            {
+                p.StoreInDB(context);
+            }
         }
 
         [TestMethod]

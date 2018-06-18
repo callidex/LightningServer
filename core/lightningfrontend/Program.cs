@@ -46,7 +46,14 @@ namespace lightningfrontend
                     Task.Run(() => potentialPacket.StoreInDB());
 
                     //Process and store the generated packet
-                    Task.Run(() => potentialPacket.Generate().StoreInDB());
+                    Task.Run(() =>
+                    {
+                        using (var context = new LightningContext())
+                        {
+                            potentialPacket.Generate().StoreInDB(context);
+
+                        }
+                    });
                 }
                 else
                 {

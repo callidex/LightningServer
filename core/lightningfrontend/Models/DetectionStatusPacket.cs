@@ -18,18 +18,15 @@ namespace lightningfrontend.Models
 
         }
 
-        public void StoreInDB()
+        public void StoreInDB(LightningContext context)
         {
             if (!packet.IsReady()) throw new InvalidDataException("Packet not constructed properly");
             Console.WriteLine($"Status Packet storing on thread {Thread.CurrentThread.ManagedThreadId}");
-            using (var context = new LightningContext())
-            {
-                context.Add(packet);
-                context.SaveChanges();
-            }
+            context.Add(packet);
+            context.SaveChanges();
         }
 
-        public void Process()
+        public void Process(LightningContext context)
         {
             throw new NotImplementedException();
         }

@@ -1,44 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
     selector: 'app-signal',
     templateUrl: './signal.component.html',
     styleUrls: ['./signal.component.css']
 })
+
 export class SignalComponent {
 
-    chart = []; // This will hold our chart info
+    public signals: ISignal[] | undefined;
 
+    constructor(httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
 
-//       this.chart = new Chart('canvas', {
-//    type: 'line',
-//    data: {
-//        labels: weatherDates,
-//        datasets: [
-//            {
-//                data: temp_max,
-//                borderColor: "#3cba9f",
-//                fill: false
-//            },
-//            {
-//                data: temp_min,
-//                borderColor: "#ffcc00",
-//                fill: false
-//            },
-//        ]
-//    },
-//    options: {
-//        legend: {
-//            display: false
-//        },
-//        scales: {
-//            xAxes: [{
-//                display: true
-//            }],
-//            yAxes: [{
-//                display: true
-//            }],
-//        }
-////    }
-////});
+        httpClient.get<ISignal[]>(baseUrl + 'api/SampleData/Signals').subscribe(result => {
+            this.signals = result;
+        });
+    }
+}
+
+interface ISignal {
+    Data: number[]
 }
