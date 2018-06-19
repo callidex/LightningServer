@@ -7,12 +7,16 @@ namespace lightningfrontend.Models
 {
     public static class TOACorrelator
     {
+        public const decimal MAXDELAY = (1 / 3e8M) * 50000M;
+
         public static Strike Correlate(List<DetectionInstance> instances)
         {
+
+
             if (instances.Any())
             {
                 // select the first (not in any order)
-                var rootDetector = instances.First();
+                var rootDetector = instances.OrderBy(x => x.DetectionTime).First();
                 List<DetectorDelta> detectorDeltas = new List<DetectorDelta>();
 
                 // create the intersections
@@ -41,6 +45,9 @@ namespace lightningfrontend.Models
                     {
 
                     }
+
+
+
                 }
             }
             return null;

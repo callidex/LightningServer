@@ -27,8 +27,7 @@ namespace lightningfrontend.Models
 
         public void Process(LightningContext context)
         {
-            var limit = 1;
-            var closePackets = context.Datapackets.Where(x => x.Epoch > this.packet.Epoch - limit);
+            var closePackets = context.Datapackets.Where(x => x.Epoch > this.packet.Epoch - TOACorrelator.MAXDELAY);
 
             var fullInfo = (from data in closePackets
                             join
