@@ -15,7 +15,7 @@ namespace lightningfrontend.Models
         {
             this.incomingRawUdpPacket = incomingRawUdpPacket;
             packet = new Statuspacket(this.incomingRawUdpPacket.RawBytes);
-
+            packet.Received = DateTimeOffset.Now.ToUnixTimeSeconds();
         }
 
         public void StoreInDB(LightningContext context)
