@@ -4,8 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "test": "karma start ClientApp/test/karma.conf.js",
-    "build": "webpack --config webpack.config.js",
-    "build-dev": "webpack --config webpack.config.js --mode=development --progress"
+    "build": "webpack"
   },
   "devDependencies": {
     "@angular/animations": "6.0.3",
@@ -55,7 +54,8 @@
     "rxjs": "^6.2.0",
     "style-loader": "0.21.0",
     "to-string-loader": "1.1.5",
-    "typescript": "^2.7.2",
+    "ts-loader": "^4.4.1",
+    "typescript": "^2.9.2",
     "url-loader": "1.0.1",
     "webpack": "^4.10.1",
     "webpack-cli": "^2.1.5",
@@ -68,5 +68,6 @@
     "@agm/core": "^1.0.0-beta.3",
     "popper.js": "^1.14.3",
     "rxjs-compat": "^6.2.0"
-  }
+  },
+  "-vs-binding": { "BeforeBuild": [ "build" ] }
 }
