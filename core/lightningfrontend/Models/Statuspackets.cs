@@ -134,8 +134,7 @@ namespace lightningContext
             Majorversion = s.majorversion;
             Avgadcnoise = s.adcnoise;
             Batchid = (int)(s.auxstatus1 << 24);
-            Marker = s.telltale1;
-            if (Marker == 0x00000000dec0edfe)
+            if (s.telltale1 == 0x00000000dec0edfe)
                 _isReady = true;
         }
         public bool IsReady() => _isReady;
@@ -144,7 +143,6 @@ namespace lightningContext
 
         /* Do not edit below, generated from database structure*/
 
-        public long Marker { get; set; }
         public long Id { get; set; }
         public string Address { get; set; }
         public int? Avgadcnoise { get; set; }
