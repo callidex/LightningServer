@@ -7,7 +7,6 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './components/app/app.component';
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { HomeComponent } from './components/home/home.component';
-import { CounterComponent } from './components/counter/counter.component';
 import { DetectorMapComponent } from './components/detectormap/detectormap.component';
 
 import { AgmCoreModule } from '@agm/core';
@@ -18,7 +17,6 @@ import { SignalComponent } from './components/signal/signal.component';
     declarations: [
         AppComponent,
         NavMenuComponent,
-        CounterComponent,
         HomeComponent,
         DetectorMapComponent,
         SignalComponent
@@ -30,7 +28,6 @@ import { SignalComponent } from './components/signal/signal.component';
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
-            { path: 'counter', component: CounterComponent },
             { path: 'detectors', component: DetectorMapComponent },
             { path: 'signals', component: SignalComponent },
             { path: '**', redirectTo: 'home' }
