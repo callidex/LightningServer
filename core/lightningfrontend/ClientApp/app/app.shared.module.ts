@@ -11,7 +11,7 @@ import { DetectorMapComponent } from './components/detectormap/detectormap.compo
 
 import { AgmCoreModule } from '@agm/core';
 import { SignalComponent } from './components/signal/signal.component';
-
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
     declarations: [
@@ -25,6 +25,7 @@ import { SignalComponent } from './components/signal/signal.component';
         CommonModule,
         HttpClientModule,
         FormsModule,
+FontAwesomeModule,
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
