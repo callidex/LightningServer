@@ -1,59 +1,6 @@
-<!--<p *ngIf="!signals"><em>Loading data...</em></p>
+<p *ngIf="!signals"><em>Loading data...</em></p>
 
-<table *ngIf="signals">
-    <tr *ngFor="let s of signals">
-        <td>test</td>
-        <td>{{s}}</td>
-    </tr>
-</table>
-
-<div class="container">
-    <div id="visualization"></div>
-    <script type="text/javascript">
-        var container1 = document.getElementById('visualization');
-        var groups = new vis.DataSet();
-        groups.add({
-            id: 0,
-            content: '<%=samples[0].detectoruid %> <%=samples[0].received %>',
-            options: {
-                yAxisOrientation: 'left',
-                drawPoints: false,
-                interpolation: {
-                    parametrization: 'centripetal'
-                }
-            }
-        })
-        groups.add({
-            id: 1,
-            content: 'peaks',
-            options: {
-                drawPoints: true,
-            }
-        })
-
-
-        var items = [
-        <% for (var i = 0; i < samples[0].data.length; i++) {%>
-            { x: <%= i %> , y: <%= samples[0].data[i] %>, group: 0 },
-      <% } %>
-        <% for (var i = 0; i < samples[0].signal.length; i++) {%>
-            { x: <%= i %> , y: <%= (samples[0].signal[i] * 200) + samples[0].mean %>, group: 1
-        },
-      <% } %>
-
-      ];
-
-        var dataset = new vis.DataSet(items);
-
-        var options = {
-            legend: { right: { position: 'top-left' } },
-            drawPoints: {
-                style: 'circle' // square, circle
-            }
-        };
-        var graph2d1 = new vis.Graph2d(container1, dataset, groups, options);
-
-    </script>
+<div *ngIf="chart">
+    <canvas id="canvas">{{ chart }}</canvas>
 </div>
-</body>
-</html>-->
+

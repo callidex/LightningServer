@@ -4,7 +4,7 @@
     "version": "0.0.0",
     "scripts": {
         "test": "karma start ClientApp/test/karma.conf.js",
-        "build": "webpack --config webpack.config.vendor.js --progress && webpack"
+        "build": "webpack --config webpack.config.vendor.js"
     },
     "devDependencies": {
         "@angular/animations": "6.0.3",
@@ -69,8 +69,10 @@
         "@fortawesome/fontawesome-free-webfonts": "^1.0.9",
         "@fortawesome/fontawesome-svg-core": "^1.2.0",
         "@fortawesome/free-solid-svg-icons": "^5.1.0",
+        "@types/chart.js": "^2.7.24",
         "angular-fontawesome": "^1.0.0",
         "awesome-typescript-loader": "^5.2.0",
+        "chart.js": "^2.7.2",
         "popper.js": "^1.14.3",
         "rxjs-compat": "^6.2.0"
     },
