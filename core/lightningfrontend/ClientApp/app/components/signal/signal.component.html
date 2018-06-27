@@ -1,6 +1,6 @@
 <p *ngIf="!signals"><em>Loading data...</em></p>
 
 <div *ngIf="chart">
-    <canvas id="canvas">{{ chart }}</canvas>
+    <canvas #myCanvas>{{ chart }}</canvas>
 </div>
 

@@ -1,6 +1,4 @@
-import { Component, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import 'rxjs/add/operator/map';
+import { AfterViewInit, Component, Input, ViewChild, ElementRef } from '@angular/core';
 import { Chart, ChartData, Point } from 'chart.js';
 
 @Component({
@@ -9,62 +7,54 @@ import { Chart, ChartData, Point } from 'chart.js';
     styleUrls: ['./signal.component.css']
 })
 
-export class SignalComponent {
+export class SignalComponent implements AfterViewInit {
 
     public chart: Chart = new Chart('canvas', {});
 
     public labels: string[] = new Array();
-    public signals: number[][] | undefined;
 
-    constructor(httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+    @Input()
+    public signal: number[] | undefined;
 
-        httpClient.get<number[][]>(baseUrl + 'api/SampleData/Signals').subscribe(result => {
-            this.signals = result;
-            var i: number = 0;
-            console.log(this.signals);
-            this.signals[0].forEach(() => { this.labels.push(i.toString()); i++; });
+    @ViewChild('myCanvas') canvasRef: ElementRef | any;
 
-            this.chart = new Chart('canvas', {
-                type: 'line',
-                data: {
-                    labels: this.labels,
-                    datasets: [
-                        {
-                            data: this.signals[0],
-                            borderColor: "#3cba9f",
-                            fill: false
-                        }
-                        //    {
-                        //        data: this.signals,
-                        //        borderColor: "#ffcc00",
-                        //        fill: false
-                        //    },
-                    ]
-                },
-                options: {
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        xAxes: [{
-                            display: true
-
-                        }],
-                        yAxes: [{
-                            display: true
-                            , ticks:
-                                {
-                                    min: 0, max: 4000
-                                }
-
-                        }],
+    ngAfterViewInit() {
+        var i: number = 0;
+        console.log(this.signal);
+        if (this.signal != undefined)
+            this.signal.forEach(() => { this.labels.push(i.toString()); i++; });
+        let ctx = this.canvasRef.nativeElement.getContext('2d');
+        this.chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: this.labels,
+                datasets: [
+                    {
+                        data: this.signal,
+                        borderColor: "#3cba9f",
+                        fill: false
                     }
+                ]
+            },
+            options: {
+                legend: {
+                    display: false
+                },
+                scales: {
+                    xAxes: [{
+                        display: true
+
+                    }],
+                    yAxes: [{
+                        display: true
+                        , ticks:
+                            {
+                                min: 0, max: 4000
+                            }
+
+                    }],
                 }
-            });
+            }
         });
     }
-}
-
-interface ISignal {
-    Data: number[]
 }

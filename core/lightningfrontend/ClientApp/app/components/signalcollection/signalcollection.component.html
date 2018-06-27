@@ -1,0 +1,8 @@
+<p *ngIf="!signals"><em>Loading data...</em></p>
+
+
+<div *ngFor="let signal of signals">
+    <app-signal [signal]="signal"></app-signal>
+</div>
+
+
