@@ -24,16 +24,16 @@ const nonTreeShakableModules = [
 ];
 const allModules = treeShakableModules.concat(nonTreeShakableModules);
 
-var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+//var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env) => {
- 
+
     const extractCSS = new ExtractTextPlugin('vendor.css');
     const isDevBuild = !(env && env.prod);
     const sharedConfig = {
         mode: 'development',
         stats: { modules: false },
-        resolve: { extensions: [ '.js' ] },
+        resolve: { extensions: ['.js'] },
         module: {
             rules: [
                 { test: /\.(png|woff|woff2|eot|ttf|svg)(\?|$)/, use: 'url-loader?limit=100000' }
@@ -49,8 +49,9 @@ module.exports = (env) => {
             new webpack.ContextReplacementPlugin(/\@angular\b.*\b(bundles|linker)/, path.join(__dirname, './ClientApp')), // Workaround for https://github.com/angular/angular/issues/11580
             new webpack.ContextReplacementPlugin(/angular(\\|\/)core(\\|\/)@angular/, path.join(__dirname, './ClientApp')), // Workaround for https://github.com/angular/angular/issues/14898
             new webpack.IgnorePlugin(/^vertx$/) // Workaround for https://github.com/stefanpenner/es6-promise/issues/100,
-            , new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /uk/),
-            new BundleAnalyzerPlugin()
+            , new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /uk/)
+            //,
+            //new BundleAnalyzerPlugin()
         ]
     };
 
@@ -72,7 +73,7 @@ module.exports = (env) => {
                 path: path.join(__dirname, 'wwwroot', 'dist', '[name]-manifest.json'),
                 name: '[name]_[hash]'
             }),
-            
+
 
         ].concat(isDevBuild ? [] : [
             new webpack.optimize.UglifyJsPlugin()
@@ -88,7 +89,7 @@ module.exports = (env) => {
             libraryTarget: 'commonjs2',
         },
         module: {
-            rules: [ { test: /\.css(\?|$)/, use: ['to-string-loader', isDevBuild ? 'css-loader' : 'css-loader?minimize' ] } ]
+            rules: [{ test: /\.css(\?|$)/, use: ['to-string-loader', isDevBuild ? 'css-loader' : 'css-loader?minimize'] }]
         },
         plugins: [
             new webpack.DllPlugin({
