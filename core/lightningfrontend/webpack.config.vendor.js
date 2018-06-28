@@ -12,7 +12,7 @@ const treeShakableModules = [
     '@angular/platform-browser',
     '@angular/platform-browser-dynamic',
     '@angular/router',
-    'zone.js',
+    'zone.js'
 ];
 const nonTreeShakableModules = [
     'bootstrap',
@@ -23,6 +23,8 @@ const nonTreeShakableModules = [
     'jquery',
 ];
 const allModules = treeShakableModules.concat(nonTreeShakableModules);
+
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = (env) => {
  
@@ -46,7 +48,9 @@ module.exports = (env) => {
             new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }), // Maps these identifiers to the jQuery package (because Bootstrap expects it to be a global variable)
             new webpack.ContextReplacementPlugin(/\@angular\b.*\b(bundles|linker)/, path.join(__dirname, './ClientApp')), // Workaround for https://github.com/angular/angular/issues/11580
             new webpack.ContextReplacementPlugin(/angular(\\|\/)core(\\|\/)@angular/, path.join(__dirname, './ClientApp')), // Workaround for https://github.com/angular/angular/issues/14898
-            new webpack.IgnorePlugin(/^vertx$/) // Workaround for https://github.com/stefanpenner/es6-promise/issues/100
+            new webpack.IgnorePlugin(/^vertx$/) // Workaround for https://github.com/stefanpenner/es6-promise/issues/100,
+            , new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /uk/),
+            new BundleAnalyzerPlugin()
         ]
     };
 
@@ -67,9 +71,11 @@ module.exports = (env) => {
             new webpack.DllPlugin({
                 path: path.join(__dirname, 'wwwroot', 'dist', '[name]-manifest.json'),
                 name: '[name]_[hash]'
-            })
+            }),
+            
+
         ].concat(isDevBuild ? [] : [
-            //new webpack.optimize.UglifyJsPlugin()
+            new webpack.optimize.UglifyJsPlugin()
         ])
     });
 

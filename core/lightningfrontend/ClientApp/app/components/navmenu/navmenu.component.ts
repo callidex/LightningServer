@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { faBroadcastTower, faSignature, faHome } from '@fortawesome/free-solid-svg-icons';
+import { faHome } from '@fortawesome/free-solid-svg-icons/faHome';
+import { faSignature } from '@fortawesome/free-solid-svg-icons/faSignature';
+import { faBroadcastTower } from '@fortawesome/free-solid-svg-icons/faBroadcastTower';
 
 @Component({
     selector: 'nav-menu',
