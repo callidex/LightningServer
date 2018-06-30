@@ -76,7 +76,7 @@ module.exports = (env) => {
 
 
         ].concat(isDevBuild ? [] : [
-            new webpack.optimize.UglifyJsPlugin()
+//            new webpack.optimize.UglifyJsPlugin()
         ])
     });
 

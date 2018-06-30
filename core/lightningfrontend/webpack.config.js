@@ -47,7 +47,7 @@ module.exports = (env) => {
             })
         ] : [
                 // Plugins that apply in production builds only
-                new webpack.optimize.UglifyJsPlugin(),
+//                new webpack.optimize.UglifyJsPlugin(),
                 new AngularCompilerPlugin({
                     tsConfigPath: './tsconfig.json',
                     entryModule: path.join(__dirname, 'ClientApp/app/app.browser.module#AppModule'),
