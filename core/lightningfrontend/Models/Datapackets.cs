@@ -15,7 +15,7 @@ namespace lightningContext
             public byte adcseq;
             public UInt16 detectorId;
             public UInt32 epoch;
-            public fixed UInt16 data[728];
+            public fixed byte data[1456];
 
         }
         public Datapacket() { }
@@ -35,12 +35,12 @@ namespace lightningContext
             {
                 // Pin the buffer to a fixed location in memory.
                 // Access safely through the index:
-                for (int i = 0; i < 728; i++)
+                for (int i = 0; i < 1456; i++)
                 {
                     data[i] = s.data[i];
                 }
             }
-            Data = new byte[data.Length * sizeof(UInt16)];
+            Data = new byte[data.Length];
             Buffer.BlockCopy(data, 0, Data, 0, data.Length);
             _isReady = true;
         }
@@ -50,7 +50,7 @@ namespace lightningContext
 
         /* Do not edit below, generated from database structure*/
 
-        public UInt16[] data = new UInt16[728];
+        public byte[] data = new byte[1456];
 
         public long Id { get; set; }
         public int? Adcseq { get; set; }
