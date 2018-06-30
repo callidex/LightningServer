@@ -19,7 +19,7 @@ namespace lightningfrontend.Controllers
                     .ToList())
                 {
                     var o = new UInt16[728];
-                    Buffer.BlockCopy(d, 0, o, 0, 728);
+                    Buffer.BlockCopy(d, 0, o, 0, 1456);
                     output.Add(o);
                 };
                 return output;
