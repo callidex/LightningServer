@@ -81,6 +81,9 @@
     "-vs-binding": {
         "BeforeBuild": [
             "build"
+        ],
+        "AfterBuild": [
+            "build"
         ]
     }
 }
