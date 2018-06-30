@@ -30,14 +30,18 @@ namespace lightningfrontend.Controllers
         public IEnumerable<Detector> Detectors()
         {
             List<Detector> detectorList = new List<Detector>();
+
             using (var context = new LightningContext())
             {
-                var detectorIDs = context.Statuspackets.Select(s => new
+                var detectorIDs = (from sp in context.Statuspackets join det in context.DetectorRegistrations on 
+                                  sp.Detectoruid equals det.ID
+                                  select new
+                 
                 {
-                    s.Detectoruid,
-                    s.Gpslon,
-                    s.Gpslat,
-                    Received = s.Received ?? 0
+                    sp.Detectoruid,
+                    sp.Gpslon,
+                    sp.Gpslat,
+                    Received = sp.Received ?? 0
 
                 }).Where(x => x.Gpslon != 0 && x.Gpslat != 0).Distinct().GroupBy(x => x.Detectoruid).Select(x => x.Select(d => new Detector()
                 {
