@@ -1,0 +1,12 @@
+﻿
+<agm-map>
+    <agm-marker *ngFor="let strike of strikes"
+                [latitude]="strike.lat"
+                [longitude]="strike.lon">
+        <agm-info-window isOpen="true">{{strike.recieved}}</agm-info-window>
+    </agm-marker>
+</agm-map>
+
+
+<p *ngIf="!strikes"><em>Loading strikes...</em></p>
+

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { faHome } from '@fortawesome/free-solid-svg-icons/faHome';
 import { faSignature } from '@fortawesome/free-solid-svg-icons/faSignature';
 import { faBroadcastTower } from '@fortawesome/free-solid-svg-icons/faBroadcastTower';
+import { faBolt } from '@fortawesome/free-solid-svg-icons/faBolt';
 
 @Component({
     selector: 'nav-menu',
@@ -12,4 +13,5 @@ export class NavMenuComponent {
     faBroadcastTower = faBroadcastTower;
     faSignal = faSignature;
     faHome = faHome;
+    faBolt = faBolt;
 }

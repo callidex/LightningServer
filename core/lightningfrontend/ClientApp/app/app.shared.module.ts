@@ -8,6 +8,7 @@ import { AppComponent } from './components/app/app.component';
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { HomeComponent } from './components/home/home.component';
 import { DetectorMapComponent } from './components/detectormap/detectormap.component';
+import { StrikeMapComponent } from './components/strikemap/strikemap.component';
 
 import { AgmCoreModule } from '@agm/core';
 import { SignalComponent } from './components/signal/signal.component';
@@ -20,6 +21,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
         NavMenuComponent,
         HomeComponent,
         DetectorMapComponent,
+        StrikeMapComponent,
         SignalComponent,
         SignalCollectionComponent
     ],
@@ -32,6 +34,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
             { path: 'detectors', component: DetectorMapComponent },
+            { path: 'strikes', component: StrikeMapComponent },
             { path: 'signals', component: SignalCollectionComponent },
             { path: '**', redirectTo: 'home' }
         ]),

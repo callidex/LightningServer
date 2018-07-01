@@ -26,6 +26,21 @@ namespace lightningfrontend.Controllers
             }
         }
 
+
+        [HttpGet("[action]")]
+        public IEnumerable<Strike> Strikes()
+        {
+            List<Strike> strikelist = new List<Strike>();
+
+            strikelist.Add(new Strike { Received = 111111, Lat = 50, Lon = -20 });
+            strikelist.Add(new Strike { Received = 111111, Lat = -50, Lon = -20 });
+            strikelist.Add(new Strike { Received = 111111, Lat = 50, Lon = 20 });
+            strikelist.Add(new Strike { Received = 111111, Lat = -50, Lon = 20 });
+
+            return strikelist;
+        }
+
+
         [HttpGet("[action]")]
         public IEnumerable<Detector> Detectors()
         {
@@ -33,36 +48,43 @@ namespace lightningfrontend.Controllers
 
             using (var context = new LightningContext())
             {
-                var detectorIDs = (from sp in context.Statuspackets join det in context.DetectorRegistrations on 
-                                  sp.Detectoruid equals det.ID
-                                  select new
-                 
-                {
-                    sp.Detectoruid,
-                    sp.Gpslon,
-                    sp.Gpslat,
-                    Received = sp.Received ?? 0
+                var detectorIDs = (from sp in context.Statuspackets
+                                   join det in context.DetectorRegistrations on
+ sp.Detectoruid equals det.ID
+                                   select new
 
-                }).Where(x => x.Gpslon != 0 && x.Gpslat != 0).Distinct().GroupBy(x => x.Detectoruid).Select(x => x.Select(d => new Detector()
-                {
-                    Name = d.Detectoruid.ToString(),
-                    Lat = (decimal)d.Gpslat,
-                    Lon = (decimal)d.Gpslon,
-                    Received = d.Received
-                }));
+                                   {
+                                       sp.Detectoruid,
+                                       sp.Gpslon,
+                                       sp.Gpslat,
+                                       Received = sp.Received ?? 0
+
+                                   }).Where(x => x.Gpslon != 0 && x.Gpslat != 0).Distinct().GroupBy(x => x.Detectoruid).Select(x => x.Select(d => new Detector()
+                                   {
+                                       Name = d.Detectoruid.ToString(),
+                                       Lat = (decimal)d.Gpslat,
+                                       Lon = (decimal)d.Gpslon,
+                                       Received = d.Received
+                                   }));
 
                 detectorList.AddRange(detectorIDs.SelectMany(x => x.OrderByDescending(y => y.Received).Take(1)));
             }
             return detectorList;
         }
 
-        public class Detector
+        public class Strike
         {
             public decimal Lat { get; set; }
             public decimal Lon { get; set; }
             public long Received { get; set; }
+
+        }
+
+        public class Detector : Strike
+        {
             public string Name { get; set; }
 
         }
+
     }
 }
