@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import 'rxjs/add/operator/map';
+import { ISignal } from '../../utils/utils';
 
 @Component({
     selector: 'app-signal-collection',
@@ -10,12 +10,14 @@ import 'rxjs/add/operator/map';
 
 export class SignalCollectionComponent {
 
-    public signals: number[][] | undefined;
+    public signals: ISignal[] | undefined;
 
     constructor(httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
 
-        httpClient.get<number[][]>(baseUrl + 'api/SampleData/Signals').subscribe(result => {
+        httpClient.get<ISignal[]>(baseUrl + 'api/SampleData/Signals').subscribe(result => {
             this.signals = result;
+        }, error => {
+            console.log(error);
         });
     }
 }
