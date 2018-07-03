@@ -1,6 +1,6 @@
 ﻿import { Component, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { GeoLocationService } from '../../geo-location.service';
+//import { GeoLocationService } from '../../geo-location.service';
 
 @Component({
     selector: 'detectormap',
@@ -13,9 +13,7 @@ export class DetectorMapComponent {
     public detectors: IDetector[] | undefined;
     homeDetector: HomeDetector | undefined;
 
-    constructor(httpClient: HttpClient, private geoLocationService: GeoLocationService, @Inject('BASE_URL') baseUrl: string) {
-
-
+    constructor(httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
         httpClient.get<IDetector[]>(baseUrl + 'api/SampleData/Detectors').subscribe(result => {
             this.detectors = result;
 

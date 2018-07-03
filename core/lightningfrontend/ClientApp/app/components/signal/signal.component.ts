@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { ISignal } from '../../utils/utils';
 import { ChartComponent } from 'angular2-chartjs'
 
@@ -46,6 +46,8 @@ export class SignalComponent {
         };
 
         this.chartoptions = {
+            responsive: true,
+            maintainAspectRatio: false,
             legend: {
                 display: false
             },
