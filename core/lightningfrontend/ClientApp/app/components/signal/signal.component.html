@@ -1,7 +1,8 @@
 <p *ngIf="!signal"><em>Loading data...</em></p>
 
-<div *ngIf="chart">
-    <canvas #myCanvas>{{ chart }}</canvas>
-    <span>{{ signal.detector }}</span>
-</div>
+<div class="card card-block panel panel-default panel-body">
 
+    <chart #chart [type]="charttype" [data]="chartdata" [options]="chartoptions"></chart>
+    <span>{{signal.detector}}</span>
+
+</div>

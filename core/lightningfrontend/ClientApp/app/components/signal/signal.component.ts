@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, Input, ViewChild, ElementRef } from '@angular/core';
-import { Chart, ChartData, Point } from 'chart.js';
+import { Component, Input, OnChanges, ViewChild } from '@angular/core';
 import { ISignal } from '../../utils/utils';
+import { ChartComponent } from 'angular2-chartjs'
 
 @Component({
     selector: 'app-signal',
@@ -8,58 +8,66 @@ import { ISignal } from '../../utils/utils';
     styleUrls: ['./signal.component.css']
 })
 
-export class SignalComponent implements AfterViewInit {
 
-    public chart: Chart = new Chart('canvas', {});
+export class SignalComponent {
+    @Input() signal!: ISignal;
 
-    public labels: string[] = new Array();
+    constructor() { }
 
-    @Input()
-    public signal: ISignal | any;
+    @ViewChild(ChartComponent) chart!: ChartComponent;
 
-    @ViewChild('myCanvas') canvasRef: ElementRef | any;
+    labels: string[] = new Array();
 
-    ngAfterViewInit() {
-        var i: number = 0;
+    charttype: any;
+    chartdata: any;
+    chartoptions: any;
 
-        if (this.signal.Data != undefined) {
+    ngOnInit() {
 
-            let dataArray: number[] = this.signal.Data;
-            dataArray.forEach(() => { this.labels.push(i.toString()); i++; });
+        let i: number = 0;
+
+        if (this.signal.data != undefined) {
+            this.signal.data.forEach(() => {
+                this.labels.push(i.toString()); i++;
+            });
         }
 
-        let ctx = this.canvasRef.nativeElement.getContext('2d');
-        this.chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: this.labels,
-                datasets: [
-                    {
-                        data: this.signal.Data,
-                        borderColor: "#3cba9f",
-                        fill: false
-                    }
-                ]
-            },
-            options: {
-                legend: {
-                    display: false
-                },
-                scales: {
-                    xAxes: [{
-                        display: true
-
-                    }],
-                    yAxes: [{
-                        display: true
-                        , ticks:
-                            {
-                                min: 0, max: 4000
-                            }
-
-                    }],
+        this.charttype = 'line';
+        this.chartdata = {
+            labels: this.labels,
+            datasets: [
+                {
+                    data: this.signal.data,
+                    borderColor: "#3cba9f",
+                    fill: false,
+                    cubicInterpolationMode: 'monotone'
                 }
+            ]
+        };
+
+        this.chartoptions = {
+            legend: {
+                display: false
+            },
+            elements: {
+                line: {
+                    tension: 0, // disables bezier curves
+                }
+            },
+            scales: {
+                xAxes: [{
+                    display: true
+
+                }],
+                yAxes: [{
+                    display: true
+                    , ticks:
+                        {
+                            min: 0, max: 4000
+                        }
+
+                }],
             }
-        });
-    }
+        }
+    };
 }

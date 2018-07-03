@@ -71,10 +71,12 @@
         "@fortawesome/fontawesome-free-webfonts": "^1.0.9",
         "@fortawesome/fontawesome-svg-core": "^1.2.0",
         "@fortawesome/free-solid-svg-icons": "^5.1.0",
-        "@types/chart.js": "^2.7.24",
+        "@types/chart.js": "^2.7.25",
         "angular-fontawesome": "^1.0.0",
+        "angular2-chartjs": "^0.5.1",
         "awesome-typescript-loader": "^5.2.0",
         "chart.js": "^2.7.2",
+        "ng2-charts": "^1.6.0",
         "popper.js": "^1.14.3",
         "rxjs-compat": "^6.2.0"
     },

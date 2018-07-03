@@ -1,7 +1,7 @@
 ﻿
 export interface ISignal {
-    Data: number[] | any;
-    Detector: string;
+    data: number[];
+    detector: string;
 
     //    PeakValue: number;
     //    StartTime: number;

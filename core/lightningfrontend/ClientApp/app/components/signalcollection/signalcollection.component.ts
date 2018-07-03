@@ -10,7 +10,7 @@ import { ISignal } from '../../utils/utils';
 
 export class SignalCollectionComponent {
 
-    public signals: ISignal[] | undefined;
+    signals: ISignal[] = [];
 
     constructor(httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
 

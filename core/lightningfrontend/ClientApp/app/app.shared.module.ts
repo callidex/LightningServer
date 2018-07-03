@@ -15,6 +15,8 @@ import { SignalComponent } from './components/signal/signal.component';
 import { SignalCollectionComponent } from './components/signalcollection/signalcollection.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
+import { ChartModule } from 'angular2-chartjs';
+
 @NgModule({
     declarations: [
         AppComponent,
@@ -26,6 +28,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
         SignalCollectionComponent
     ],
     imports: [
+        ChartModule,
         CommonModule,
         HttpClientModule,
         FormsModule,
