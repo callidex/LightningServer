@@ -39,11 +39,14 @@ namespace lightningfrontend
 
                 potentialPacket.PopulateFromIncomingPacket(RemoteIpEndPoint);
                 Console.WriteLine($"{potentialPacket.GetPacketType().ToString()}");
-                Console.WriteLine($"Packet incoming on thread {Thread.CurrentThread.ManagedThreadId}");
                 if (potentialPacket.GetPacketType() != Models.PacketType.Unknown)
                 {
+                    Console.WriteLine($"Packet incoming on thread {Thread.CurrentThread.ManagedThreadId} : {potentialPacket.IPAddress}:{potentialPacket.IPPort}");
+
                     //Store the raw packet
-                    Task.Run(() => potentialPacket.StoreInDB());
+
+                    //Disabled storing whole raw packet for now
+                    //Task.Run(() => potentialPacket.StoreInDB());
 
                     //Process and store the generated packet
                     Task.Run(() =>
@@ -51,7 +54,6 @@ namespace lightningfrontend
                         using (var context = new LightningContext())
                         {
                             potentialPacket.Generate().StoreInDB(context);
-
                         }
                     });
                 }
