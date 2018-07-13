@@ -41,7 +41,9 @@ namespace lightningfrontend
                 Console.WriteLine($"{potentialPacket.GetPacketType().ToString()}");
                 if (potentialPacket.GetPacketType() != Models.PacketType.Unknown)
                 {
-                    Console.WriteLine($"Packet incoming on thread {Thread.CurrentThread.ManagedThreadId} : {potentialPacket.IPAddress}:{potentialPacket.IPPort}");
+
+                    var newPacket = potentialPacket.Generate();
+                    Console.WriteLine($"New packet incoming on thread {Thread.CurrentThread.ManagedThreadId} : {potentialPacket.IPAddress}:{potentialPacket.IPPort}");
 
                     //Store the raw packet
 
@@ -53,7 +55,7 @@ namespace lightningfrontend
                     {
                         using (var context = new LightningContext())
                         {
-                            potentialPacket.Generate().StoreInDB(context);
+                            newPacket.StoreInDB(context);
                         }
                     });
                 }
