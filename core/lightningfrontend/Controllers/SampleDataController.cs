@@ -14,12 +14,12 @@ namespace lightningfrontend.Controllers
             using (var context = new LightningContext())
             {
                 var output = new List<Signal>();
-                foreach (var d in context.Datapackets.OrderByDescending(x => x.Id).Take(10).Select(x => new { x.Data, x.Detectoruid })
+                foreach (var d in context.Datapackets.OrderByDescending(x => x.Id).Take(10).Select(x => new { x.Data, x.Detectoruid, x.Epoch, x.Id })
                     .ToList())
                 {
                     var o = new UInt16[728];
                     Buffer.BlockCopy(d.Data, 0, o, 0, 1456);
-                    output.Add(new Signal() { Data = o, Detector = d.Detectoruid }
+                    output.Add(new Signal() { Data = o, Detector = d.Detectoruid, Received = d.Epoch, Id = d.Id }
                     );
                 };
                 return output;
@@ -90,6 +90,8 @@ namespace lightningfrontend.Controllers
         {
             public UInt16[] Data;
             public long Detector;
+            public uint Received;
+            public long Id;
         }
 
     }
