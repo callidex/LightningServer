@@ -8,7 +8,7 @@
         "profile": "webpack --profile --json > stats.json"
     },
     "devDependencies": {
-        "@angular/animations": "6.0.3",
+        "@angular/animations": "^6.0.3",
         "@angular/cli": "^6.0.7",
         "@angular/common": "6.0.3",
         "@angular/compiler": "6.0.3",
@@ -67,6 +67,8 @@
     },
     "dependencies": {
         "@agm/core": "^1.0.0-beta.3",
+        "@angular/cdk": "^6.4.1",
+        "@angular/material": "^6.4.1",
         "@fortawesome/angular-fontawesome": "0.1.0-10",
         "@fortawesome/fontawesome-free-webfonts": "^1.0.9",
         "@fortawesome/fontawesome-svg-core": "^1.2.0",

@@ -52,17 +52,18 @@ export class SignalComponent {
                 display: false
             },
             elements: {
+                point: { radius: 0 },
                 line: {
                     tension: 0, // disables bezier curves
                 }
             },
             scales: {
                 xAxes: [{
-                    display: true
+                    display: false
 
                 }],
                 yAxes: [{
-                    display: true
+                    display: false
                     , ticks:
                         {
                             min: 0, max: 4000

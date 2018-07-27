@@ -1,10 +1,9 @@
-<p *ngIf="!signal"><em>Loading data...</em></p>
+<p *ngIf="!signal"><mat-spinner></mat-spinner></p>
 
-<div class="card card-block panel panel-default panel-body">
-
-    <chart #chart [type]="charttype" [data]="chartdata" [options]="chartoptions" style="height:80px"></chart>
-    <span>{{signal.detector}}</span>
-    <span>{{signal.received}}</span>
-    <span>{{signal.id}}</span>
-
-</div>
+<chart #chart [type]="charttype" [data]="chartdata" [options]="chartoptions"></chart>
+<mat-divider></mat-divider>
+<mat-chip-list>
+    <mat-chip>{{signal.detector}}</mat-chip>
+    <mat-chip>{{signal.received}}</mat-chip>
+    <mat-chip>{{signal.id}}</mat-chip>
+</mat-chip-list>

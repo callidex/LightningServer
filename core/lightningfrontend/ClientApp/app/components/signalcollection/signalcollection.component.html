@@ -1,8 +1,11 @@
 <p *ngIf="!signals"><em>Loading data...</em></p>
 
-
-<div *ngFor="let signal of signals">
-    <app-signal [signal]="signal"></app-signal>
-</div>
+<mat-grid-list cols="2" rowHeight="2:1.5">
+    <div *ngFor="let signal of signals">
+        <mat-grid-tile>
+            <app-signal [signal]="signal"></app-signal>
+        </mat-grid-tile>
+    </div>
+</mat-grid-list>
 
 
