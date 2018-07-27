@@ -14,7 +14,7 @@ import { AgmCoreModule } from '@agm/core';
 import { SignalComponent } from './components/signal/signal.component';
 import { SignalCollectionComponent } from './components/signalcollection/signalcollection.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { MatGridListModule, MatProgressSpinnerModule } from '@angular/material';
+import { MatGridListModule, MatDividerModule, MatProgressSpinnerModule, MatChipsModule } from '@angular/material';
 
 import { ChartModule } from 'angular2-chartjs';
 
@@ -30,6 +30,8 @@ import { ChartModule } from 'angular2-chartjs';
     ],
     imports: [
         MatGridListModule,
+        MatDividerModule,
+        MatChipsModule,
         MatProgressSpinnerModule,
         ChartModule,
         CommonModule,

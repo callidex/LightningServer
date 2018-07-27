@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const merge = require('webpack-merge');
 const treeShakableModules = [
     '@angular/animations',
@@ -28,7 +28,6 @@ const allModules = treeShakableModules.concat(nonTreeShakableModules);
 
 module.exports = (env) => {
 
-    const extractCSS = new ExtractTextPlugin('vendor.css');
     const isDevBuild = !(env && env.prod);
     const sharedConfig = {
         mode: 'development',
@@ -64,11 +63,32 @@ module.exports = (env) => {
         output: { path: path.join(__dirname, 'wwwroot', 'dist') },
         module: {
             rules: [
-                { test: /\.css(\?|$)/, use: extractCSS.extract({ use: isDevBuild ? 'css-loader' : 'css-loader?minimize' }) }
+                {
+                    test: /\.(sa|sc|c)ss$/,
+                    use: [
+                        {
+                            loader: MiniCssExtractPlugin.loader,
+                            //    options: {
+                            //        // you can specify a publicPath here
+                            //        // by default it use publicPath in webpackOptions.output
+                            //        publicPath: '../'
+                            //    }
+                            //
+                        },
+                        "css-loader"
+                    ]
+                },
+
             ]
         },
         plugins: [
-            extractCSS,
+            new MiniCssExtractPlugin({
+                // Options similar to the same options in webpackOptions.output
+                // both options are optional
+                filename: "[name].css",
+                chunkFilename: "[id].css"
+            })
+            ,
             new webpack.DllPlugin({
                 path: path.join(__dirname, 'wwwroot', 'dist', '[name]-manifest.json'),
                 name: '[name]_[hash]'
@@ -76,7 +96,7 @@ module.exports = (env) => {
 
 
         ].concat(isDevBuild ? [] : [
-//            new webpack.optimize.UglifyJsPlugin()
+            //            new webpack.optimize.UglifyJsPlugin()
         ])
     });
 
@@ -89,7 +109,11 @@ module.exports = (env) => {
             libraryTarget: 'commonjs2',
         },
         module: {
-            rules: [{ test: /\.css(\?|$)/, use: ['to-string-loader', isDevBuild ? 'css-loader' : 'css-loader?minimize'] }]
+            rules: [{
+                test: /\.css(\?|$)/,
+                use: ['to-string-loader',
+                    isDevBuild ? 'css-loader' : 'css-loader?minimize']
+            }]
         },
         plugins: [
             new webpack.DllPlugin({

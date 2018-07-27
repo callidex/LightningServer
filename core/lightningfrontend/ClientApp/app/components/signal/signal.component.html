@@ -1,9 +1,15 @@
 <p *ngIf="!signal"><mat-spinner></mat-spinner></p>
 
 <chart #chart [type]="charttype" [data]="chartdata" [options]="chartoptions"></chart>
-<mat-divider></mat-divider>
-<mat-chip-list>
-    <mat-chip>{{signal.detector}}</mat-chip>
-    <mat-chip>{{signal.received}}</mat-chip>
-    <mat-chip>{{signal.id}}</mat-chip>
-</mat-chip-list>
+<li class="dropdown-divider"></li>
+<div class="card">
+    <div class="card-block">
+        Detector : {{signal.detector}}
+    </div>
+    <div class="card-block">
+        {{signal.received}}
+    </div>
+    <div class="card-block">
+        Id: {{signal.id}}
+    </div>
+</div>
