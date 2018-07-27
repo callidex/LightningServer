@@ -81,9 +81,6 @@
         "rxjs-compat": "^6.2.0"
     },
     "-vs-binding": {
-        "BeforeBuild": [
-            "build"
-        ],
         "AfterBuild": [
             "build"
         ]
