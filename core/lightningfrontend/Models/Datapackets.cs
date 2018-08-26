@@ -29,7 +29,7 @@ namespace lightningContext
             Batchid = s.adcseq;
             Packetnumber = (int?)s.udpcount;
             Detectoruid = s.detectorId;
-            Epoch = s.epoch;
+            Received = s.epoch;
 
             unsafe
             {
@@ -79,7 +79,5 @@ namespace lightningContext
         public int? Udpnumber { get; set; }
         public float? Variance { get; set; }
         public float? Version { get; set; }
-        public UInt32 Epoch;
-
     }
 }

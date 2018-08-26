@@ -27,7 +27,7 @@ namespace lightningfrontend.Models
 
         public void Process(LightningContext context)
         {
-            var closePackets = context.Datapackets.Where(x => x.Epoch > this.packet.Epoch - TOACorrelator.MAXDELAY);
+            var closePackets = context.Datapackets.Where(x => x.Received  > this.packet.Received - TOACorrelator.MAXDELAY);
 
             var fullInfo = (from data in closePackets
                             join
@@ -49,8 +49,6 @@ namespace lightningfrontend.Models
             if (strike != null)
             {
                 context.Add(strike);
-                context.SaveChanges();
-
             }
         }
 

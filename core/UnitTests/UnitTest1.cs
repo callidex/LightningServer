@@ -45,7 +45,7 @@ namespace UnitTests
             Assert.AreEqual(1002, detectionPacket.Detectoruid);
             Assert.AreEqual(293, detectionPacket.Packetnumber);
             Assert.AreEqual(51, detectionPacket.Batchid);
-            Assert.AreEqual((System.Int32)0, (System.Int32)detectionPacket.Epoch - 1527921364);
+            Assert.AreEqual((System.Int32)0, (System.Int32)detectionPacket.Received - 1527921364);
         }
 
 

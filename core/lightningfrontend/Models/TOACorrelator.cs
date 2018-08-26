@@ -117,17 +117,17 @@ namespace lightningfrontend.Models
         public static DetectionInstance FromPacket(Datapacket packet)
         {
             // Detection data packet has epoch, calc first peak, related status, create detection instance
-            decimal possibleStrikeTime = packet.Epoch;
+            long possibleStrikeTime = packet.Received ?? 0;
 
             var peakData = packet.Data.GetPeak();
 
-            possibleStrikeTime += (decimal)peakData.Item1 * 1 / 3.6e6M;
+            decimal possibleStrikeTimeDec = possibleStrikeTime + (decimal)peakData.Item1 * 1 / 3.6e6M;
 
             //TODO: pull out the peak from the datapacket and produce the detection time epoch
             //TODO: confirm time types
             return new DetectionInstance()
             {
-                DetectionTime = possibleStrikeTime
+                DetectionTime = possibleStrikeTimeDec
             };
         }
     }

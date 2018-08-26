@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
 
 namespace lightningfrontend.Controllers
 {
@@ -14,12 +14,12 @@ namespace lightningfrontend.Controllers
             using (var context = new LightningContext())
             {
                 var output = new List<Signal>();
-                foreach (var d in context.Datapackets.OrderByDescending(x => x.Id).Take(10).Select(x => new { x.Data, x.Detectoruid, x.Epoch, x.Id })
+                foreach (var d in context.Datapackets.OrderByDescending(x => x.Id).Take(10).Select(x => new { x.Data, x.Detectoruid, x.Received, x.Id })
                     .ToList())
                 {
                     var o = new UInt16[728];
                     Buffer.BlockCopy(d.Data, 0, o, 0, 1456);
-                    output.Add(new Signal() { Data = o, Detector = d.Detectoruid, Received = d.Epoch, Id = d.Id }
+                    output.Add(new Signal() { Data = o, Detector = d.Detectoruid, Received = d.Received ?? 0, ReceivedString = FromUnixTime(d.Received ?? 0).ToString(), Id = d.Id }
                     );
                 };
                 return output;
@@ -73,7 +73,7 @@ namespace lightningfrontend.Controllers
             return detectorList;
         }
 
-        
+
 
         public class Strike
         {
@@ -94,7 +94,8 @@ namespace lightningfrontend.Controllers
         {
             public UInt16[] Data;
             public long Detector;
-            public uint Received;
+            public long Received { get; set; }
+            public string ReceivedString { get; set; }
             public long Id;
         }
         private DateTime FromUnixTime(long unixTime)
