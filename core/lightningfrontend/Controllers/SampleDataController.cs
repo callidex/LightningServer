@@ -64,7 +64,8 @@ namespace lightningfrontend.Controllers
                                        Name = d.Detectoruid.ToString(),
                                        Lat = (decimal)d.Gpslat,
                                        Lon = (decimal)d.Gpslon,
-                                       Received = d.Received
+                                       Received = d.Received,
+                                       ReceivedString = FromUnixTime(d.Received).ToString()
                                    }));
 
                 detectorList.AddRange(detectorIDs.SelectMany(x => x.OrderByDescending(y => y.Received).Take(1)));
@@ -72,11 +73,14 @@ namespace lightningfrontend.Controllers
             return detectorList;
         }
 
+        
+
         public class Strike
         {
             public decimal Lat { get; set; }
             public decimal Lon { get; set; }
             public long Received { get; set; }
+            public string ReceivedString { get; set; }
 
         }
 
@@ -93,6 +97,10 @@ namespace lightningfrontend.Controllers
             public uint Received;
             public long Id;
         }
+        private DateTime FromUnixTime(long unixTime)
+        {
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(unixTime);
 
+        }
     }
 }

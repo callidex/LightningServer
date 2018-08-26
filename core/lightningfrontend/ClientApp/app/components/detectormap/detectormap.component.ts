@@ -29,6 +29,7 @@ class HomeDetector implements IDetector {
     Lat: number = 0;
     Lon: number = 0;
     Received: number = 0;
+    ReceivedString: string = '';
 }
 
 interface IDetector {
@@ -36,4 +37,5 @@ interface IDetector {
     Lat: number;
     Lon: number;
     Received: number;
+    ReceivedString: string;
 }
