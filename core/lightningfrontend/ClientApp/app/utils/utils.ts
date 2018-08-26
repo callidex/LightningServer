@@ -3,7 +3,7 @@ export interface ISignal {
     data: number[];
     detector: string;
     received: number;
-    receivedstring: string;
+    receivedString: string;
     id: number;
 
     //    PeakValue: number;

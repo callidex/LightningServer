@@ -12,6 +12,7 @@ import { ChartComponent } from 'angular2-chartjs'
 export class SignalComponent {
     @Input() signal!: ISignal;
 
+    //constructor(private modalService: NgbModal) { }
     constructor() { }
 
     @ViewChild(ChartComponent) chart!: ChartComponent;
@@ -65,12 +66,31 @@ export class SignalComponent {
                 yAxes: [{
                     display: false
                     , ticks:
-                        {
-                            min: 0, max: 4000
-                        }
+                    {
+                        min: 0, max: 4000
+                    }
 
                 }],
             }
         }
+
+        //open(content) {
+        //    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
+        //        this.closeResult = `Closed with: ${result}`;
+        //    }, (reason) => {
+        //        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        //    });
+        //}
+
+        //private getDismissReason(reason: any): string {
+        //    if (reason === ModalDismissReasons.ESC) {
+        //        return 'by pressing ESC';
+        //    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+        //        return 'by clicking on a backdrop';
+        //    } else {
+        //        return `with: ${reason}`;
+        //    }
+        //} 
     };
+
 }
