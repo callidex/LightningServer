@@ -30,14 +30,27 @@ namespace lightningfrontend.Controllers
         [HttpGet("[action]")]
         public IEnumerable<Strike> Strikes()
         {
-            List<Strike> strikelist = new List<Strike>();
+            using (var context = new LightningContext())
+            {
+                var t = context.Datapackets.Join(context.Datapackets, x => x.Received, y => y.Received, (x, y) => new { Left = x, Right = y })
+                    .Where(x => x.Left.Detectoruid != x.Right.Detectoruid)
+                    .Where(x => x.Left.Received == x.Right.Received)
+                    .Select(x =>
+                     new
+                     {
+                         lID = x.Left.Detectoruid,
+                         rID = x.Right.Detectoruid,
+                         lTime = x.Left.Received,
+                         rTime = x.Right.Received
+                     }).ToArray();
 
-            strikelist.Add(new Strike { Received = 111111, Lat = 50, Lon = -20 });
-            strikelist.Add(new Strike { Received = 111111, Lat = -50, Lon = -20 });
-            strikelist.Add(new Strike { Received = 111111, Lat = 50, Lon = 20 });
-            strikelist.Add(new Strike { Received = 111111, Lat = -50, Lon = 20 });
+                if (t.Any())
+                {
+                    return t.Select(x => new Strike() { Received = x.lTime ?? 0 }).ToArray();
 
-            return strikelist;
+                }
+            }
+            return null;
         }
 
 
