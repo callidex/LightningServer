@@ -1,4 +1,3 @@
-using lightningContext;
 using lightningfrontend;
 using lightningfrontend.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -93,12 +92,6 @@ namespace UnitTests
 
             IDetectionPacket p = packet.Generate();
             Assert.IsNotNull(p);
-
-            using (var context = new LightningContext())
-
-            {
-                p.StoreInDB(context);
-            }
         }
 
         [TestMethod]
@@ -116,6 +109,9 @@ namespace UnitTests
             };
 
             Strike final = TOACorrelator.Correlate(strikedetections);
+
+            Assert.IsNotNull(final);
+
 
         }
     }

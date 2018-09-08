@@ -5,14 +5,17 @@ using System.Linq;
 
 namespace lightningfrontend.Models
 {
+    public struct Vector
+    {
+        public double Lon, Lat, Angle;
+    }
     public static class TOACorrelator
     {
-        public const decimal MAXDELAY = (1 / 3e8M) * 50000M;
+        private static readonly double SIGNALSPEED = (1 / 3e8);
+        public static readonly double MAXDELAY = SIGNALSPEED * 50000;
 
         public static Strike Correlate(List<DetectionInstance> instances)
         {
-
-
             if (instances.Any())
             {
                 // select the first (not in any order)
@@ -22,33 +25,48 @@ namespace lightningfrontend.Models
                 // create the intersections
                 foreach (var secondaryDetector in instances.Where(x => x != rootDetector))
                 {
+                    var firstToHear = rootDetector.DetectionTime > secondaryDetector.DetectionTime ? rootDetector : secondaryDetector;
+                    var secondToHear = rootDetector.DetectionTime > secondaryDetector.DetectionTime ? secondaryDetector : rootDetector;
+
                     detectorDeltas.Add(new DetectorDelta
                     {
                         deltaLat = rootDetector.DetectorLat - secondaryDetector.DetectorLat,
                         deltaLon = rootDetector.DetectorLon - secondaryDetector.DetectorLon,
                         deltaTime = rootDetector.DetectionTime - secondaryDetector.DetectionTime,
-                        Primary = rootDetector,
-                        Secondary = secondaryDetector
+                        Primary = firstToHear,
+                        Secondary = secondToHear,
+                        Angle = Math.Atan2(secondToHear.DetectorLat - firstToHear.DetectorLat, secondToHear.DetectorLon - firstToHear.DetectorLon)
                     });
                 }
-                detectorDeltas = detectorDeltas.OrderBy(x => x.deltaTime).ToList();  // order by earliest heard
+
+                var strike = new Strike();
+
+                detectorDeltas = detectorDeltas.OrderBy(x => x.deltaTime).ToList();
                 foreach (var delta in detectorDeltas)
                 {
                     var distance = delta.GetKilometers();
                     var timeDiff = delta.deltaTime;
-                    Console.WriteLine(distance);
-                    if (timeDiff > 0)
-                    {
-                        //first detector heard it last
-                    }
-                    else
-                    {
 
-                    }
+                    // time diff is the radius of the 'circle of difference' and 'opposite of the RHTriangle'
+                    var adjacent = timeDiff * SIGNALSPEED;
+                    var hypotenuse = distance;
 
+                    var opposite = Math.Sqrt((hypotenuse * hypotenuse) - (adjacent * adjacent));
 
+                    // sin theta = O / H
 
+                    var angleFromDetector = Math.Asin(opposite / hypotenuse);
+
+                    // this angle represents the angle from normal between the two points, relative, get absolute.
+
+                    var finalAngle = angleFromDetector + delta.Angle;
+
+                    // as we are treating as a front, no curve, take detector 1 as point for now ( could work out midpoint of line between detectors)
+
+                    
+                    strike.Vectors.Add(new Vector() { Angle = finalAngle, Lat = delta.Primary.DetectorLat, Lon = delta.Primary.DetectorLon });
                 }
+                if (strike.Vectors.Any()) return strike;
             }
             return null;
         }
@@ -58,7 +76,7 @@ namespace lightningfrontend.Models
     {
         internal double deltaLat;
         internal double deltaLon;
-        internal decimal deltaTime;
+        internal double deltaTime;
         private enum DistanceMeasure
         {
             Kilometers,
@@ -68,6 +86,7 @@ namespace lightningfrontend.Models
 
         public DetectionInstance Secondary { get; internal set; }
         public DetectionInstance Primary { get; internal set; }
+        public double Angle { get; internal set; }
 
         public double GetKilometers()
         {
@@ -106,13 +125,13 @@ namespace lightningfrontend.Models
         public double StrikeLat { get; set; }
         public double StrikeLon { get; set; }
         public decimal StrikeTime { get; set; }
-
+        public List<Vector> Vectors { get; internal set; } = new List<Vector>();
     }
     public class DetectionInstance
     {
         public double DetectorLat { get; set; }
         public double DetectorLon { get; set; }
-        public decimal DetectionTime { get; set; }
+        public double DetectionTime { get; set; }
 
         public static DetectionInstance FromPacket(Datapacket packet)
         {
@@ -121,7 +140,7 @@ namespace lightningfrontend.Models
 
             var peakData = packet.Data.GetPeak();
 
-            decimal possibleStrikeTimeDec = possibleStrikeTime + (decimal)peakData.Item1 * 1 / 3.6e6M;
+            double possibleStrikeTimeDec = possibleStrikeTime + peakData.Item1 * 1 / 3.6e6;
 
             //TODO: pull out the peak from the datapacket and produce the detection time epoch
             //TODO: confirm time types
