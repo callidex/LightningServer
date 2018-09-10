@@ -30,16 +30,27 @@ namespace lightningfrontend.Controllers
         [HttpGet("[action]")]
         public IEnumerable<Strike> Strikes()
         {
-            List<Strike> strikelist = new List<Strike>();
+            using (var context = new LightningContext())
+            {
+                var coincedence = (from d in context.Datapackets
+                                   join s in context.Statuspackets on new { d.Batchid, d.Detectoruid } equals new { Batchid = s.Batchid ?? 0, Detectoruid = s.Detectoruid ?? 0 }
 
-            strikelist.Add(new Strike { Received = 111111, Lat = 50, Lon = -20 });
-            strikelist.Add(new Strike { Received = 111111, Lat = -50, Lon = -20 });
-            strikelist.Add(new Strike { Received = 111111, Lat = 50, Lon = 20 });
-            strikelist.Add(new Strike { Received = 111111, Lat = -50, Lon = 20 });
+                                   select new { d, s })
 
-            return strikelist;
+                                   .GroupBy(g => g.d.Received).Where(x => x.Count() > 1);
+                List<Strike> strikelist = new List<Strike>();
+
+                foreach (var co in coincedence)
+                {
+                    foreach (var e in co)
+                    {
+                        strikelist.Add(new Strike { Received = co.Key ?? 0, Lat = (decimal)e.s.Gpslat, Lon = (decimal)e.s.Gpslon });
+                    }
+
+                }
+                return strikelist;
+            }
         }
-
 
         [HttpGet("[action]")]
         public IEnumerable<Detector> Detectors()
