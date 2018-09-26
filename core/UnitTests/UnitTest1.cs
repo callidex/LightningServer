@@ -25,10 +25,11 @@ namespace UnitTests
         {
             using (var context = new LightningContext())
             {
-                var t = context.Datapackets.Join(context.Datapackets, x => x.Received, y => y.Received, (x, y) => new { Left = x, Right = y }).Where(x => x.Left.Received == x.Right.Received).ToArray();
+                var t = context.Datapackets.Join(context.Datapackets, x => x.Received, y => y.Received, (x, y) => new { Left = x, Right = y });
                     
                 
-                var s = t.Where(x => x.Left.Received == x.Right.Received).Select(x =>
+                var s = t.Where(x => x.Left.Received == x.Right.Received).Where(x=>x.Left.Detectoruid > x.Right.Detectoruid)
+                .Select(x =>
                                new
                                {
                                    lID = x.Left.Detectoruid,

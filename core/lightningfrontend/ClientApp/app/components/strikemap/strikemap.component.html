@@ -3,10 +3,23 @@
     <agm-marker *ngFor="let strike of strikes"
                 [latitude]="strike.lat"
                 [longitude]="strike.lon">
-        <agm-info-window isOpen="true">{{strike.recieved}}</agm-info-window>
+        <agm-info-window isOpen="true">{{strike.received}}</agm-info-window>
     </agm-marker>
 </agm-map>
 
 
 <p *ngIf="!strikes"><em>Loading strikes...</em></p>
 
+<table class='table' *ngIf="strikes">
+    <thead>
+        <tr>
+            <th>Strike Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let strike of strikes">
+            <td>{{ strike.received}}</td>
+            <td>{{ strike.receivedstring}}</td>
+        </tr>
+    </tbody>
+</table>

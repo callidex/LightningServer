@@ -42,7 +42,7 @@ namespace lightningfrontend.Controllers
                          rID = x.Right.Detectoruid,
                          lTime = x.Left.Received,
                          rTime = x.Right.Received
-                     }).ToArray();
+                     }).Take(10).ToArray();
 
                 if (t.Any())
                 {
