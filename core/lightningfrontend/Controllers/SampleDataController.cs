@@ -53,7 +53,6 @@ namespace lightningfrontend.Controllers
             return null;
         }
 
-
         [HttpGet("[action]")]
         public IEnumerable<Detector> Detectors()
         {
