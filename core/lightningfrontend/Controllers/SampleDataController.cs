@@ -40,30 +40,31 @@ namespace lightningfrontend.Controllers
       }
 
 
-      [HttpGet("[action]")]
-      public IEnumerable<Strike> Strikes()
-      {
-         using (var context = new LightningContext())
-         {
-            var coincedence = (from d in context.Datapackets
-                               join s in context.Statuspackets on new { d.Batchid, d.Detectoruid } equals new { Batchid = s.Batchid ?? 0, Detectoruid = s.Detectoruid ?? 0 }
-
-                               select new { d, s })
-
-                               .GroupBy(g => g.d.Received).Where(x => x.Count() > 1);
-            List<Strike> strikelist = new List<Strike>();
-
-            foreach (var co in coincedence)
+        [HttpGet("[action]")]
+        public IEnumerable<Strike> Strikes()
+        {
+            using (var context = new LightningContext())
             {
-               foreach (var e in co)
-               {
-                  strikelist.Add(new Strike { Received = co.Key ?? 0, Lat = (decimal)e.s.Gpslat, Lon = (decimal)e.s.Gpslon });
-               }
+                var t = context.Datapackets.Join(context.Datapackets, x => x.Received, y => y.Received, (x, y) => new { Left = x, Right = y })
+                    .Where(x => x.Left.Detectoruid != x.Right.Detectoruid)
+                    .Where(x => x.Left.Received == x.Right.Received)
+                    .Select(x =>
+                     new
+                     {
+                         lID = x.Left.Detectoruid,
+                         rID = x.Right.Detectoruid,
+                         lTime = x.Left.Received,
+                         rTime = x.Right.Received
+                     }).Take(10).ToArray();
 
+                if (t.Any())
+                {
+                    return t.Select(x => new Strike() { Received = x.lTime ?? 0 }).ToArray();
+
+                }
+                return strikelist;
             }
-            return strikelist;
-         }
-      }
+        }
 
       [HttpGet("[action]")]
       public IEnumerable<Detector> Detectors()

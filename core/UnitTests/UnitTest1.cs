@@ -20,6 +20,32 @@ namespace UnitTests
             Assert.IsFalse(statusPacket.GetPacket().IsReady());
 
         }
+        [TestMethod]
+        public void StrikeTest()
+        {
+            using (var context = new LightningContext())
+            {
+                var t = context.Datapackets.Join(context.Datapackets, x => x.Received, y => y.Received, (x, y) => new { Left = x, Right = y });
+                    
+                
+                var s = t.Where(x => x.Left.Received == x.Right.Received).Where(x=>x.Left.Detectoruid > x.Right.Detectoruid)
+                .Select(x =>
+                               new
+                               {
+                                   lID = x.Left.Detectoruid,
+                                   rID = x.Right.Detectoruid,
+                                   lTime = x.Left.Received,
+                                   rTime = x.Right.Received
+                               }).ToArray();
+
+                if (t.Any())
+                {
+                    var st =  s.Select(x => new Strike() { StrikeTime = x.lTime ?? 0 }).ToArray();
+
+                }
+            }
+
+        }
 
 
         [TestMethod]

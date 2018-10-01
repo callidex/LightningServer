@@ -20,7 +20,7 @@ const nonTreeShakableModules = [
     'es6-promise',
     'es6-shim',
     'event-source-polyfill',
-    'jquery',
+    'jquery'
 ];
 const allModules = treeShakableModules.concat(nonTreeShakableModules);
 
@@ -67,7 +67,7 @@ module.exports = (env) => {
                     test: /\.(sa|sc|c)ss$/,
                     use: [
                         {
-                            loader: MiniCssExtractPlugin.loader,
+                            loader: MiniCssExtractPlugin.loader
                             //    options: {
                             //        // you can specify a publicPath here
                             //        // by default it use publicPath in webpackOptions.output
@@ -77,7 +77,7 @@ module.exports = (env) => {
                         },
                         "css-loader"
                     ]
-                },
+                }
 
             ]
         },
@@ -92,7 +92,7 @@ module.exports = (env) => {
             new webpack.DllPlugin({
                 path: path.join(__dirname, 'wwwroot', 'dist', '[name]-manifest.json'),
                 name: '[name]_[hash]'
-            }),
+            })
 
 
         ].concat(isDevBuild ? [] : [
@@ -106,7 +106,7 @@ module.exports = (env) => {
         entry: { vendor: allModules.concat(['aspnet-prerendering']) },
         output: {
             path: path.join(__dirname, 'ClientApp', 'dist'),
-            libraryTarget: 'commonjs2',
+            libraryTarget: 'commonjs2'
         },
         module: {
             rules: [{
@@ -124,4 +124,4 @@ module.exports = (env) => {
     });
 
     return [clientBundleConfig, serverBundleConfig];
-}
+};
