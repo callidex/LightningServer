@@ -10,3 +10,9 @@ export interface ISignal {
     //    StartTime: number;
 }
 
+export interface InfoDump {
+    statuspacketcount: number;
+    datapacketcount: number;
+    detectorcount: number
+
+}

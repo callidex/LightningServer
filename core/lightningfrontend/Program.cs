@@ -45,12 +45,6 @@ namespace lightningfrontend
                     var newPacket = potentialPacket.Generate();
                     Console.WriteLine($"New packet incoming on thread {Thread.CurrentThread.ManagedThreadId} : {potentialPacket.IPAddress}:{potentialPacket.IPPort}");
 
-                    //Store the raw packet
-
-                    //Disabled storing whole raw packet for now
-                    //Task.Run(() => potentialPacket.StoreInDB());
-
-                    //Process and store the generated packet
                     Task.Run(() =>
                     {
                         using (var context = new LightningContext())

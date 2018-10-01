@@ -30,6 +30,7 @@ namespace lightningContext
             Packetnumber = (int?)s.udpcount;
             Detectoruid = s.detectorId;
             Received = s.epoch;
+            Rtsecs = s.buffnum_pps & 0b00111111;
 
             unsafe
             {
