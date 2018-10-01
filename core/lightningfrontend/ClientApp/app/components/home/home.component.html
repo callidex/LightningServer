@@ -1,15 +1,12 @@
 <p *ngIf="!infodump"><em>Loading info...</em></p>
-<p *ngIf="infodump">
-
-    <div class="card">
-        <div class="card-block">
-            Detectors : {{infodump.detectorCount}}
-        </div>
-        <div class="card-block">
-            Status Packets : {{infodump.statusPacketCount}}
-        </div>
-        <div class="card-block">
-            Data Packets: {{infodump.dataPacketCount}}
-        </div>
+<div class="card">
+    <div class="card-block">
+        Detectors : {{infodump.detectorCount}}
     </div>
-</p>
+    <div class="card-block">
+        Status Packets : {{infodump.statusPacketCount}}
+    </div>
+    <div class="card-block">
+        Data Packets: {{infodump.dataPacketCount}}
+    </div>
+</div>
