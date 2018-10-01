@@ -59,10 +59,10 @@ namespace lightningfrontend.Controllers
 
                 if (t.Any())
                 {
-                    return t.Select(x => new Strike() { Received = x.lTime ?? 0 }).ToArray();
+                    return t.Select(x => new Strike() { Received = x.lTime ?? 0  }).ToArray();
 
                 }
-                return strikelist;
+                return null;
             }
         }
 
