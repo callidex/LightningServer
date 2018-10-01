@@ -11,8 +11,8 @@ export interface ISignal {
 }
 
 export interface InfoDump {
-    statuspacketcount: number;
-    datapacketcount: number;
-    detectorcount: number
+    statusPacketCount: number;
+    dataPacketCount: number;
+    detectorCount: number
 
 }

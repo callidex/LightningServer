@@ -7,7 +7,7 @@ import { InfoDump } from '../../utils/utils';
     templateUrl: './home.component.html'
 })
 export class HomeComponent {
-    infodump: InfoDump | undefined;
+    infodump: InfoDump = <InfoDump>{};
     
     constructor(httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
 
