@@ -1,7 +1,8 @@
 <p *ngIf="!signal"><mat-spinner></mat-spinner></p>
 
-<chart #chart [type]="charttype" [data]="chartdata" [options]="chartoptions"></chart>
+
 <div class="card">
+    <chart #chart [type]="charttype" [data]="chartdata" [options]="chartoptions"></chart>
     <div class="card-block">
         Detector : {{signal.detector}}
     </div>

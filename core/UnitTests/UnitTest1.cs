@@ -1,4 +1,5 @@
 using lightningfrontend;
+using lightningfrontend.DB;
 using lightningfrontend.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
@@ -23,7 +24,7 @@ namespace UnitTests
         [TestMethod]
         public void StrikeTest()
         {
-            using (var context = new LightningContext())
+            using (var context = new lightningContext())
             {
                 var t = context.Datapackets.Join(context.Datapackets, x => x.Received, y => y.Received, (x, y) => new { Left = x, Right = y });
                     
@@ -40,7 +41,7 @@ namespace UnitTests
 
                 if (t.Any())
                 {
-                    var st =  s.Select(x => new Strike() { StrikeTime = x.lTime ?? 0 }).ToArray();
+                    var st =  s.Select(x => new Strike() { StrikeTime = x.lTime }).ToArray();
 
                 }
             }
@@ -123,9 +124,9 @@ namespace UnitTests
         [TestMethod]
         public void TOATest()
         {
-            DetectionInstance strike1 = new DetectionInstance() { DetectorLat = 153.221, DetectorLon = -27.5604, DetectionTime = 0 };
-            DetectionInstance strike2 = new DetectionInstance() { DetectorLat = 153.265, DetectorLon = -27.5583, DetectionTime = 0 };
-            DetectionInstance strike3 = new DetectionInstance() { DetectorLat = 153.24211, DetectorLon = -27.5241, DetectionTime = 0 };
+            DetectionInstance strike1 = new DetectionInstance() { DetectorLat = (float)153.221, DetectorLon = (float)-27.5604, DetectionTime = 0 };
+            DetectionInstance strike2 = new DetectionInstance() { DetectorLat = (float)153.265, DetectorLon = (float)-27.5583, DetectionTime = 0 };
+            DetectionInstance strike3 = new DetectionInstance() { DetectorLat = (float)153.24211, DetectorLon = (float)-27.5241, DetectionTime = 0 };
 
             var strikedetections = new System.Collections.Generic.List<DetectionInstance>
             {

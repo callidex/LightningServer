@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace lightningContext
+﻿namespace lightningfrontend.DB
 {
-    public partial class Rawpacket
+   public partial class Rawpackets
     {
         public long Id { get; set; }
         public string Address { get; set; }

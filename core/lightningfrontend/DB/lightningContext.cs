@@ -1,14 +1,13 @@
-﻿using lightningContext;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace lightningfrontend
+namespace lightningfrontend.DB
 {
-    public partial class LightningContext : DbContext
+   public partial class lightningContext : DbContext
     {
-        public virtual DbSet<DetectorRegistration> DetectorRegistrations { get; set; }
-        public virtual DbSet<Datapacket> Datapackets { get; set; }
-        public virtual DbSet<Rawpacket> Rawpackets { get; set; }
-        public virtual DbSet<Statuspacket> Statuspackets { get; set; }
+        public virtual DbSet<Datapackets> Datapackets { get; set; }
+        public virtual DbSet<Detectors> Detectors { get; set; }
+        public virtual DbSet<Rawpackets> Rawpackets { get; set; }
+        public virtual DbSet<Statuspackets> Statuspackets { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -21,28 +20,16 @@ namespace lightningfrontend
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<DetectorRegistration>(entity =>
-            {
-                    entity.ToTable("detectors");
-                    entity.HasIndex(e => e.ID)
-                    .HasName("iddetectors_UNIQUE")
-                    .IsUnique();
-                    entity.Property(e => e.ID)
-                        .HasColumnName("id")
-                        .HasColumnType("int(8)");
-
-                    entity.Property(e => e.UniqueDeviceCode)
-                    .HasColumnName("devicecode")
-                    .HasMaxLength(45);
-            });
-
-            modelBuilder.Entity<Datapacket>(entity =>
+            modelBuilder.Entity<Datapackets>(entity =>
             {
                 entity.ToTable("datapackets");
 
                 entity.HasIndex(e => e.Id)
                     .HasName("iddatapackets_UNIQUE")
                     .IsUnique();
+
+                entity.HasIndex(e => e.Received)
+                    .HasName("received");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -137,7 +124,22 @@ namespace lightningfrontend
                 entity.Property(e => e.Version).HasColumnName("version");
             });
 
-            modelBuilder.Entity<Rawpacket>(entity =>
+            modelBuilder.Entity<Detectors>(entity =>
+            {
+                entity.ToTable("detectors");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Devicecode)
+                    .HasColumnName("devicecode")
+                    .HasMaxLength(45);
+
+                entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .HasMaxLength(100);
+            });
+
+            modelBuilder.Entity<Rawpackets>(entity =>
             {
                 entity.ToTable("rawpackets");
 
@@ -179,7 +181,7 @@ namespace lightningfrontend
                     .HasMaxLength(45);
             });
 
-            modelBuilder.Entity<Statuspacket>(entity =>
+            modelBuilder.Entity<Statuspackets>(entity =>
             {
                 entity.ToTable("statuspackets");
 

@@ -1,22 +1,22 @@
-<ul class='nav nav-pills flex-column'>
-    <li [routerLinkActive]="['link-active']" class="nav-item">
+<ul class='nav nav-pills nav-stacked'>
+    <!--<li [routerLinkActive]="['link-active']" class="nav-item">
         <a [routerLink]="['/home']" class="nav-link">
             <p><fa-icon [icon]="faHome" style="width:20px"></fa-icon>Home</p>
         </a>
-    </li>
+    </li>-->
     <li [routerLinkActive]="['link-active']" class="nav-link">
         <a [routerLink]="['/detectors']">
-            <p><fa-icon [icon]="faBroadcastTower" style="width:20px"></fa-icon>Detectors</p>
+            <fa-icon [icon]="faBroadcastTower" style="width:20px"></fa-icon>
         </a>
     </li>
     <li [routerLinkActive]="['link-active']" class="nav-link">
         <a [routerLink]="['/strikes']">
-            <p><fa-icon [icon]="faBolt" style="width:20px"></fa-icon>Strikes</p>
+            <fa-icon [icon]="faBolt" style="width:20px"></fa-icon>
         </a>
     </li>
     <li [routerLinkActive]="['link-active']" class="nav-link">
         <a [routerLink]="['/signals']">
-            <p><fa-icon [icon]="faSignal" style="width:20px"></fa-icon>Signals</p>
+            <fa-icon [icon]="faSignal" style="width:20px"></fa-icon>
         </a>
     </li>
 </ul>

@@ -1,4 +1,5 @@
-﻿using lightningContext;
+﻿
+using lightningfrontend.DB;
 using System;
 using System.IO;
 using System.Threading;
@@ -8,17 +9,17 @@ namespace lightningfrontend.Models
     public class DetectionStatusPacket : IDetectionPacket
     {
         private IncomingRawUdpPacket incomingRawUdpPacket;
-        private Statuspacket packet;
-        public Statuspacket GetPacket() => packet;
+        private Statuspackets packet;
+        public Statuspackets GetPacket() => packet;
 
         public DetectionStatusPacket(IncomingRawUdpPacket incomingRawUdpPacket)
         {
             this.incomingRawUdpPacket = incomingRawUdpPacket;
-            packet = new Statuspacket(this.incomingRawUdpPacket.RawBytes);
+            packet = new Statuspackets(this.incomingRawUdpPacket.RawBytes);
             packet.Received = DateTimeOffset.Now.ToUnixTimeSeconds();
         }
 
-        public void StoreInDB(LightningContext context)
+        public void StoreInDB(lightningContext context)
         {
             if (!packet.IsReady()) throw new InvalidDataException("Packet not constructed properly");
             Console.WriteLine($"Status Packet storing on thread {Thread.CurrentThread.ManagedThreadId}");
@@ -37,7 +38,7 @@ namespace lightningfrontend.Models
             }
         }
 
-        public void Process(LightningContext context)
+        public void Process(lightningContext context)
         {
             throw new NotImplementedException();
         }

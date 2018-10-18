@@ -1,4 +1,5 @@
-﻿using lightningContext;
+﻿
+using lightningfrontend.DB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -122,21 +123,21 @@ namespace lightningfrontend.Models
 
     public class Strike
     {
-        public double StrikeLat { get; set; }
-        public double StrikeLon { get; set; }
+        public float StrikeLat { get; set; }
+        public float StrikeLon { get; set; }
         public decimal StrikeTime { get; set; }
         public List<Vector> Vectors { get; internal set; } = new List<Vector>();
     }
     public class DetectionInstance
     {
-        public double DetectorLat { get; set; }
-        public double DetectorLon { get; set; }
+        public float DetectorLat { get; set; }
+        public float DetectorLon { get; set; }
         public double DetectionTime { get; set; }
 
-        public static DetectionInstance FromPacket(Datapacket packet)
+        public static DetectionInstance FromPacket(Datapackets packet)
         {
             // Detection data packet has epoch, calc first peak, related status, create detection instance
-            long possibleStrikeTime = packet.Received ?? 0;
+            long possibleStrikeTime = packet.Received;
 
             var peakData = packet.Data.GetPeak();
 

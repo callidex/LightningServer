@@ -1,19 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using lightningfrontend.DB;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace lightningfrontend
 {
-    public class Program
+   public class Program
     {
         public static void Main(string[] args)
         {
@@ -47,7 +43,7 @@ namespace lightningfrontend
 
                     Task.Run(() =>
                     {
-                        using (var context = new LightningContext())
+                        using (var context = new lightningContext())
                         {
                             newPacket.StoreInDB(context);
                         }

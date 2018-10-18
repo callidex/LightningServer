@@ -39,7 +39,7 @@ export class SignalComponent {
             datasets: [
                 {
                     data: this.signal.data,
-                    borderColor: "#3cba9f",
+                    borderColor: "#3c0000",
                     fill: false,
                     cubicInterpolationMode: 'monotone'
                 }
@@ -48,7 +48,7 @@ export class SignalComponent {
 
         this.chartoptions = {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
             legend: {
                 display: false
             },
