@@ -10,12 +10,28 @@ import { interval } from 'rxjs';
 
 export class LiveDataComponent {
 
+
+
+    constructor(httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+
+        interval(2000).subscribe(val =>
+            httpClient.get<number>(baseUrl + 'api/SampleData/RealtimeStatusPacketCount').subscribe(result => {
+                this.setStatus(result);
+
+            }));
+
+        interval(2000).subscribe(val =>
+            httpClient.get<number>(baseUrl + 'api/SampleData/RealtimeDataPacketCount').subscribe(result => {
+                this.setData(result);
+            }));
+    }
+
     statuscount: number = 0;
     datacount: number = 0;
     datatable: number[] = [0, 0, 0, 0];
-    statustable: number[] = [0,0,0,0];
+    statustable: number[] = [0, 0, 0, 0];
     charttype = 'line';
-    
+
     statuschartdata = {
 
         datasets: [
@@ -53,21 +69,24 @@ export class LiveDataComponent {
     };
 
 
-    constructor(httpClient: HttpClient, @Inject('BASE_URL') baseUrl: string) {
-
-        interval(2000).subscribe(val =>
-            httpClient.get<number>(baseUrl + 'api/SampleData/RealtimeStatusPacketCount').subscribe(result => {
-                alert(result);
-                this.datacount = result;
-                this.datatable.push(result);
-           
-            }));
-
-        interval(2000).subscribe(val =>
-            httpClient.get<number>(baseUrl + 'api/SampleData/RealtimeDataPacketCount').subscribe(result => {
-                this.statuscount = result;
-                this.statustable.push(result);
-                
-            }));
+    setStatus(res: number) {
+        this.statuscount = res;
+        this.statustable.push(res);
+        if (this.statustable.length > 10)
+            this.statustable.pop()
+        console.log(this.statustable)
+        this.statuschartdata.datasets[0].data = this.statustable;
     }
+    setData(res: number) {
+        console.log("Setdata ",res)
+        this.datacount = res;
+        this.datatable.push(res);
+        if (this.datatable.length > 10)
+            this.datatable.pop()
+
+        console.log(this.datatable)
+        this.datachartdata.datasets[0].data = this.datatable;
+
+    }
+
 }
