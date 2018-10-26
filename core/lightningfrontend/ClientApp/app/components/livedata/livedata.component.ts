@@ -21,14 +21,14 @@ export class LiveDataComponent implements AfterViewInit {
         //interval(500).subscribe(val => this.setData(Math.random() * 100));
         //interval(500).subscribe(val => this.setStatus(Math.random() * 100));
 
-        interval(2000).subscribe(val =>
+        interval(4500).subscribe(val =>
             httpClient.get<number>(baseUrl + 'api/SampleData/RealtimeStatusPacketCount').subscribe(result => {
                 this.setStatus(result);
 
             }));
 
 
-        interval(2000).subscribe(val =>
+        interval(4500).subscribe(val =>
             httpClient.get<number>(baseUrl + 'api/SampleData/RealtimeDataPacketCount').subscribe(result => {
                 this.setData(result);
             }));
@@ -36,12 +36,12 @@ export class LiveDataComponent implements AfterViewInit {
 
     statuscount: number = 0;
     datacount: number = 0;
-    datatable: number[] = new Array(240);
-    statustable: number[] = new Array(240);
+    datatable: number[] = new Array(30);
+    statustable: number[] = new Array(30);
     charttype = 'line';
 
     statuschartdata = {
-        labels: new Array(240),
+        labels: new Array(30),
         datasets: [
             {
                 data: this.statustable,
@@ -52,7 +52,7 @@ export class LiveDataComponent implements AfterViewInit {
         ]
     };
     datachartdata = {
-        labels: new Array(240),
+        labels: new Array(30),
         datasets: [
             {
                 data: this.datatable,
@@ -68,11 +68,11 @@ export class LiveDataComponent implements AfterViewInit {
         legend: {
             display: false
         }, animation: {
-            duration: 100, // general animation time
+            duration: 1000, // general animation time
         },
         showLines: true,
         elements: {
-            point: { radius: 3 }
+            point: { radius: 0 }
            
         },
     };
@@ -81,7 +81,7 @@ export class LiveDataComponent implements AfterViewInit {
     setStatus(res: number) {
         this.statuscount = res;
         this.statustable.push(this.statuscount);
-        if (this.statustable.length > 240)
+        if (this.statustable.length > 30)
             this.statustable.shift()
         this.statuschartdata.datasets[0].data = this.statustable;
         this.statuschart.chart.update();
@@ -89,7 +89,7 @@ export class LiveDataComponent implements AfterViewInit {
     setData(res: number) {
         this.datacount = res;
         this.datatable.push(this.datacount);
-        if (this.datatable.length > 240) {
+        if (this.datatable.length > 30) {
             this.datatable.shift()
         }
         this.datachartdata.datasets[0].data = this.datatable;       

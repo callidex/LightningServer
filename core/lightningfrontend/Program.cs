@@ -9,7 +9,7 @@ using lightningfrontend.DB;
 using lightningfrontend.Models;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-
+using Microsoft.Extensions.Logging;
 namespace lightningfrontend
 {
    public class Program
@@ -26,6 +26,11 @@ namespace lightningfrontend
           WebHost.CreateDefaultBuilder(args)
               .UseUrls("http://0.0.0.0:8080")
               .UseStartup<Startup>()
+            .ConfigureLogging(logging =>
+            {
+               logging.ClearProviders();
+               logging.AddConsole();
+            })
               .Build();
 
       public static List<DetectionDataPacket> FindStrike(List<DetectionDataPacket> data)
@@ -76,8 +81,8 @@ namespace lightningfrontend
                         }
                      });
                   }
-            
-                     dataPacketBuffer.RemoveAll(x => x.GetPacket().Persisteddate < DateTime.Now.AddMilliseconds(-500).Ticks);
+
+                  dataPacketBuffer.RemoveAll(x => x.GetPacket().Persisteddate < DateTime.Now.AddMilliseconds(-500).Ticks);
                }
                else
                {
