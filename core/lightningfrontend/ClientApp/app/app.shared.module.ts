@@ -17,7 +17,7 @@ import { SignalCollectionComponent } from './components/signalcollection/signalc
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatGridListModule, MatDividerModule, MatProgressSpinnerModule, MatChipsModule } from '@angular/material';
 
-import { ChartModule } from 'angular2-chartjs';
+import { ChartModule} from 'angular2-chartjs';
 
 @NgModule({
     declarations: [

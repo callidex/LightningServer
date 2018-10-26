@@ -63,9 +63,11 @@ namespace lightningfrontend.Models
             Process(context);
             context.SaveChanges();
          }
-         catch(Exception ex)
+         catch (Exception ex)
          {
-            Console.Write(ex.InnerException.Message);
+            Console.Write(ex.Message);
+            if (ex.InnerException != null)
+               Console.Write(ex.InnerException.Message);
          }
       }
    }

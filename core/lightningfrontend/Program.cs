@@ -62,6 +62,7 @@ namespace lightningfrontend
                   dataPacketBuffer.Add(dPacket);
                   //TODO: If coincedent, keep it, else wait till it ages
                   var data = FindStrike(dataPacketBuffer);
+                  data.ForEach(x => dataPacketBuffer.Remove(x));
                   if (data != null)
                   {
                      Task.Run(() =>

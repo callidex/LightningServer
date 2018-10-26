@@ -26,8 +26,7 @@ namespace lightningfrontend.Controllers
       {
          using (var context = new lightningContext())
          {
-           var ret = context.Datapackets.Count(x => x.Persisteddate > DateTime.Now.AddMinutes(-2).Ticks);
-            return ret;
+           return context.Datapackets.Count(x => x.Persisteddate > DateTime.Now.AddSeconds(-5).Ticks);
          }
       }
 
@@ -36,8 +35,7 @@ namespace lightningfrontend.Controllers
       {
          using (var context = new lightningContext())
          {
-            var ret =  context.Statuspackets.Count(x => x.Persisteddate > DateTime.Now.AddMinutes(-2).Ticks);
-            return ret;
+            return context.Statuspackets.Count(x => x.Persisteddate > DateTime.Now.AddSeconds(-5).Ticks);
          }
       }
 
