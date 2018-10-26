@@ -21,6 +21,24 @@ namespace lightningfrontend.Controllers
             return dump;
          }
       }
+      [HttpGet("[action]")]
+      public long RealtimeDataPacketCount()
+      {
+         using (var context = new lightningContext())
+         {
+            return context.Datapackets.Count(x => x.Persisteddate > DateTime.Now.AddMinutes(-2).Ticks);
+         }
+      }
+
+      [HttpGet("[action]")]
+      public long RealtimeStatusPacketCount()
+      {
+         using (var context = new lightningContext())
+         {
+            return context.Statuspackets.Count(x => x.Persisteddate > DateTime.Now.AddMinutes(-2).Ticks);
+         }
+      }
+
 
       [HttpGet("[action]")]
       public IEnumerable<Signal> Signals()

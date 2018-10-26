@@ -33,12 +33,18 @@
 
   <ItemGroup>
     <None Remove="ClientApp\app\components\detectormap\detectormap.component.ts" />
+    <None Remove="ClientApp\app\components\livedata\livedata.component.css" />
+    <None Remove="ClientApp\app\components\livedata\livedata.component.html" />
+    <None Remove="ClientApp\app\components\livedata\livedata.component.ts" />
     <None Remove="ClientApp\app\geo-location.service.ts" />
     <None Remove="ClientApp\app\utils\utils.ts" />
   </ItemGroup>
 
   <ItemGroup>
     <TypeScriptCompile Include="ClientApp\app\components\detectormap\detectormap.component.ts" />
+    <TypeScriptCompile Include="ClientApp\app\components\livedata\livedata.component.css" />
+    <TypeScriptCompile Include="ClientApp\app\components\livedata\livedata.component.html" />
+    <TypeScriptCompile Include="ClientApp\app\components\livedata\livedata.component.ts" />
     <TypeScriptCompile Include="ClientApp\app\geo-location.service.ts" />
     <TypeScriptCompile Include="ClientApp\app\utils\utils.ts" />
   </ItemGroup>

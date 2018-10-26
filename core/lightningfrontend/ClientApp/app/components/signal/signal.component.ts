@@ -17,6 +17,8 @@ export class SignalComponent {
 
     @ViewChild(ChartComponent) chart!: ChartComponent;
 
+
+
     labels: string[] = new Array();
 
     charttype: any;

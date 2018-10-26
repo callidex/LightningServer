@@ -23,6 +23,7 @@ namespace lightningfrontend.Models
 
          packet = new Datapackets(packetWrapper.RawBytes);
          packet.Address = incomingRawUdpPacket.IPAddress;
+         packet.Persisteddate = DateTime.Now.Ticks;
       }
 
       public void Process(lightningContext context)

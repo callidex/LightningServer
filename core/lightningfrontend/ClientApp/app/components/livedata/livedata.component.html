@@ -1,0 +1,13 @@
+﻿<h3>Live status reports (2 mins) {{statuscount}}</h3>
+<p>
+    
+    <chart id="statuschartid" #statuschart [type]="charttype" [data]="statuschartdata" [options]="chartoptions"></chart>
+</p>
+<h3>Live data reports (2 mins) {{datacount}}</h3>
+
+<p>
+    
+    <chart id="datachartid" #datachart [type]="charttype" [data]="datachartdata" [options]="chartoptions"></chart>
+</p>
+{{statustable}}
+{{datatable}}
