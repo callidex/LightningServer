@@ -28,12 +28,13 @@ namespace lightningfrontend
               .UseStartup<Startup>()
               .Build();
 
-      public static IEnumerable<DetectionDataPacket> FindStrike(List<DetectionDataPacket> data)
+      public static List<DetectionDataPacket> FindStrike(List<DetectionDataPacket> data)
       {
-         // TODO:
-         // for now return the latest only
          if (data == null) return null;
-         return data.OrderByDescending(x => x.GetPacket().Received).Take(1);
+         // TODO:
+         // for now return the latest only  (this will result in attempts to add the same entry more than once, the DB will reject it
+         // NOTE:  If you find a strike here with say 3, we should leave the data here, in case 4 and 5 give better accuracy?
+         return data.OrderByDescending(x => x.GetPacket().Received).Take(1).ToList();
       }
 
       public static void ServerThread()
@@ -74,8 +75,8 @@ namespace lightningfrontend
                         }
                      });
                   }
-                  // purge old
-                  dataPacketBuffer.RemoveAll(x => x.GetPacket().Persisteddate < DateTime.Now.AddMilliseconds(-500).Ticks)
+            
+                     dataPacketBuffer.RemoveAll(x => x.GetPacket().Persisteddate < DateTime.Now.AddMilliseconds(-500).Ticks);
                }
                else
                {

@@ -57,10 +57,16 @@ namespace lightningfrontend.Models
       public void StoreInDB(lightningContext context)
       {
          if (!packet.IsReady()) throw new InvalidOperationException("Packet not constructed properly");
-
-         context.Add(packet);
-         Process(context);
-         context.SaveChanges();
+         try
+         {
+            context.Add(packet);
+            Process(context);
+            context.SaveChanges();
+         }
+         catch(Exception ex)
+         {
+            Console.Write(ex.InnerException.Message);
+         }
       }
    }
 }
