@@ -76,6 +76,7 @@ namespace lightningfrontend
                   data.ForEach(x => dataPacketBuffer.Remove(x));
                   if (data != null)
                   {
+                     //TODO: Hit the database way less often
                      Task.Run(() =>
                      {
                         using (var context = new lightningContext())
