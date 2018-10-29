@@ -33,8 +33,12 @@ namespace lightningfrontend
             })
               .Build();
 
+      
+      
+      
       public static List<DetectionDataPacket> FindStrike(List<DetectionDataPacket> data)
       {
+         //TODO: Get bobwis numbers for 'close' results  
          if (data == null) return null;
          // TODO:
          // for now return the latest only  (this will result in attempts to add the same entry more than once, the DB will reject it
@@ -44,6 +48,8 @@ namespace lightningfrontend
 
       public static void ServerThread()
       {
+         //TODO: Provide datapacketbuffer access as a service (signal?) to provide realtime counts without hitting the DB
+         
          var dataPacketBuffer = new List<DetectionDataPacket>();
 
          UdpClient udpClient = new UdpClient(5000);
