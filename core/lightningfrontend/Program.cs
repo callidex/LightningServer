@@ -67,8 +67,7 @@ namespace lightningfrontend
                Console.WriteLine($"New packet incoming on thread {Thread.CurrentThread.ManagedThreadId} : {potentialPacket.IPAddress}:{potentialPacket.IPPort}");
 
                // Throw in buffer
-               var dPacket = newPacket as DetectionDataPacket;
-               if (dPacket != null)
+               if (newPacket is DetectionDataPacket dPacket)
                {
                   dataPacketBuffer.Add(dPacket);
                   //TODO: If coincedent, keep it, else wait till it ages
@@ -78,7 +77,7 @@ namespace lightningfrontend
                   {
                      Task.Run(() =>
                      {
-                        using (var context = new lightningContext())
+                        using (var context = new LightningContext())
                         {
                            foreach (var d in data)
                            {
@@ -94,7 +93,7 @@ namespace lightningfrontend
                {
                   Task.Run(() =>
                   {
-                     using (var context = new lightningContext())
+                     using (var context = new LightningContext())
                      {
                         newPacket.StoreInDB(context);
                      }

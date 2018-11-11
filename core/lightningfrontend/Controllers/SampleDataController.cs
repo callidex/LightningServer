@@ -12,12 +12,14 @@ namespace lightningfrontend.Controllers
       [HttpGet("[action]")]
       public InfoDump GetInfoDump()
       {
-         using (var context = new lightningContext())
+         using (var context = new LightningContext())
          {
-            InfoDump dump = new InfoDump();
-            dump.StatusPacketCount = context.Statuspackets.Count();
-            dump.DataPacketCount = context.Datapackets.Count();
-            dump.DetectorCount = context.Detectors.Count();
+            InfoDump dump = new InfoDump
+            {
+               StatusPacketCount = context.Statuspackets.Count(),
+               DataPacketCount = context.Datapackets.Count(),
+               DetectorCount = context.Detectors.Count()
+            };
             return dump;
          }
       }
@@ -26,7 +28,7 @@ namespace lightningfrontend.Controllers
       {
          try
          {
-            using (var context = new lightningContext())
+            using (var context = new LightningContext())
             {
                var n = DateTime.Now;
                var u = n.Ticks;
@@ -51,7 +53,7 @@ namespace lightningfrontend.Controllers
       {
          try
          {
-            using (var context = new lightningContext())
+            using (var context = new LightningContext())
             {
                var n = DateTime.Now;
                var u = n.Ticks;
@@ -74,7 +76,7 @@ namespace lightningfrontend.Controllers
    [HttpGet("[action]")]
    public IEnumerable<Signal> Signals()
    {
-      using (var context = new lightningContext())
+      using (var context = new LightningContext())
       {
          var output = new List<Signal>();
 
@@ -99,7 +101,7 @@ namespace lightningfrontend.Controllers
    [HttpGet("[action]")]
    public IEnumerable<Strike> Strikes()
    {
-      using (var context = new lightningContext())
+      using (var context = new LightningContext())
       {
          var t = context.Datapackets.Join(context.Datapackets, x => x.Received, y => y.Received, (x, y) => new { Left = x, Right = y })
              .Where(x => x.Left.Detectoruid != x.Right.Detectoruid)
@@ -127,7 +129,7 @@ namespace lightningfrontend.Controllers
    {
       List<Detector> detectorList = new List<Detector>();
 
-      using (var context = new lightningContext())
+      using (var context = new LightningContext())
       {
          var detectorIDs = (from sp in context.Statuspackets
                             join det in context.Detectors

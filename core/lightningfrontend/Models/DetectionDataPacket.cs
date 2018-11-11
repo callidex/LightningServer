@@ -21,12 +21,14 @@ namespace lightningfrontend.Models
       {
          this.incomingRawUdpPacket = packetWrapper;
 
-         packet = new Datapackets(packetWrapper.RawBytes);
-         packet.Address = incomingRawUdpPacket.IPAddress;
-         packet.Persisteddate = DateTime.Now.Ticks;
+         packet = new Datapackets(packetWrapper.RawBytes)
+         {
+            Address = incomingRawUdpPacket.IPAddress,
+            Persisteddate = DateTime.Now.Ticks
+         };
       }
 
-      public void Process(lightningContext context)
+      public void Process(LightningContext context)
       {
          var closePackets = context.Datapackets.Where(x => x.Received > this.packet.Received - TOACorrelator.MAXDELAY);
 
@@ -54,7 +56,7 @@ namespace lightningfrontend.Models
       }
 
 
-      public void StoreInDB(lightningContext context)
+      public void StoreInDB(LightningContext context)
       {
          if (!packet.IsReady()) throw new InvalidOperationException("Packet not constructed properly");
          try

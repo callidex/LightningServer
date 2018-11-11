@@ -32,7 +32,7 @@ namespace lightningfrontend.Models
                 Port = IPPort.ToString(),
                 Address = IPAddress.ToString(),
             };
-            using (var context = new lightningContext())
+            using (var context = new LightningContext())
             {
                 context.Add(packet);
                 context.SaveChanges();

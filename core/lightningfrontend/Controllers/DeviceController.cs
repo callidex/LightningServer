@@ -12,12 +12,12 @@ namespace lightningfrontend.Controllers
       {
          if (unique == null) return 0;
          // check db for existing DetectorID
-         using (var context = new lightningContext())
+         using (var context = new LightningContext())
          {
-            var found = context.Detectors.Where(x => x.Devicecode == unique).FirstOrDefault();
-            if (found != null)
+            var found = context.Detectors.Where(x => x.Devicecode == unique).Select(x=>x.Id).FirstOrDefault();
+            if (found != 0)
             {
-               return found.Id;
+               return found;
             }
             else
             {

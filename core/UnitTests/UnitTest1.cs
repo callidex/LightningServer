@@ -24,7 +24,7 @@ namespace UnitTests
         [TestMethod]
         public void StrikeTest()
         {
-            using (var context = new lightningContext())
+            using (var context = new LightningContext())
             {
                 var t = context.Datapackets.Join(context.Datapackets, x => x.Received, y => y.Received, (x, y) => new { Left = x, Right = y });
                     
