@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace lightningfrontend.DB
+﻿namespace lightningfrontend.DB
 {
-    public partial class Weatherrecord
+   public partial class Weatherrecord
     {
         public long Id { get; set; }
         public ulong Detectoruid { get; set; }

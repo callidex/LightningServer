@@ -1,4 +1,3 @@
-using lightningfrontend;
 using lightningfrontend.DB;
 using lightningfrontend.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -7,7 +6,7 @@ using System.Linq;
 
 namespace UnitTests
 {
-    [TestClass]
+   [TestClass]
     public class UnitTest1
     {
         [TestMethod]

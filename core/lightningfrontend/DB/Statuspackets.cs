@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace lightningfrontend.DB
+﻿namespace lightningfrontend.DB
 {
    public partial class Statuspackets
    {
