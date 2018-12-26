@@ -22,7 +22,18 @@ namespace lightningfrontend.Controllers
             };
             return dump;
          }
+
+
+
+
       }
+      //TODO: Report weather records by detector
+      [HttpGet("[action]")]
+      public long WeatherRecords()
+      {
+         throw new NotImplementedException();
+      }
+
       [HttpGet("[action]")]
       public long RealtimeDataPacketCount()
       {
