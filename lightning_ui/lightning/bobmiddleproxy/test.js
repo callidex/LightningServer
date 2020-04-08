@@ -13,8 +13,9 @@ app.use(cors());
 
 var nodeproxy = express();
 nodeproxy.use('/', function (req, res) {
-	var url = 'http://localhost:9800' + req.url;
-	req.pipe(request(url)).pipe(res);
+	var url = 'http://localhost:9080' + req.url;
+	console.log('Forwarded to ' + url);
+	req.on('error', (error) => { console.log(error) }).pipe(request(url)).on('error', (error) => { console.log(error) }).pipe(res);
 
 });
 
