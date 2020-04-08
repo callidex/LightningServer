@@ -1,0 +1,27 @@
+{
+    "name": "bobmiddleproxy",
+    "version": "1.0.0",
+    "description": "",
+    "license": "",
+    "scripts": {
+        "start": "node ./test.js",
+        "start-dev": "nodemon ./test.js"
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.18.3",
+        "cors": "^2.8.4",
+        "express": "^4.17.1",
+        "express-jwt": "^5.3.1",
+        "iptables2": "^0.2.0",
+        "jsonwebtoken": "^8.5.1",
+        "mongodb": "^3.0.10",
+        "mongoose": "^5.5.12",
+        "node-http-proxy": "^0.2.3",
+        "rootpath": "^0.1.2"
+    },
+    "devDependencies": {
+        "@angular/cli": "^7.3.8",
+        "nodemon": "^1.17.5"
+    }
+}

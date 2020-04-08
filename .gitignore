@@ -18,3 +18,4 @@
 /core/lightningfrontend/stats.json
 /core/.vs/core/lut
 /core/UnitTests/bin/Debug/netcoreapp2.1
+lightning_ui/lightning/bobmiddleproxy/node_modules
