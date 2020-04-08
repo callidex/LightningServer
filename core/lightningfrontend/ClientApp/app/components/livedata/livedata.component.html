@@ -1,0 +1,19 @@
+﻿
+<div *ngIf="statuschartdata">
+    <h3>Live status reports (2 mins) {{statuscount}}</h3>
+    
+        <chart #statuschart [type]="charttype" [data]="statuschartdata" [options]="chartoptions"></chart>
+    
+</div>
+
+
+
+
+
+    <div *ngIf="datachartdata">
+        <h3>Live data reports (2 mins) {{datacount}}</h3>        
+            <chart #datachart [type]="charttype" [data]="datachartdata" [options]="chartoptions"></chart>
+
+        
+</div>
+ 

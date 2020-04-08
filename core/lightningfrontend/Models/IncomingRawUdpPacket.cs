@@ -1,4 +1,5 @@
-﻿using lightningContext;
+﻿
+using lightningfrontend.DB;
 using System.Net;
 
 namespace lightningfrontend.Models
@@ -25,7 +26,7 @@ namespace lightningfrontend.Models
 
         public void StoreInDB()
         {
-            Rawpacket packet = new Rawpacket
+            Rawpackets packet = new Rawpackets
             {
                 Data = RawBytes,
                 Port = IPPort.ToString(),

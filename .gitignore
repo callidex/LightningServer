@@ -17,3 +17,4 @@
 /core/.vs/config/applicationhost.config
 /core/lightningfrontend/stats.json
 /core/.vs/core/lut
+/core/UnitTests/bin/Debug/netcoreapp2.1

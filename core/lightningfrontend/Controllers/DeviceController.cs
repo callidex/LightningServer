@@ -1,35 +1,32 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
+using lightningfrontend.DB;
 using Microsoft.AspNetCore.Mvc;
 
 namespace lightningfrontend.Controllers
 {
-    [Route("api/[controller]")]
-    public class DeviceController : Controller
-    {
-        [HttpGet("{unique}")]
-        public int Register(string unique)
-        {
-            if (unique == null) return 0;
-            // check db for existing DetectorID
-            using (var context = new LightningContext())
+   [Route("api/[controller]")]
+   public class DeviceController : Controller
+   {
+      [HttpGet("{unique}")]
+      public uint Register(string unique)
+      {
+         if (unique == null) return 0;
+         // check db for existing DetectorID
+         using (var context = new LightningContext())
+         {
+            var found = context.Detectors.Where(x => x.Devicecode == unique).Select(x=>x.Id).FirstOrDefault();
+            if (found != 0)
             {
-                var found = context.DetectorRegistrations.Where(x => x.UniqueDeviceCode == unique).FirstOrDefault();
-                if (found != null)
-                {
-                    return found.ID;
-                }
-                else
-                {
-                    var nextId = context.DetectorRegistrations.Max(x => x.ID) + 1;
-                    context.DetectorRegistrations.Add(new DetectorRegistration() { ID = nextId, UniqueDeviceCode = unique });
-                    context.SaveChanges();
-                    return nextId;
-                }
+               return found;
             }
-        }
-    }
+            else
+            {
+               var nextId = context.Detectors.Max(x => x.Id) + 1;
+               context.Detectors.Add(new Detectors() { Id = nextId, Devicecode = unique });
+               context.SaveChanges();
+               return nextId;
+            }
+         }
+      }
+   }
 }

@@ -9,6 +9,7 @@ import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { HomeComponent } from './components/home/home.component';
 import { DetectorMapComponent } from './components/detectormap/detectormap.component';
 import { StrikeMapComponent } from './components/strikemap/strikemap.component';
+import { LiveDataComponent } from './components/livedata/livedata.component';
 
 import { AgmCoreModule } from '@agm/core';
 import { SignalComponent } from './components/signal/signal.component';
@@ -16,7 +17,7 @@ import { SignalCollectionComponent } from './components/signalcollection/signalc
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatGridListModule, MatDividerModule, MatProgressSpinnerModule, MatChipsModule } from '@angular/material';
 
-import { ChartModule } from 'angular2-chartjs';
+import { ChartModule} from 'angular2-chartjs';
 
 @NgModule({
     declarations: [
@@ -26,7 +27,8 @@ import { ChartModule } from 'angular2-chartjs';
         DetectorMapComponent,
         StrikeMapComponent,
         SignalComponent,
-        SignalCollectionComponent
+        SignalCollectionComponent,
+        LiveDataComponent 
     ],
     imports: [
         MatGridListModule,

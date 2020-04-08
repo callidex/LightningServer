@@ -2,8 +2,8 @@
 {
     public interface IDetectionPacket
     {
-        void Process(LightningContext context);
-        void StoreInDB(LightningContext context);
+        void Process(lightningfrontend.DB.LightningContext context);
+        void StoreInDB(lightningfrontend.DB.LightningContext context);
     }
 
 
