@@ -58,12 +58,10 @@ export class DetectormapComponent implements OnInit {
   addallpoints() {
     this.detectorService.getAll()
       .subscribe(
-        (data: string) => {
-          const detectors = JSON.parse(data);
-          detectors.array.forEach((element: number) => {
+        (detectors: string) => {
+          detectors['Detectorlist'].forEach((element: number) => {
             this.detectorService.getByID(element).subscribe(
               (detector: string) => {
-                console.log(detector);
                 const parsed = JSON.parse(detector);
                 this.add_map_point(parsed.Lat, parsed.Lon);
                 const view = this.map.getView();
