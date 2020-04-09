@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://b1.vk4ya.space:3000',
+  apiUrl: 'http://localhost:3000',
 };
 
 /*
