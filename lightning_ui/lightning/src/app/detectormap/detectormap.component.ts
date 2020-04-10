@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DetectorService } from '../detector.service';
+import { Detector } from '../detector.model';
+import { DetectorList } from '../detector-list.model';
 declare var ol: any;
 @Component({
   selector: 'app-detectormap',
@@ -78,17 +80,17 @@ export class DetectormapComponent implements OnInit {
           anchorYUnits: 'fraction',
           src: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg'
         }),
-        text: new ol.style.Text({
-          text: txt,
-          scale: 2.2,
-          fill: new ol.style.Fill({
-            color: '#fff'
-          }),
-          stroke: new ol.style.Stroke({
-            color: '0',
-            width: 3
-          })
-        })
+        // text: new ol.style.Text({
+        //   text: txt,
+        //   scale: 2.2,
+        //   fill: new ol.style.Fill({
+        //     color: '#fff'
+        //   }),
+        //   stroke: new ol.style.Stroke({
+        //     color: '0',
+        //     width: 3
+        //   })
+        // })
       })
     });
 
@@ -97,14 +99,14 @@ export class DetectormapComponent implements OnInit {
   addallpoints() {
     this.detectorService.getAll()
       .subscribe(
-        (detectors: string) => {
-          detectors.Detectorlist.forEach((element: number) => {
+        (detectors: DetectorList) => {
+          const arr = detectors.Detectorlist;
+          arr.forEach((element: number) => {
             this.detectorService.getByID(element).subscribe(
-              (parsed: string) => {
+              (parsed: Detector) => {
                 const tempress = parsed.temppress;
                 // tslint:disable-next-line: no-bitwise
                 const temp = tempress & 0xFFFFF;
-                console.log(parsed);
                 this.add_map_point(parsed.Lat, parsed.Lon, temp.toString());
                 const view = this.map.getView();
                 view.setCenter(ol.proj.fromLonLat([parsed.Lon, parsed.Lat]));
