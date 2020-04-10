@@ -1,3 +1,37 @@
-Testing
 
-<div id="map" class="map"></div>
+<div class="container" style="margin-top: 70px;">
+    <div id="map" class="map"></div>
+        <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Lon</th>
+          <th>Lat</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let detector of detectors">
+  
+          <td>{{ detector.id }}</td>
+          <td> {{ detector.Lon }}</td>
+          <td> {{ detector.Lon }}</td>
+          <td>
+            <button class="btn btn-primary" (click)="selectDetector(detector)"> Show details</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="card text-center" *ngIf="selectedDetector">
+        <div class="card-header">
+          # {{selectedDetector.id}}
+        </div>
+        <div class="card-block">
+          <table class="table table-hover">
+                <tbody>
+                    <tr><td>Height</td><td>{{selectedDetector.Height}}</td></tr>
+                </tbody>
+            </table>
+        </div>
+  
+      </div>
+  </div>
