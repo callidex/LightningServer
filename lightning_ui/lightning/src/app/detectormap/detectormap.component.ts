@@ -40,31 +40,34 @@ export class DetectormapComponent implements OnInit {
       source: new ol.source.OSM({ url: 'http://tile.stamen.com/terrain-labels/{z}/{x}/{y}.png' })
     });
 
+    const selectPoints = new ol.style.Style({
+      image: new ol.style.Circle({
+        fill: new ol.style.Fill({
+          color: '#ff0000'
+        }),
+        stroke: new ol.style.Stroke({
+          color: '#ffccff'
+        }),
+        radius: 16
+      })
+    });
 
-
+    const selectInteraction = new ol.interaction.Select({
+      layers(layer) {
+        return layer.get('selectable') === true;
+      },
+      style: selectPoints
+    });
 
     this.map = new ol.Map({
       target: 'map',
-      layers: [toner, topo
-
-        // ,
-
-        // new ol.layer.Graticule({
-        //   // the style to use for the lines, optional.
-        //   strokeStyle: new ol.layer.Stroke({
-        //     color: 'rgba(255,120,0,0.9)',
-        //     width: 2,
-        //     lineDash: [0.5, 4]
-        //   }),
-        //   showLabels: true,
-        //   wrapX: false
-        // })
-      ],
+      layers: [osm],
       view: new ol.View({
         center: ol.proj.fromLonLat([0, 0]),
         zoom: 12
       })
     });
+    this.map.getInteractions().extend([selectInteraction]);
     this.addallpoints();
   }
 
@@ -95,7 +98,7 @@ export class DetectormapComponent implements OnInit {
         // })
       })
     });
-
+    vectorLayer.set('selectable', true);
     this.map.addLayer(vectorLayer);
   }
   public selectDetector(contact) {
