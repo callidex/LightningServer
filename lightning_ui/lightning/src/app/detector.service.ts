@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpClientJsonpModule } from '@angular/common/http';
 import { Detector } from './detector.model';
 import { DetectorList } from './detector-list.model';
+import { Strikelist } from './strikelist.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,5 +21,10 @@ export class DetectorService {
   getByID(id: number) {
     return this.http.get<Detector>(`${environment.apiUrl}/detector/${id}`);
   }
+
+  getStrikes(count: number) {
+    return this.http.get<Strikelist>(`${environment.apiUrl}/strikes/${count}`);
+  }
+
 
 }

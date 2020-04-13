@@ -2,11 +2,13 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { DetectormapComponent } from './detectormap/detectormap.component';
 import { HomeComponent } from './home/home.component';
+import { StrikesComponent } from './strikes/strikes.component';
 
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'detectors', component: DetectormapComponent },
+  { path: 'strikes', component: StrikesComponent },
   {
     path: '',
     redirectTo: '/home',

@@ -4,4 +4,5 @@ export class Strike {
     heat: any;
     dcount: any;
     stamp: any;
+    linecount: any;
 }
