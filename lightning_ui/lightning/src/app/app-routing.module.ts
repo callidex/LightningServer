@@ -6,7 +6,7 @@ import { StrikesComponent } from './strikes/strikes.component';
 
 
 const routes: Routes = [
-  { path: 'home', component: HomeComponent },
+  { path: 'home', component: DetectormapComponent },
   { path: 'detectors', component: DetectormapComponent },
   { path: 'strikes', component: StrikesComponent },
   {

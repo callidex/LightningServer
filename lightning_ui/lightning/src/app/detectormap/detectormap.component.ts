@@ -116,7 +116,7 @@ export class DetectormapComponent implements OnInit {
 
     this.detectorService.getStrikes(10).subscribe(
       (s: Strikelist) => {
-        console.log(s);
+        this.strikes = s.Strikes;
         s.Strikes.forEach((strike: Strike) => {
           this.add_map_point(strike.lat, strike.lon, strike.linecount, this.strikeIcon);
 
