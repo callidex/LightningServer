@@ -133,9 +133,7 @@ export class DetectormapComponent implements OnInit {
                 this.detectors.push(parsed);
                 console.log(parsed);
                 const tempress = parsed.temppress;
-                // tslint:disable-next-line: no-bitwise
-                const temp = tempress & 0xFFFFF;
-                this.add_map_point(parsed.Lat, parsed.Lon, temp.toString(), this.detectorIcon);
+                this.add_map_point(parsed.Lat, parsed.Lon, tempress.toString(), this.detectorIcon);
                 const view = this.map.getView();
                 view.setCenter(ol.proj.fromLonLat([parsed.Lon, parsed.Lat]));
               }

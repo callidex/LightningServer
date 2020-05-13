@@ -14,10 +14,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let detector of detectors">
-            
+
           <td>{{ detector.id }}</td>
           <td> {{ detector.Lon }}</td>
           <td> {{ detector.Lat }}</td>
+          <td> {{ detector.getPressure()}}</td>
+          <td> {{ detector.getTemperature()}}</td>
           <!-- <td>
             <button class="btn btn-primary" (click)="selectDetector(detector)"> Show details</button>
           </td> -->
