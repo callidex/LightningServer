@@ -129,13 +129,11 @@ export class DetectormapComponent implements OnInit {
           const arr = detectors.Detectorlist;
           arr.forEach((element: number) => {
             this.detectorService.getByID(element).subscribe(
-              (parsed: Detector) => {
-                this.detectors.push(parsed);
-                console.log(parsed);
-                const tempress = parsed.temppress;
-                this.add_map_point(parsed.Lat, parsed.Lon, tempress.toString(), this.detectorIcon);
-                const view = this.map.getView();
-                view.setCenter(ol.proj.fromLonLat([parsed.Lon, parsed.Lat]));
+              (parsed) => {
+                const detector = new Detector(parsed);
+                this.detectors.push(detector);
+                this.add_map_point(detector.Lat, detector.Lon, '', this.detectorIcon);
+                this.map.getView().setCenter(ol.proj.fromLonLat([parsed.Lon, parsed.Lat]));
               }
             );
           });

@@ -10,6 +10,8 @@
           <th>#</th>
           <th>Lon</th>
           <th>Lat</th>
+          <th>Pressure</th>
+          <th>Temperature</th>
         </tr>
       </thead>
       <tbody>
@@ -18,8 +20,8 @@
           <td>{{ detector.id }}</td>
           <td> {{ detector.Lon }}</td>
           <td> {{ detector.Lat }}</td>
-          <td> {{ detector.getPressure()}}</td>
-          <td> {{ detector.getTemperature()}}</td>
+          <td> {{ detector.Pressure}}</td>
+          <td> {{ detector.Temperature}}</td>
           <!-- <td>
             <button class="btn btn-primary" (click)="selectDetector(detector)"> Show details</button>
           </td> -->
