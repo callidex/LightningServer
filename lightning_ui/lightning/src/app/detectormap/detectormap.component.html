@@ -34,14 +34,18 @@
         <table class="table table-hover">
             <thead>
               <tr>
-                <th>Lon</th>
+                <th>Timestamp</th>
                 <th>Lat</th>
+                <th>Lon</th>
+                <th>Heat</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let strike of strikes">
-                <td> {{ strike.lon }}</td>
+                <td> {{ strike.stamp }}</td>
                 <td> {{ strike.lat }}</td>
+                <td> {{ strike.lon }}</td>
+                <td> {{ strike.heat }}</td>
               </tr>
             </tbody>
           </table>

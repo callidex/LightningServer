@@ -79,7 +79,7 @@ export class DetectormapComponent implements OnInit {
     this.addallpoints();
   }
 
-  add_map_point(lat: string, lng: string, txt: string, icon: string) {
+  add_map_point(lat: string, lng: string, heat: string, txt: string, icon: string) {
     const vectorLayer = new ol.layer.Vector({
       source: new ol.source.Vector({
         features: [new ol.Feature({
@@ -91,7 +91,9 @@ export class DetectormapComponent implements OnInit {
           anchor: [0.5, 0.5],
           anchorXUnits: 'fraction',
           anchorYUnits: 'fraction',
-          src: icon
+          src: icon,
+          opacity: 1 / (parseFloat(heat) / 100)
+//          color: '#29f'
         }),
         // text: new ol.style.Text({
         //   text: txt,
@@ -118,7 +120,7 @@ export class DetectormapComponent implements OnInit {
       (s: Strikelist) => {
         this.strikes = s.Strikes;
         s.Strikes.forEach((strike: Strike) => {
-          this.add_map_point(strike.lat, strike.lon, strike.linecount, this.strikeIcon);
+          this.add_map_point(strike.lat, strike.lon, strike.heat, strike.linecount, this.strikeIcon);
 
         });
       }, error => { console.log(error); } // this.error = error // error path);
@@ -132,7 +134,7 @@ export class DetectormapComponent implements OnInit {
               (parsed) => {
                 const detector = new Detector(parsed);
                 this.detectors.push(detector);
-                this.add_map_point(detector.Lat, detector.Lon, '', this.detectorIcon);
+                this.add_map_point(detector.Lat, detector.Lon, detector.heat, this.detectorIcon);
                 this.map.getView().setCenter(ol.proj.fromLonLat([parsed.Lon, parsed.Lat]));
               }
             );
