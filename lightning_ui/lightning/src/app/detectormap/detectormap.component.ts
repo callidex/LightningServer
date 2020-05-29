@@ -134,7 +134,7 @@ export class DetectormapComponent implements OnInit {
               (parsed) => {
                 const detector = new Detector(parsed);
                 this.detectors.push(detector);
-                this.add_map_point(detector.Lat, detector.Lon, detector.heat, this.detectorIcon);
+                this.add_map_point(detector.Lat, detector.Lon, detector.heat, '', this.detectorIcon);
                 this.map.getView().setCenter(ol.proj.fromLonLat([parsed.Lon, parsed.Lat]));
               }
             );
