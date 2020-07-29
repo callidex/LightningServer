@@ -23,7 +23,9 @@ app.all('*', function (req, res, next) {
 		request({ url: targetURL + req.url, method: req.method, json: req.body, headers: {} },
 			function (error, response, body) {
 				if (error) {
-					console.error('error: ' + response.statusCode)
+			
+					console.error('error: ' + error)
+	throw error;
 				}
 			}).pipe(res);
 	}
