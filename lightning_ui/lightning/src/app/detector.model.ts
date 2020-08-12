@@ -14,12 +14,12 @@ export class Detector {
 
   getPressure() {
     // tslint:disable-next-line: no-bitwise
-    return ((this.temppress & 0xFFFFF) / 4).toString();
+    return (((((this.temppress & 0xFFFFF) / 4) / 1000)).toFixed(6)).toString();
   }
 
   getTemperature() {
     // tslint:disable-next-line: no-bitwise
-    return ((this.temppress >>> 20) / 16).toString();
+    return (((this.temppress >>> 20) / 16).toFixed(2)).toString();
   }
 
   constructor(detector: Detector) {
