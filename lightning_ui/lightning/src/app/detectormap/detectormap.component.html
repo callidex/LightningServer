@@ -41,7 +41,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let strike of strikes">
+              <tr *ngFor="let strike of strikes.reverse()">
                 <td> {{ strike.stamp }}</td>
                 <td> {{ strike.lat }}</td>
                 <td> {{ strike.lon }}</td>

@@ -19,11 +19,11 @@ app.all('*', function (req, res, next) {
 		// CORS Preflight
 		res.send();
 	} else {
-		var targetURL = 'http://b1.vk4ya.space:9080';
+		var targetURL = 'http://b1.vk4ya.com:9080';
 		request({ url: targetURL + req.url, method: req.method, json: req.body, headers: {} },
 			function (error, response, body) {
 				if (error) {
-			
+
 					console.error('error: ' + error)
 	throw error;
 				}
