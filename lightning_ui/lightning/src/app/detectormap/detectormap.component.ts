@@ -92,7 +92,7 @@ export class DetectormapComponent implements OnInit {
           anchorXUnits: 'fraction',
           anchorYUnits: 'fraction',
           src: icon,
-          opacity: 1 / (parseFloat(heat) / 100)
+          opacity: 1 / (parseFloat(heat) / 15)
 //          color: '#29f'
         }),
         // text: new ol.style.Text({
