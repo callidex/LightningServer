@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   apiUrl: 'http://b1.vk4ya.com',
-  port: 3000
+  port: 3001
 };
 
 /*
