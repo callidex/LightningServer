@@ -19,3 +19,5 @@
 /core/.vs/core/lut
 /core/UnitTests/bin/Debug/netcoreapp2.1
 lightning_ui/lightning/bobmiddleproxy/node_modules
+lightning_ui/lightning/postnode/out
+lightning_ui/lightning/postnode/node_modules

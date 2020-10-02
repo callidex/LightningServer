@@ -14,16 +14,16 @@ export class DetectorService {
   }
   getAll() {
 
-    return this.http.get<DetectorList>(`${environment.apiUrl}/detectorlist`).pipe();
+    return this.http.get<DetectorList>(`${environment.apiUrl}:${environment.port}/detectorlist`).pipe();
 
   }
 
   getByID(id: number) {
-    return this.http.get<Detector>(`${environment.apiUrl}/detector/${id}`);
+    return this.http.get<Detector>(`${environment.apiUrl}:${environment.port}/detector/${id}`);
   }
 
   getStrikes(count: number) {
-    return this.http.get<Strikelist>(`${environment.apiUrl}/strikes/${count}`);
+    return this.http.get<Strikelist>(`${environment.apiUrl}:${environment.port}/strikes/${count}`);
   }
 
 

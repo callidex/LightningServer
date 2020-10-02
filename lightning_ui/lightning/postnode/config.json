@@ -1,0 +1,7 @@
+{
+  "user": "postgres",
+  "host": "lightning.vk4ya.com",
+  "database": "lightning",
+  "password": "bobspostgresql",
+  "port": 5432
+}
