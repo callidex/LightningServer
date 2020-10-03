@@ -4,7 +4,7 @@ const router = express.Router();
 const config = require("./config.json");
 const { Client } = require('pg');
 
-import geohash from 'latlon-geohash';
+//import geohash from 'latlon-geohash';
 
 
 
@@ -35,9 +35,9 @@ function status(req, res, next) {
       port: config.port,
     })
     await client.connect()
-    const geo = geohash.encode(incomingStatus.Lat, incomingStatus.Lon);
-
-    const sql = "insert into status (stamp,detectorid, Lon,Lat,height,udpcount,clktrim,satellites,temppress,geohash) values ("
+//    const geo = geohash.encode(incomingStatus.Lat, incomingStatus.Lon);
+  const geo = '';
+    const sql = "insert into status_hyper (stamp,detectorid, Lon,Lat,height,udpcount,clktrim,satellites,temppress,geohash) values ("
       + "TO_TIMESTAMP('" + incomingStatus.LastSeen + "','dd.mm.YY HH24:MI:SS:MS'),"
       + incomingStatus.id + ","
       + incomingStatus.Lon + ","
