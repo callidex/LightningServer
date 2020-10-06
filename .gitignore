@@ -21,3 +21,4 @@
 lightning_ui/lightning/bobmiddleproxy/node_modules
 lightning_ui/lightning/postnode/out
 lightning_ui/lightning/postnode/node_modules
+lightning_ui/lightning/postnode/config.json
