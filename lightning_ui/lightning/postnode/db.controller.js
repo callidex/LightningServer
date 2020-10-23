@@ -50,12 +50,13 @@ function status(req, res, next) {
   console.log(req.body);
   const incomingStatus = req.body;
   console.log(incomingStatus.LastSeen);
-  if(incomingStatus.clktrim > 109000000 || incomingStatus.clktrim < 107000000)
-     console.log( 'rejected - ');
-     console.log(incomingStatus);
-     res.status(500).end();
-     return;
-  } 
+//  if(incomingStatus.clktrim > 109000000 || incomingStatus.clktrim < 107000000)
+//{
+//     console.log( 'rejected - ');
+//     console.log(incomingStatus);
+//     res.status(500).end();
+//     return;
+//  } 
 
   ; (async () => {
     const client = new Client({
@@ -68,7 +69,7 @@ function status(req, res, next) {
     await client.connect()
 //    const geo = geohash.encode(incomingStatus.Lat, incomingStatus.Lon);
     const geo = '';
-    const sql = "insert into status_hyper (stamp,detectorid, Lon,Lat,height,udpcount,clktrim,satellites,temppress,geohash,temp,press,adctrigoff,adcbase,noise,peaklevel,trigcount,pgagain, jabbering, batchid, splatrev, sensetype,adcpktssent,sysuptime,netuptime,gpsuptime,majorversion,minorversion,auxstatus,adcudpover,udpsent,bconf,epochsecs) values ("
+    const sql = "insert into status_hyper (stamp,detectorid, Lon,Lat,height,udpcount,clktrim,satellites,temppress,geohash,temp,press,adctrigoff,adcbase,noise,peaklevel,trigcount,pgagain, jabbering, batchid, splatrev, sensetype,adcpktssent,sysuptime,netuptime,gpsuptime,majorversion,minorversion,auxstatus,adcudpover,udpsent,bconf,gpslocked,epochsecs) values ("
       + "TO_TIMESTAMP('" + incomingStatus.LastSeen + "','dd.mm.YY HH24:MI:SS:MS') - (10 * interval '1 hour'),"
       + incomingStatus.id + ","
       + incomingStatus.Lon + ","
@@ -101,11 +102,11 @@ function status(req, res, next) {
       + incomingStatus.adcudpover+ ","
       + incomingStatus.udpsent+ ","
       + incomingStatus.bconf+ ","
+      + incomingStatus.gpslocked + ","
       + incomingStatus.epochsecs+ " );";
       console.log(sql);
       await client.query(sql);
 client .end()
-console.log(client);
   })()
   res.status(200).end();
 }
