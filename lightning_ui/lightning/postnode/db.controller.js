@@ -14,6 +14,11 @@ const pool = new Pool({
           database: config.database,
           password: config.password,
           port: config.port,
+
+
+ max: 300,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000,
           });
 
 
@@ -31,25 +36,6 @@ function strike(req, res, next) {
 ;(async function() {
   const client = await pool.connect()
   
-
-
-
-
-await client.query('SELECT NOW()')
-  client.release()
-})()
-
-
-  ;(async () =>  
-    {
-       const client = new Client({
-          user: config.user,
-          host: config.host,
-          database: config.database,
-          password: config.password,
-          port: config.port,
-          });
-       await client.connect()
        const sql = "insert into strikes_hyper(stamp,linecount,heat,hity,hitx,longitude,latitude)  values ("
 + "TO_TIMESTAMP('" + incomingStrike.stamp + "','dd.mm.YY HH24:MI:SS:MS') - (10 * interval  '1 hour'),"
   + incomingStrike.linecount + ","
@@ -72,23 +58,7 @@ for (var dec in dlist)
 }
 
 console.log('done')
-//
-//       await client.query(sql ,[],(err, res) =>
-//{
-//   if (err) 
- //  {
-//console.log('callback error')
-//      console.log(err.stack);
-//
-//   }
-//   else
-//   {
-//     console.log('SUCCESS')
-//      console.log(err.rows[0]);
-//    }
-//
-// })
-       client.end()
+       client.release()
     })()
     res.status(200).end();
 }
