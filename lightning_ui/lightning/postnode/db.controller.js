@@ -7,6 +7,17 @@ const { Client } = require('pg');
 //import geohash from 'latlon-geohash';
 
 
+const { Pool } = require('pg')
+const pool = new Pool({
+          user: config.user,
+          host: config.host,
+          database: config.database,
+          password: config.password,
+          port: config.port,
+          });
+
+
+
 
 // routes
 router.post("/status", status);
@@ -17,6 +28,17 @@ module.exports = router;
 function strike(req, res, next) {
   console.log(req.body);
   const incomingStrike = req.body;
+;(async function() {
+  const client = await pool.connect()
+  
+
+
+
+
+await client.query('SELECT NOW()')
+  client.release()
+})()
+
 
   ;(async () =>  
     {
@@ -28,20 +50,45 @@ function strike(req, res, next) {
           port: config.port,
           });
        await client.connect()
-
-       const sql = "insert into strikes_hyper(stamp,linecount,heat,hity,hitx,longitude,latitude,dlist)  values ("
+       const sql = "insert into strikes_hyper(stamp,linecount,heat,hity,hitx,longitude,latitude)  values ("
 + "TO_TIMESTAMP('" + incomingStrike.stamp + "','dd.mm.YY HH24:MI:SS:MS') - (10 * interval  '1 hour'),"
   + incomingStrike.linecount + ","
   + incomingStrike.heat + ","
  +  incomingStrike.hity + ","
  +  incomingStrike.hitx + ","
  +  incomingStrike.lon + ","
- + incomingStrike.lat + ","
- + incomingStrike.dlist + ");";
+ + incomingStrike.lat + ") RETURNING id;";
        console.log(sql);
-       await client.query(sql);
+
+
+const result =  await client.query(sql);
+
+const dlist = incomingStrike.dlist.split(",");
+for (var dec in dlist)
+{
+    const dec_id = dlist[dec].split("<")[0];
+    const insert = "insert into strike_detector(strike_id,detector_id) values (" + result.rows[0].id + "," + dec_id + ");";
+    await client.query(insert);
+}
+
+console.log('done')
+//
+//       await client.query(sql ,[],(err, res) =>
+//{
+//   if (err) 
+ //  {
+//console.log('callback error')
+//      console.log(err.stack);
+//
+//   }
+//   else
+//   {
+//     console.log('SUCCESS')
+//      console.log(err.rows[0]);
+//    }
+//
+// })
        client.end()
-       console.log(client);
     })()
     res.status(200).end();
 }
