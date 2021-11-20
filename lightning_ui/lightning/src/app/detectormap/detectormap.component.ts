@@ -80,32 +80,36 @@ export class DetectormapComponent implements OnInit {
   }
 
   add_map_point(lat: string, lng: string, heat: string, txt: string, icon: string) {
+
     const vectorLayer = new ol.layer.Vector({
       source: new ol.source.Vector({
         features: [new ol.Feature({
           geometry: new ol.geom.Point(ol.proj.transform([parseFloat(lng), parseFloat(lat)], 'EPSG:4326', 'EPSG:3857')),
         })]
       }),
+
+
       style: new ol.style.Style({
-        image: new ol.style.Icon({
-          anchor: [0.5, 0.5],
-          anchorXUnits: 'fraction',
-          anchorYUnits: 'fraction',
-          src: icon,
-          opacity: 1 / (parseFloat(heat) / 15)
-//          color: '#29f'
-        }),
-        // text: new ol.style.Text({
-        //   text: txt,
-        //   scale: 2.2,
-        //   fill: new ol.style.Fill({
-        //     color: '#fff'
-        //   }),
-        //   stroke: new ol.style.Stroke({
-        //     color: '0',
-        //     width: 3
-        //   })
+        // image: new ol.style.Icon({
+        //   anchor: [0.5, 0.5],
+        //   anchorXUnits: 'fraction',
+        //   anchorYUnits: 'fraction',
+        //   src: icon,
+        //   //   opacity: 1 / (parseFloat(heat) / 15)
+        //   //          color: '#29f'
         // })
+        // ,
+        text: new ol.style.Text({
+          text: txt.toString(),
+          scale: 2.2,
+          fill: new ol.style.Fill({
+            color: "#fff"
+          }),
+          stroke: new ol.style.Stroke({
+            color: "0",
+            width: 2
+          })
+        })
       })
     });
     vectorLayer.set('selectable', true);
@@ -120,7 +124,7 @@ export class DetectormapComponent implements OnInit {
       (s: Strikelist) => {
         this.strikes = s.Strikes;
         s.Strikes.forEach((strike: Strike) => {
-          this.add_map_point(strike.lat, strike.lon, strike.heat, strike.linecount, this.strikeIcon);
+          this.add_map_point(strike.lat, strike.lon, strike.heat, '', this.strikeIcon);
 
         });
       }, error => { console.log(error); } // this.error = error // error path);
@@ -134,7 +138,7 @@ export class DetectormapComponent implements OnInit {
               (parsed) => {
                 const detector = new Detector(parsed);
                 this.detectors.push(detector);
-                this.add_map_point(detector.Lat, detector.Lon, '1', '', this.detectorIcon);
+                this.add_map_point(detector.Lat, detector.Lon, '', detector.id, this.detectorIcon);
                 this.map.getView().setCenter(ol.proj.fromLonLat([parsed.Lon, parsed.Lat]));
               }
             );
