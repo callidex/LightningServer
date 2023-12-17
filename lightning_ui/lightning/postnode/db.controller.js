@@ -18,35 +18,86 @@ const pool = new Pool({           user: config.user,           host: config.host
 // routes
 router.post("/status", status);
 router.post("/strike", strike);
+router.post("/sample", sample);
 
 module.exports = router;
 
+
+
+function sample(req, res, next) {
+
+  console.log("incoming sample");
+  const incomingSample = req.body;
+;(async function() {
+  const client = await pool.connect()
+       const sql = "insert into sample(detector,data,dmatime,batchid,rtsecs,adcseq,smoothed,timestamp )  values ("
+     + incomingSample.detector + ","
+      + incomingSample.data + ","
+      + incomingSample.dmatime + ","
+      +  incomingSample.batchid + ","
+      +  incomingSample.rtsecs + ","
+      +  incomingSample.adcseq + ","
+      + incomingSample.smoothed + 
+
+  + "TO_TIMESTAMP('" + incomingSample.timestamp + "','dd.mm.YY HH24:MI:SS:MS') - interval  '10 hour',"
+
+
+") RETURNING id;";
+  console.log(new Date().toISOString());
+  console.log(sql);
+  try
+  {
+ const result =  await client.query(sql);
+   console.log(result);
+  
+  } 
+  catch (error) {
+  console.error(error);
+  }
+  finally
+  {
+    client.release()
+  }
+ })()
+    res.status(200).end();
+}
+
+
+
+
 function strike(req, res, next) {
    strikeCounter.inc();
-
+  console.log("incoming strike");
   const incomingStrike = req.body;
 ;(async function() {
   const client = await pool.connect()
        const sql = "insert into strikes_hyper(stamp,linecount,heat,hity,hitx,longitude,latitude)  values ("
-      + "TO_TIMESTAMP('" + incomingStrike.stamp + "','dd.mm.YY HH24:MI:SS:MS') - (10 * interval  '1 hour'),"
+        + "TO_TIMESTAMP('" + incomingStrike.stamp + "','dd.mm.YY HH24:MI:SS:MS') - interval  '10 hour',"
+
       + incomingStrike.linecount + ","
       + incomingStrike.heat + ","
       +  incomingStrike.hity + ","
       +  incomingStrike.hitx + ","
       +  incomingStrike.lon + ","
       + incomingStrike.lat + ") RETURNING id;";
+  console.log(new Date().toISOString());
   console.log(sql);
   try
   {
    const result =  await client.query(sql);
+   console.log(result);
    const dlist = incomingStrike.dlist.split(",");
-   for (var dec in dlist)
+
+ for (var dec in dlist)
    {
       const dec_id = dlist[dec].split("<")[0];
       const insert = "insert into strike_detector(strike_id,detector_id) values (" + result.rows[0].id + "," + dec_id + ");";
       await client.query(insert);
    }
    console.log('done')
+  }
+  catch (error) {
+  console.error(error);
   }
   finally
   {
